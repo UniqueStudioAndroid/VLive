@@ -4,6 +4,36 @@ plugins {
     id("kotlin-android")
 }
 
+apply {
+    FilamentToolsPlugin().apply(project)
+}
+
+
+//tasks {
+//    val copyModel by registering(Copy::class) {
+//        from("models/BusterDrone/")
+//        from("models/RobotExpressive.glb")
+//        into("src/main/assets/models")
+//    }
+//
+//    preBuild.dependsOn(copyModel)
+//
+//    named("clean") {
+//        doFirst {
+//            delete("src/main/assets/models")
+//        }
+//    }
+//
+//}
+
+//extensions.configure<FilamentToolsPluginExtension> {
+//    cmgenArgs = "-q --format=ktx --size=256 --extract-blur=0.1 --deploy=src/main/assets/envs/default_env"
+//    iblInputFile.set(project.layout.projectDirectory.file("models/env/lightroom_14b.hdr"))
+//    iblOutputDir.set(project.layout.projectDirectory.dir("src/main/assets/envs"))
+//}
+
+
+
 android {
     compileSdkVersion(Dep.Build.COMPILE_SDK_VERSION)
     buildToolsVersion(Dep.Build.BUILD_TOOLS_VERSION)
@@ -54,4 +84,9 @@ dependencies {
     implementation(Dep.CameraX.CAMERA2)
     implementation(Dep.CameraX.LIFE_CYCLE)
     implementation(Dep.CameraX.CAMERA_VIEW)
+
+    implementation(Dep.Filament.FILAMENT)
+    implementation(Dep.Filament.GLTFIO)
+    implementation(Dep.Filament.UTILS)
+    implementation(Dep.Filament.FILAMAT)
 }

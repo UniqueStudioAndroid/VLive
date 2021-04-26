@@ -38,4 +38,14 @@ object Dep {
         const val LIFE_CYCLE = "androidx.camera:camera-lifecycle:1.0.0-beta07"
         const val CAMERA_VIEW = "androidx.camera:camera-view:1.0.0-alpha14"
     }
+
+    object Filament {
+        const val BASE_VAR = "1.9.21"
+
+        const val FILAMENT = "com.google.android.filament:filament-android:${BASE_VAR}"
+        const val GLTFIO = "com.google.android.filament:gltfio-android:${BASE_VAR}"
+        const val UTILS = "com.google.android.filament:filament-utils-android:${BASE_VAR}"
+        const val FILAMAT = "com.google.android.filament:filamat-android:${BASE_VAR}"
+    }
+
 }
