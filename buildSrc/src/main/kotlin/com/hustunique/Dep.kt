@@ -1,4 +1,3 @@
-
 object Dep {
 
     object Build {
@@ -27,6 +26,15 @@ object Dep {
         const val MATERIAL = "com.google.android.material:material:1.3.0"
         const val CONSTRAINTLAYOUT = "androidx.constraintlayout:constraintlayout:2.0.4"
         const val LIVEDATA = "androidx.lifecycle:lifecycle-livedata:2.3.0"
+    }
+
+    object Filament {
+        const val BASE_VAR = "1.9.21"
+
+        const val FILAMENT = "com.google.android.filament:filament-android:${BASE_VAR}"
+        const val GLTFIO = "com.google.android.filament:gltfio-android:${BASE_VAR}"
+        const val UTILS = "com.google.android.filament:filament-utils-android:${BASE_VAR}"
+        const val FILAMAT = "com.google.android.filament:filamat-android:${BASE_VAR}"
     }
 
 }
