@@ -43,10 +43,15 @@ android {
 
 dependencies {
     implementation(kotlin("stdlib", Dep.Kt.KOTLIN_VERSION))
+    implementation(Dep.MLKit.ML_KIT_FACE)
     implementation(Dep.Kt.COROUTINE)
     implementation(Dep.AndroidX.CORE)
     implementation(Dep.AndroidX.APPCOMPAT)
     implementation(Dep.AndroidX.MATERIAL)
     implementation(Dep.AndroidX.CONSTRAINTLAYOUT)
     implementation(Dep.AndroidX.LIVEDATA)
+
+    implementation(Dep.CameraX.CAMERA2)
+    implementation(Dep.CameraX.LIFE_CYCLE)
+    implementation(Dep.CameraX.CAMERA_VIEW)
 }

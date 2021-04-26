@@ -29,4 +29,13 @@ object Dep {
         const val LIVEDATA = "androidx.lifecycle:lifecycle-livedata:2.3.0"
     }
 
+    object MLKit {
+        const val ML_KIT_FACE = "com.google.mlkit:face-detection:16.0.6"
+    }
+
+    object CameraX {
+        const val CAMERA2 = "androidx.camera:camera-camera2:1.0.0-beta07"
+        const val LIFE_CYCLE = "androidx.camera:camera-lifecycle:1.0.0-beta07"
+        const val CAMERA_VIEW = "androidx.camera:camera-view:1.0.0-alpha14"
+    }
 }
