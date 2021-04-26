@@ -55,6 +55,7 @@ class CameraXActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         imageProcessor?.stop()
+        cameraProvider?.unbindAll()
     }
 
     private fun initCamera() {

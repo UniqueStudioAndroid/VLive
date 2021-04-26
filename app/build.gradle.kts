@@ -4,9 +4,9 @@ plugins {
     id("kotlin-android")
 }
 
-apply {
-    FilamentToolsPlugin().apply(project)
-}
+//apply {
+//    FilamentToolsPlugin().apply(project)
+//}
 
 
 //tasks {
