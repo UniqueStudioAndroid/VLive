@@ -9,6 +9,8 @@ import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.filament.EntityManager
+import com.google.android.filament.RenderableManager
 import com.google.android.filament.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,6 +23,8 @@ import java.nio.Buffer
 import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
 import java.util.zip.ZipInputStream
+import kotlin.math.roundToInt
+import kotlin.math.sin
 
 class ModelActivity : AppCompatActivity() {
 
@@ -72,21 +76,23 @@ class ModelActivity : AppCompatActivity() {
     }
 
     private fun createRenderables() {
-        val buffer = assets.open("models/RobotExpressive.glb").use { input ->
+        val buffer = assets.open("models/MorphPrimitivesTest.glb").use { input ->
+//            val buffer = assets.open("models/RobotExpressive.glb").use { input ->
 //            val buffer = assets.open("models/scene.gltf").use { input ->
             val bytes = ByteArray(input.available())
             input.read(bytes)
             Log.i(TAG, "createRenderables: ${bytes.size}")
             ByteBuffer.wrap(bytes)
         }
+        RenderableManager.PrimitiveType.POINTS
 
         modelViewer.loadModelGlb(buffer)
-//        modelViewer.loadModelGltfAsync(buffer) { uri -> readCompressedAsset("models/$uri") }
         modelViewer.transformToUnitCube()
     }
 
     private fun createIndirectLight() {
         val engine = modelViewer.engine
+
         val scene = modelViewer.scene
         val ibl = "default_env"
         readCompressedAsset("envs/$ibl/${ibl}_ibl.ktx").let {
@@ -122,21 +128,32 @@ class ModelActivity : AppCompatActivity() {
         modelViewer.destroyModel()
     }
 
+    var entity: Int = 0
+
     inner class FrameCallback : Choreographer.FrameCallback {
         private val startTime = System.nanoTime()
         override fun doFrame(frameTimeNanos: Long) {
             choreographer.postFrameCallback(this)
 
+            if (entity == 0) {
+                entity = modelViewer.asset?.getFirstEntityByName("mesh") ?: 0
+            }
+
             modelViewer.animator?.apply {
+                val elapsedTimeSeconds = (frameTimeNanos - startTime).toDouble() / 1_000_000_000
                 if (animationCount > 0) {
-                    val elapsedTimeSeconds = (frameTimeNanos - startTime).toDouble() / 1_000_000_000
-                    for (i in 0 until  animationCount) {
+                    for (i in 0 until animationCount) {
                         applyAnimation(i, elapsedTimeSeconds.toFloat())
                         Log.i(TAG, "doFrame: ${getAnimationName(i)}")
                     }
                 }
+                modelViewer.engine.renderableManager.setMorphWeights(
+                    modelViewer.engine.renderableManager.getInstance(entity),
+                    floatArrayOf(sin(elapsedTimeSeconds * Math.PI).toFloat(), 0f, 0f, 0f)
+                )
                 updateBoneMatrices()
             }
+
 
             modelViewer.render(frameTimeNanos)
         }
