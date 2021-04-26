@@ -36,6 +36,11 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         }
+
+        binding.btnModelEntry.setOnClickListener {
+            val intent = Intent(this, ModelActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun getRuntimePermissions() {
