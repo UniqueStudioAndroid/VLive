@@ -7,23 +7,14 @@ import android.view.Choreographer
 import android.view.SurfaceView
 import android.view.WindowManager
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.filament.EntityManager
 import com.google.android.filament.RenderableManager
-import com.google.android.filament.utils.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.io.File
-import java.io.FileInputStream
-import java.io.RandomAccessFile
-import java.nio.Buffer
+import com.google.android.filament.utils.KtxLoader
+import com.google.android.filament.utils.ModelViewer
+import com.google.android.filament.utils.Utils
 import java.nio.ByteBuffer
-import java.nio.charset.StandardCharsets
-import java.util.zip.ZipInputStream
-import kotlin.math.roundToInt
+import kotlin.math.abs
+import kotlin.math.cos
 import kotlin.math.sin
 
 class ModelActivity : AppCompatActivity() {
@@ -76,7 +67,7 @@ class ModelActivity : AppCompatActivity() {
     }
 
     private fun createRenderables() {
-        val buffer = assets.open("models/MorphPrimitivesTest.glb").use { input ->
+        val buffer = assets.open("models/bighead.glb").use { input ->
 //            val buffer = assets.open("models/RobotExpressive.glb").use { input ->
 //            val buffer = assets.open("models/scene.gltf").use { input ->
             val bytes = ByteArray(input.available())
@@ -128,16 +119,46 @@ class ModelActivity : AppCompatActivity() {
         modelViewer.destroyModel()
     }
 
-    var entity: Int = 0
+    var lEyeEntity: Int = 0
+    var rEyeEntity: Int = 0
+    var mouthEntity: Int = 0
 
     inner class FrameCallback : Choreographer.FrameCallback {
         private val startTime = System.nanoTime()
+
+        private fun checkEntity() {
+
+            if (lEyeEntity == 0) {
+                lEyeEntity = modelViewer.asset?.getFirstEntityByName("leye") ?: 0
+            }
+            if (rEyeEntity == 0) {
+                rEyeEntity = modelViewer.asset?.getFirstEntityByName("reye") ?: 0
+            }
+            if (mouthEntity == 0) {
+                mouthEntity = modelViewer.asset?.getFirstEntityByName("mouth") ?: 0
+            }
+        }
+
+        private fun setAnim(frameTimeNanos: Long) {
+            val elapsedTimeSeconds = (frameTimeNanos - startTime).toDouble() / 1_000_000_000
+            modelViewer.engine.renderableManager.setMorphWeights(
+                modelViewer.engine.renderableManager.getInstance(lEyeEntity),
+                floatArrayOf(abs(sin(elapsedTimeSeconds * Math.PI )).toFloat(), 0f, 0f, 0f)
+            )
+            modelViewer.engine.renderableManager.setMorphWeights(
+                modelViewer.engine.renderableManager.getInstance(rEyeEntity),
+                floatArrayOf(abs(cos(elapsedTimeSeconds * Math.PI)).toFloat(), 0f, 0f, 0f)
+            )
+            modelViewer.engine.renderableManager.setMorphWeights(
+                modelViewer.engine.renderableManager.getInstance(mouthEntity),
+                floatArrayOf(abs(sin(elapsedTimeSeconds * Math.PI)).toFloat(), 0f, 0f, 0f)
+            )
+        }
+
         override fun doFrame(frameTimeNanos: Long) {
             choreographer.postFrameCallback(this)
 
-            if (entity == 0) {
-                entity = modelViewer.asset?.getFirstEntityByName("mesh") ?: 0
-            }
+            checkEntity()
 
             modelViewer.animator?.apply {
                 val elapsedTimeSeconds = (frameTimeNanos - startTime).toDouble() / 1_000_000_000
@@ -147,12 +168,9 @@ class ModelActivity : AppCompatActivity() {
                         Log.i(TAG, "doFrame: ${getAnimationName(i)}")
                     }
                 }
-                modelViewer.engine.renderableManager.setMorphWeights(
-                    modelViewer.engine.renderableManager.getInstance(entity),
-                    floatArrayOf(sin(elapsedTimeSeconds * Math.PI).toFloat(), 0f, 0f, 0f)
-                )
                 updateBoneMatrices()
             }
+            setAnim(frameTimeNanos)
 
 
             modelViewer.render(frameTimeNanos)
