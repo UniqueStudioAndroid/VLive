@@ -5,15 +5,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/user_hint"
+    <FrameLayout
+        android:id="@+id/frame_container"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:gravity="center|center_horizontal|center_vertical"
-        android:text="https://google.github.io/filament/remote"
-        android:textIsSelectable="true"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+        android:layout_height="80dp">
+
+    </FrameLayout>
 
     <SurfaceView
         android:id="@+id/main_sv"

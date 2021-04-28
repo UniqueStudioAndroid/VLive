@@ -1,17 +1,18 @@
 package com.hustunique.vlive
 
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.hustunique.vlive.agora.AgoraActivity
 import com.hustunique.vlive.databinding.ActivityMainBinding
 import com.hustunique.vlive.util.Utils
-import java.util.ArrayList
+import com.hustunique.vlive.util.startActivity
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -32,14 +33,20 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "No permission, no work!", Toast.LENGTH_SHORT).show()
             } else {
                 Utils.init(this)
-                val intent = Intent(this, CameraXActivity::class.java)
-                startActivity(intent)
+                startActivity<CameraXActivity>()
             }
         }
 
         binding.btnModelEntry.setOnClickListener {
-            val intent = Intent(this, ModelActivity::class.java)
-            startActivity(intent)
+            startActivity<ModelActivity>()
+        }
+
+        binding.btnAgoraEntry.setOnClickListener {
+            if (!allPermissionsGranted()) {
+                Toast.makeText(this, "No permission, no work!", Toast.LENGTH_SHORT).show()
+            } else {
+                startActivity<AgoraActivity>()
+            }
         }
     }
 
@@ -61,13 +68,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun allPermissionsGranted(): Boolean {
-        for (permission in getRequiredPermissions()) {
-            permission?.let {
-                if (!isPermissionGranted(this, it)) {
-                    return false
-                }
-            }
-        }
+//        for (permission in getRequiredPermissions()) {
+//            permission?.let {
+//                if (!isPermissionGranted(this, it)) {
+//                    return false
+//                }
+//            }
+//        }
         return true
     }
 

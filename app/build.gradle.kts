@@ -33,7 +33,6 @@ plugins {
 //}
 
 
-
 android {
     compileSdkVersion(Dep.Build.COMPILE_SDK_VERSION)
     buildToolsVersion(Dep.Build.BUILD_TOOLS_VERSION)
@@ -89,4 +88,10 @@ dependencies {
     implementation(Dep.Filament.GLTFIO)
     implementation(Dep.Filament.UTILS)
     implementation(Dep.Filament.FILAMAT)
+
+    implementation(Dep.Agora.AGORA)
+    implementation(Dep.AndroidX.Lifecycle.COMMON_KTX)
+    implementation(Dep.AndroidX.Lifecycle.LD_KTX)
+    implementation(Dep.AndroidX.Lifecycle.VM_KTX)
+    implementation(Dep.AndroidX.Lifecycle.RTM_KTX)
 }

@@ -27,6 +27,14 @@ object Dep {
         const val MATERIAL = "com.google.android.material:material:1.3.0"
         const val CONSTRAINTLAYOUT = "androidx.constraintlayout:constraintlayout:2.0.4"
         const val LIVEDATA = "androidx.lifecycle:lifecycle-livedata:2.3.0"
+
+        object Lifecycle {
+            private const val VERSION = "2.3.1"
+            const val VM_KTX = "androidx.lifecycle:lifecycle-viewmodel-ktx:$VERSION"
+            const val LD_KTX = "androidx.lifecycle:lifecycle-livedata-ktx:$VERSION"
+            const val COMMON_KTX = "androidx.lifecycle:lifecycle-common-java8:$VERSION"
+            const val RTM_KTX = "androidx.lifecycle:lifecycle-runtime-ktx:$VERSION"
+        }
     }
 
     object MLKit {
@@ -40,12 +48,16 @@ object Dep {
     }
 
     object Filament {
-        const val BASE_VAR = "1.9.21"
+        private const val BASE_VAR = "1.9.21"
 
         const val FILAMENT = "com.google.android.filament:filament-android:${BASE_VAR}"
         const val GLTFIO = "com.google.android.filament:gltfio-android:${BASE_VAR}"
         const val UTILS = "com.google.android.filament:filament-utils-android:${BASE_VAR}"
         const val FILAMAT = "com.google.android.filament:filamat-android:${BASE_VAR}"
+    }
+
+    object Agora {
+        const val AGORA = "com.github.agorabuilder:native-full-sdk:3.4.1"
     }
 
 }
