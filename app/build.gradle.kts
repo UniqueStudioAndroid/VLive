@@ -94,4 +94,6 @@ dependencies {
     implementation(Dep.AndroidX.Lifecycle.LD_KTX)
     implementation(Dep.AndroidX.Lifecycle.VM_KTX)
     implementation(Dep.AndroidX.Lifecycle.RTM_KTX)
+
+    implementation(Dep.ARCore.CORE)
 }
