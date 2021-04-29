@@ -3,12 +3,18 @@ package com.hustunique.vlive
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+<<<<<<< HEAD
 import com.hustunique.vlive.agora.AgoraActivity
+=======
+import com.google.ar.core.ArCoreApk
+>>>>>>> init AR Core activity
 import com.hustunique.vlive.databinding.ActivityMainBinding
 import com.hustunique.vlive.util.Utils
 import com.hustunique.vlive.util.startActivity
@@ -47,6 +53,23 @@ class MainActivity : AppCompatActivity() {
             } else {
                 startActivity<AgoraActivity>()
             }
+        }
+
+        binding.btnArCoreEntry.setOnClickListener {
+            testArCoreAvailability()
+        }
+    }
+
+    private fun testArCoreAvailability() {
+        val availability = ArCoreApk.getInstance().checkAvailability(this)
+        if (availability.isTransient) {
+            Toast.makeText(this, "Checking...", Toast.LENGTH_SHORT).show()
+        } else if (!availability.isSupported) {
+            Toast.makeText(this, "Not support", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "AR core support ok", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, ARCoreActivity::class.java)
+            startActivity(intent)
         }
     }
 

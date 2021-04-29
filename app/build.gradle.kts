@@ -96,4 +96,6 @@ dependencies {
     implementation(Dep.AndroidX.Lifecycle.RTM_KTX)
 
     implementation(Dep.ARCore.CORE)
+    implementation("androidx.appcompat:appcompat:1.2.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.0.4")
 }
