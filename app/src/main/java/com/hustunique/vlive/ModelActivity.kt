@@ -232,13 +232,13 @@ class ModelActivity : AppCompatActivity() {
             }
             setAnim(frameTimeNanos)
 
-//            val entity = modelViewer.asset?.root ?: 0
-//            if (entity != 0) {
-//                val instance = modelViewer.engine.transformManager.getInstance(entity)
-//                modelViewer.engine.transformManager.setTransform(instance, arCoreHelper.objectMatrix)
-//            }
-//            modelViewer.camera.setModelMatrix(arCoreHelper.viewMatrix)
-//            modelViewer.camera.setCustomProjection(arCoreHelper.projectionMatrix, 0.1, 100.0)
+            val entity = modelViewer.asset?.root ?: 0
+            if (entity != 0) {
+                val instance = modelViewer.engine.transformManager.getInstance(entity)
+                modelViewer.engine.transformManager.setTransform(instance, arCoreHelper.objectMatrix)
+            }
+            modelViewer.camera.setModelMatrix(arCoreHelper.viewMatrix)
+            modelViewer.camera.setCustomProjection(arCoreHelper.projectionMatrix, 0.1, 100.0)
 
             modelViewer.render(frameTimeNanos)
         }
