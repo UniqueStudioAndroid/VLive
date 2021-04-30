@@ -3,7 +3,7 @@ object Dep {
 
     object Build {
         const val APPLICATION_ID = "com.hustunique.vlive"
-        const val MIN_SDK_VERSION = 28
+        const val MIN_SDK_VERSION = 29
         const val TARGET_SDK_VERSION = 30
         const val COMPILE_SDK_VERSION = 30
         const val BUILD_TOOLS_VERSION = "30.0.3"

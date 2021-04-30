@@ -5,6 +5,7 @@ import android.opengl.GLES11Ext
 import android.os.Handler
 import android.os.HandlerThread
 import android.util.Log
+import android.view.Surface
 import com.google.ar.core.*
 import io.agora.rtc.gl.EglBase
 import io.agora.rtc.gl.GlUtil
@@ -16,7 +17,8 @@ import java.util.*
  *    date   : 4/28/21
  */
 class ARCoreHelper(
-    context: Context
+    context: Context,
+    surface: Surface? = null
 ) : Runnable {
 
     private lateinit var eglBase: EglBase
@@ -37,7 +39,11 @@ class ARCoreHelper(
     init {
         post {
             eglBase = EglBase.create()
-            eglBase.createDummyPbufferSurface()
+            if (surface == null) {
+                eglBase.createDummyPbufferSurface()
+            } else {
+                eglBase.createSurface(surface)
+            }
             eglBase.makeCurrent()
             texture = GlUtil.generateTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES)
             configSession(context)
@@ -93,6 +99,12 @@ class ARCoreHelper(
             ?.getRegionPose(AugmentedFace.RegionType.NOSE_TIP)
             ?.toMatrix(objectMatrix, 0)
 //        apply(0.01f, objectMatrix)
+
+        render()
+    }
+
+    private fun render() {
+
     }
 
     private fun apply(factor: Float, array: FloatArray) {

@@ -29,6 +29,9 @@ plugins {
 //    cmgenArgs = "-q --format=ktx --size=256 --extract-blur=0.1 --deploy=src/main/assets/envs/default_env"
 //    iblInputFile.set(project.layout.projectDirectory.file("models/env/lightroom_14b.hdr"))
 //    iblOutputDir.set(project.layout.projectDirectory.dir("src/main/assets/envs"))
+//
+//    materialInputDir.set(project.layout.projectDirectory.dir("models/materials"))
+//    materialOutputDir.set(project.layout.projectDirectory.dir("src/main/assets/materials"))
 //}
 
 
