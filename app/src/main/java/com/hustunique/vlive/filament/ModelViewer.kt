@@ -262,11 +262,11 @@ class ModelViewer(val engine: Engine) : android.view.View.OnTouchListener {
         asset?.let { populateScene(it) }
 
         // Extract the camera basis from the helper and push it to the Filament camera.
-        cameraManipulator.getLookAt(eyePos, target, upward)
-        camera.lookAt(
-            eyePos[0], eyePos[1], eyePos[2],
-            target[0], target[1], target[2],
-            upward[0], upward[1], upward[2])
+//        cameraManipulator.getLookAt(eyePos, target, upward)
+//        camera.lookAt(
+//            eyePos[0], eyePos[1], eyePos[2],
+//            target[0], target[1], target[2],
+//            upward[0], upward[1], upward[2])
 
         // Render the scene, unless the renderer wants to skip the frame.
         if (renderer.beginFrame(swapChain!!, frameTimeNanos)) {

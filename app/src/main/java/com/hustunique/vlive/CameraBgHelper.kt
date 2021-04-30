@@ -63,9 +63,9 @@ class CameraBgHelper(
     fun pushExternalImageToFilament() {
         val stream = filamentStream
         if (stream != null) {
-            imageReader.acquireLatestImage()?.also {
-                stream.setAcquiredImage(it.hardwareBuffer, Handler()) { it.close() }
-            }
+//            imageReader.acquireLatestImage()?.also {
+//                stream.setAcquiredImage(it.hardwareBuffer, Handler()) { it.close() }
+//            }
         }
     }
 }

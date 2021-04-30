@@ -271,7 +271,7 @@ class ModelActivity : AppCompatActivity() {
                 if (animationCount > 0) {
                     for (i in 0 until animationCount) {
                         applyAnimation(i, elapsedTimeSeconds.toFloat())
-                        Log.i(TAG, "doFrame: ${getAnimationName(i)}")
+//                        Log.i(TAG, "doFrame: ${getAnimationName(i)}")
                     }
                 }
                 updateBoneMatrices()
@@ -280,14 +280,12 @@ class ModelActivity : AppCompatActivity() {
 
             val entity = modelViewer.asset?.root ?: 0
             if (entity != 0) {
-//                val instance = modelViewer.engine.transformManager.getInstance(entity)
-//                modelViewer.engine.transformManager.setTransform(
-//                    instance,
-//                    arCoreHelper.objectMatrix
-//                )
+                val instance = modelViewer.engine.transformManager.getInstance(entity)
+                modelViewer.engine.transformManager.setTransform(
+                    instance,
+                    arCoreHelper.objectMatrix
+                )
             }
-//            modelViewer.camera.setModelMatrix(arCoreHelper.viewMatrix)
-//            modelViewer.camera.setCustomProjection(arCoreHelper.projectionMatrix, 0.1, 100.0)
 
             cameraBgHelper.pushExternalImageToFilament()
             modelViewer.render(frameTimeNanos)

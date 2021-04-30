@@ -8,6 +8,7 @@ import android.os.HandlerThread
 import android.util.Log
 import android.view.Surface
 import com.google.ar.core.*
+import com.hustunique.vlive.toMString
 import com.hustunique.vlive.util.ShaderUtil
 import io.agora.rtc.gl.EglBase
 import io.agora.rtc.gl.GlUtil
@@ -35,10 +36,6 @@ class ARCoreHelper(
 
     private lateinit var session: Session
 
-    val viewMatrix = FloatArray(16)
-    private val _projectionMatrix = FloatArray(16)
-    val projectionMatrix
-        get() = _projectionMatrix.map { it.toDouble() }.toDoubleArray()
     val objectMatrix = FloatArray(16)
 
     private var cameraTexture: Int = 0
@@ -103,15 +100,15 @@ class ARCoreHelper(
     override fun run() {
         handler.post(this)
         session.setCameraTextureName(cameraTexture)
-        val frame = session.update()
-        val camera = frame.camera
-        camera.getViewMatrix(viewMatrix, 0)
-        camera.getProjectionMatrix(_projectionMatrix, 0, 0.01f, 100f)
+        session.update()
         session.getAllTrackables(AugmentedFace::class.java)
             .firstOrNull { it.trackingState == TrackingState.TRACKING }
             ?.getRegionPose(AugmentedFace.RegionType.NOSE_TIP)
             ?.toMatrix(objectMatrix, 0)
-//        apply(0.01f, objectMatrix)
+        objectMatrix[0] = objectMatrix[0] * -1
+        objectMatrix[4] = objectMatrix[4] * -1
+        objectMatrix[8] = objectMatrix[8] * -1
+        objectMatrix[12] = objectMatrix[12] * -1
 
         renderCamera()
     }
