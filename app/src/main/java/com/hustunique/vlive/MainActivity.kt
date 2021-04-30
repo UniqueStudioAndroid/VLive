@@ -10,11 +10,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-<<<<<<< HEAD
 import com.hustunique.vlive.agora.AgoraActivity
-=======
 import com.google.ar.core.ArCoreApk
->>>>>>> init AR Core activity
 import com.hustunique.vlive.databinding.ActivityMainBinding
 import com.hustunique.vlive.util.Utils
 import com.hustunique.vlive.util.startActivity
@@ -68,8 +65,7 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Not support", Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(this, "AR core support ok", Toast.LENGTH_SHORT).show()
-            val intent = Intent(this, ARCoreActivity::class.java)
-            startActivity(intent)
+//            startActivity<ARCoreActivity>()
         }
     }
 
@@ -91,13 +87,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun allPermissionsGranted(): Boolean {
-//        for (permission in getRequiredPermissions()) {
-//            permission?.let {
-//                if (!isPermissionGranted(this, it)) {
-//                    return false
-//                }
-//            }
-//        }
+        for (permission in getRequiredPermissions()) {
+            permission?.let {
+                if (!isPermissionGranted(this, it)) {
+                    return false
+                }
+            }
+        }
         return true
     }
 

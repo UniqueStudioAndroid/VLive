@@ -11,7 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:text="Start"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
@@ -19,8 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:text="Model"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="@id/btn_main_entry" />
+        app:layout_constraintTop_toBottomOf="@id/btn_main_entry" />
 
     <Button
         android:id="@+id/btn_ar_core_entry"

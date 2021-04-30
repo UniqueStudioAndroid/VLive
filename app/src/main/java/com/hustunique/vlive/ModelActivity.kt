@@ -14,10 +14,9 @@ import com.google.android.filament.utils.KtxLoader
 import com.google.android.filament.utils.Utils
 import com.hustunique.vlive.agora.AgoraModule
 import com.hustunique.vlive.agora.BufferSource
-import com.hustunique.vlive.agora.FilamentTextureSource
+import com.hustunique.vlive.agora.ARCoreHelper
 import com.hustunique.vlive.databinding.ActivityModelBinding
 import com.hustunique.vlive.filament.ModelViewer
-import io.agora.rtc.mediaio.IVideoSource
 import java.nio.ByteBuffer
 import kotlin.math.abs
 import kotlin.math.cos
@@ -40,11 +39,13 @@ class ModelActivity : AppCompatActivity() {
 
     private lateinit var modelViewer: ModelViewer
 
-//    private lateinit var videoSource: IVideoSource
+    //    private lateinit var videoSource: IVideoSource
     private lateinit var videoSource: BufferSource
     private lateinit var agoraModule: AgoraModule
     private var bm = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
     private var reader: ImageReader? = null
+
+    private lateinit var arCoreHelper: ARCoreHelper
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -111,6 +112,8 @@ class ModelActivity : AppCompatActivity() {
         val bloomOptions = modelViewer.view.bloomOptions
         bloomOptions.enabled = true
         modelViewer.view.bloomOptions = bloomOptions
+
+        arCoreHelper = ARCoreHelper(this)
     }
 
     private fun createRenderables() {
@@ -152,16 +155,19 @@ class ModelActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        arCoreHelper.resume()
         choreographer.postFrameCallback(frameScheduler)
     }
 
     override fun onPause() {
         super.onPause()
+        arCoreHelper.pause()
         choreographer.removeFrameCallback(frameScheduler)
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        arCoreHelper.release()
         choreographer.removeFrameCallback(frameScheduler)
         modelViewer.destroyModel()
     }
@@ -226,10 +232,20 @@ class ModelActivity : AppCompatActivity() {
             }
             setAnim(frameTimeNanos)
 
+            val entity = modelViewer.asset?.root ?: 0
+            if (entity != 0) {
+                val instance = modelViewer.engine.transformManager.getInstance(entity)
+                modelViewer.engine.transformManager.setTransform(instance, arCoreHelper.objectMatrix)
+            }
+            modelViewer.camera.setModelMatrix(arCoreHelper.viewMatrix)
+            modelViewer.camera.setCustomProjection(arCoreHelper.projectionMatrix, 0.1, 100.0)
 
             modelViewer.render(frameTimeNanos)
-
-
         }
     }
+}
+
+fun FloatArray.toMString(): String = fold("Matrix: ") {
+    R, d ->
+    "$R $d, "
 }

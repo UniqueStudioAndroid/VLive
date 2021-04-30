@@ -56,14 +56,11 @@ object Dep {
         const val FILAMAT = "com.google.android.filament:filamat-android:${BASE_VAR}"
     }
 
-<<<<<<< HEAD
     object Agora {
         const val AGORA = "com.github.agorabuilder:native-full-sdk:3.4.1"
     }
 
-=======
     object ARCore {
         const val CORE = "com.google.ar:core:1.23.0"
     }
->>>>>>> import ar core
 }
