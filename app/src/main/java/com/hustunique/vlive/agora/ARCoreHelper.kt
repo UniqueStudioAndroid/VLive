@@ -92,7 +92,7 @@ class ARCoreHelper(
             .firstOrNull { it.trackingState == TrackingState.TRACKING }
             ?.getRegionPose(AugmentedFace.RegionType.NOSE_TIP)
             ?.toMatrix(objectMatrix, 0)
-        apply(0.0002f, objectMatrix)
+        apply(0.01f, objectMatrix)
     }
 
     private fun apply(factor: Float, array: FloatArray) {
