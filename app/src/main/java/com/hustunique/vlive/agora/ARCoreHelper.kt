@@ -2,13 +2,19 @@ package com.hustunique.vlive.agora
 
 import android.content.Context
 import android.opengl.GLES11Ext
+import android.opengl.GLES20
 import android.os.Handler
 import android.os.HandlerThread
 import android.util.Log
 import android.view.Surface
 import com.google.ar.core.*
+import com.hustunique.vlive.util.ShaderUtil
 import io.agora.rtc.gl.EglBase
 import io.agora.rtc.gl.GlUtil
+import java.io.IOException
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import java.nio.FloatBuffer
 import java.util.*
 
 /**
@@ -27,7 +33,6 @@ class ARCoreHelper(
     }
     private val handler = Handler(handlerThread.looper)
 
-    private var texture: Int = 0
     private lateinit var session: Session
 
     val viewMatrix = FloatArray(16)
@@ -35,6 +40,12 @@ class ARCoreHelper(
     val projectionMatrix
         get() = _projectionMatrix.map { it.toDouble() }.toDoubleArray()
     val objectMatrix = FloatArray(16)
+
+    private var cameraTexture: Int = 0
+    private var cameraProgram: Int = -1
+    private var cameraPositionAttrib: Int = -1
+    private var cameraTexCoordAttrib: Int = -1
+    private var cameraTextureUniform: Int = -1
 
     init {
         post {
@@ -45,7 +56,9 @@ class ARCoreHelper(
                 eglBase.createSurface(surface)
             }
             eglBase.makeCurrent()
-            texture = GlUtil.generateTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES)
+            cameraTexture = GlUtil.generateTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES)
+            compileAndLoadShaderProgram(context)
+
             configSession(context)
         }
     }
@@ -65,8 +78,8 @@ class ARCoreHelper(
         config.augmentedFaceMode = Config.AugmentedFaceMode.MESH3D
         session.configure(config)
 
-        session.setCameraTextureName(texture)
-        Log.i(TAG, "configSession: $texture")
+        session.setCameraTextureName(cameraTexture)
+        Log.i(TAG, "configSession: $cameraTexture")
     }
 
     fun release() = post {
@@ -89,7 +102,7 @@ class ARCoreHelper(
 
     override fun run() {
         handler.post(this)
-        session.setCameraTextureName(texture)
+        session.setCameraTextureName(cameraTexture)
         val frame = session.update()
         val camera = frame.camera
         camera.getViewMatrix(viewMatrix, 0)
@@ -100,17 +113,78 @@ class ARCoreHelper(
             ?.toMatrix(objectMatrix, 0)
 //        apply(0.01f, objectMatrix)
 
-        render()
+        renderCamera()
     }
 
-    private fun render() {
+    private fun renderCamera() {
+        GLES20.glDisable(GLES20.GL_DEPTH_TEST)
+        GLES20.glDepthMask(false)
 
+        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, cameraTexture)
+        GLES20.glUseProgram(cameraProgram)
+        GLES20.glUniform1i(cameraTextureUniform, 0)
+
+        QUAD_COORDS.position(0)
+        QUAD_TEX_COORDS.position(0)
+        // Set the vertex positions and texture coordinates.
+        GLES20.glVertexAttribPointer(
+            cameraPositionAttrib,
+            COORDS_PER_VERTEX,
+            GLES20.GL_FLOAT,
+            false,
+            0,
+            QUAD_COORDS
+        )
+        GLES20.glVertexAttribPointer(
+            cameraTexCoordAttrib,
+            TEXCOORDS_PER_VERTEX,
+            GLES20.GL_FLOAT,
+            false,
+            0,
+            QUAD_TEX_COORDS
+        )
+        GLES20.glEnableVertexAttribArray(cameraPositionAttrib)
+        GLES20.glEnableVertexAttribArray(cameraTexCoordAttrib)
+
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4)
+
+        // Restore the depth state for further drawing.
+        GLES20.glDepthMask(true)
+        GLES20.glEnable(GLES20.GL_DEPTH_TEST)
+
+        ShaderUtil.checkGLError(TAG, "BackgroundRendererDraw")
+        eglBase.swapBuffers()
     }
 
-    private fun apply(factor: Float, array: FloatArray) {
-        array[0] *= factor
-        array[5] *= factor
-        array[10] *= factor
+    @Throws(IOException::class)
+    private fun compileAndLoadShaderProgram(context: Context) {
+        val defineValuesMap: Map<String, Int> = TreeMap()
+        val vertexShader: Int = ShaderUtil.loadGLShader(
+            TAG,
+            context,
+            GLES20.GL_VERTEX_SHADER,
+            VERTEX_SHADER_NAME
+        )
+        val fragmentShader: Int = ShaderUtil.loadGLShader(
+            TAG,
+            context,
+            GLES20.GL_FRAGMENT_SHADER,
+            FRAGMENT_SHADER_NAME,
+            defineValuesMap
+        )
+        cameraProgram = GLES20.glCreateProgram()
+        GLES20.glAttachShader(cameraProgram, vertexShader)
+        GLES20.glAttachShader(cameraProgram, fragmentShader)
+        GLES20.glLinkProgram(cameraProgram)
+        GLES20.glUseProgram(cameraProgram)
+        ShaderUtil.checkGLError(TAG, "Program creation")
+
+        cameraPositionAttrib = GLES20.glGetAttribLocation(cameraProgram, "a_Position")
+        cameraTexCoordAttrib = GLES20.glGetAttribLocation(cameraProgram, "a_TexCoord")
+        ShaderUtil.checkGLError(TAG, "Program creation")
+
+        cameraTextureUniform = GLES20.glGetUniformLocation(cameraProgram, "sTexture")
+        ShaderUtil.checkGLError(TAG, "Program parameters")
     }
 
     private fun post(action: () -> Unit) = handler.post {
@@ -119,5 +193,34 @@ class ARCoreHelper(
 
     companion object {
         private const val TAG = "SurfaceTextureHelper"
+        private const val VERTEX_SHADER_NAME = "shaders/common.vert"
+        private const val FRAGMENT_SHADER_NAME = "shaders/common.frag"
+        private const val COORDS_PER_VERTEX = 2
+        private const val TEXCOORDS_PER_VERTEX = 2
+        private const val FLOAT_SIZE = 4
+        private val QUAD_COORDS = ByteBuffer
+            .allocateDirect(8 * FLOAT_SIZE)
+            .order(ByteOrder.nativeOrder())
+            .asFloatBuffer()
+            .put(
+                floatArrayOf(
+                    -1.0f, -1.0f,
+                    +1.0f, -1.0f,
+                    -1.0f, +1.0f,
+                    +1.0f, +1.0f
+                )
+            )
+        private val QUAD_TEX_COORDS = ByteBuffer
+            .allocateDirect(8 * FLOAT_SIZE)
+            .order(ByteOrder.nativeOrder())
+            .asFloatBuffer()
+            .put(
+                floatArrayOf(
+                    0f, 1f,
+                    1f, 1f,
+                    0f, 0f,
+                    1f, 0f
+                )
+            )
     }
 }
