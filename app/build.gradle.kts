@@ -70,6 +70,9 @@ android {
         viewBinding = true
         prefab = true
     }
+    aaptOptions {
+        noCompress("filamat")
+    }
 }
 
 dependencies {

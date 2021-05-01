@@ -55,8 +55,10 @@ class ModelActivity : AppCompatActivity() {
 
     private lateinit var vertexBuffer: VertexBuffer
     private lateinit var indexBuffer: IndexBuffer
+
     // Filament entity representing a renderable object
-    @Entity private var renderable = 0
+    @Entity
+    private var renderable = 0
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,7 +82,7 @@ class ModelActivity : AppCompatActivity() {
                 PixelFormat.RGBA_8888,
                 2
             )
-            modelViewer.addRenderTarget(reader!!.surface)
+//            modelViewer.addRenderTarget(reader!!.surface)
 //            val mask =  0xf.inv()
 //            videoSource =
 //                FilamentTextureSource((binding.mainSv.width and mask), (binding.mainSv.height and mask), modelViewer)
@@ -137,9 +139,8 @@ class ModelActivity : AppCompatActivity() {
     }
 
     private fun createRenderables() {
-        val buffer = assets.open("models/nfface.glb").use { input ->
-//            val buffer = assets.open("models/RobotExpressive.glb").use { input ->
-//            val buffer = assets.open("models/scene.gltf").use { input ->
+        val buffer = assets.open("models/room.glb").use { input ->
+//            val buffer = assets.open("models/nfface.glb").use { input ->
             val bytes = ByteArray(input.available())
             input.read(bytes)
             Log.i(TAG, "createRenderables: ${bytes.size}")
@@ -182,7 +183,14 @@ class ModelActivity : AppCompatActivity() {
             // Overall bounding box of the renderable
             .boundingBox(Box(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f))
             // Sets the mesh data of the first primitive, 6 faces of 6 indices each
-            .geometry(0, RenderableManager.PrimitiveType.TRIANGLES, vertexBuffer, indexBuffer, 0, 6 * 6)
+            .geometry(
+                0,
+                RenderableManager.PrimitiveType.TRIANGLES,
+                vertexBuffer,
+                indexBuffer,
+                0,
+                6 * 6
+            )
             // Sets the material of the first primitive
             .material(0, materialInstance)
             .build(modelViewer.engine, renderable)
@@ -280,18 +288,18 @@ class ModelActivity : AppCompatActivity() {
 
             val entity = modelViewer.asset?.root ?: 0
             if (entity != 0) {
-                val instance = modelViewer.engine.transformManager.getInstance(entity)
-                modelViewer.engine.transformManager.setTransform(
-                    instance,
-                    arCoreHelper.objectMatrix
-                )
+//                val instance = modelViewer.engine.transformManager.getInstance(entity)
+//                modelViewer.engine.transformManager.setTransform(
+//                    instance,
+//                    arCoreHelper.objectMatrix
+//                )
             }
 
+//            modelViewer.camera.lookAt(0.0, 0.0, 6.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0)
             cameraBgHelper.pushExternalImageToFilament()
             modelViewer.render(frameTimeNanos)
         }
     }
-
 
 
     private fun createMesh() {
@@ -304,6 +312,7 @@ class ModelActivity : AppCompatActivity() {
         // Define a vertex and a function to put a vertex in a ByteBuffer
         @Suppress("ArrayInDataClass")
         data class Vertex(val x: Float, val y: Float, val z: Float, val tangents: FloatArray)
+
         fun ByteBuffer.put(v: Vertex): ByteBuffer {
             putFloat(v.x)
             putFloat(v.y)
@@ -323,46 +332,46 @@ class ModelActivity : AppCompatActivity() {
         val tfPZ = FloatArray(4)
         val tfNZ = FloatArray(4)
 
-        MathUtils.packTangentFrame( 0.0f,  1.0f, 0.0f, 0.0f, 0.0f, -1.0f,  1.0f,  0.0f,  0.0f, tfPX)
-        MathUtils.packTangentFrame( 0.0f,  1.0f, 0.0f, 0.0f, 0.0f, -1.0f, -1.0f,  0.0f,  0.0f, tfNX)
-        MathUtils.packTangentFrame(-1.0f,  0.0f, 0.0f, 0.0f, 0.0f, -1.0f,  0.0f,  1.0f,  0.0f, tfPY)
-        MathUtils.packTangentFrame(-1.0f,  0.0f, 0.0f, 0.0f, 0.0f,  1.0f,  0.0f, -1.0f,  0.0f, tfNY)
-        MathUtils.packTangentFrame( 0.0f,  1.0f, 0.0f, 1.0f, 0.0f,  0.0f,  0.0f,  0.0f,  1.0f, tfPZ)
-        MathUtils.packTangentFrame( 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,  0.0f,  0.0f,  0.0f, -1.0f, tfNZ)
+        MathUtils.packTangentFrame(0.0f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, tfPX)
+        MathUtils.packTangentFrame(0.0f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f, -1.0f, 0.0f, 0.0f, tfNX)
+        MathUtils.packTangentFrame(-1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f, tfPY)
+        MathUtils.packTangentFrame(-1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, -1.0f, 0.0f, tfNY)
+        MathUtils.packTangentFrame(0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, tfPZ)
+        MathUtils.packTangentFrame(0.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, tfNZ)
 
         val vertexData = ByteBuffer.allocate(vertexCount * vertexSize)
             // It is important to respect the native byte order
             .order(ByteOrder.nativeOrder())
             // Face -Z
             .put(Vertex(-1.5f, -1.5f, -1.0f, tfNZ))
-            .put(Vertex(-1.5f,  1.5f, -1.0f, tfNZ))
-            .put(Vertex( 1.5f,  1.5f, -1.0f, tfNZ))
-            .put(Vertex( 1.5f, -1.5f, -1.0f, tfNZ))
+            .put(Vertex(-1.5f, 1.5f, -1.0f, tfNZ))
+            .put(Vertex(1.5f, 1.5f, -1.0f, tfNZ))
+            .put(Vertex(1.5f, -1.5f, -1.0f, tfNZ))
             // Face +X
-            .put(Vertex( 1.5f, -1.5f, -1.0f, tfPX))
-            .put(Vertex( 1.5f,  1.5f, -1.0f, tfPX))
-            .put(Vertex( 1.0f,  1.0f,  1.0f, tfPX))
-            .put(Vertex( 1.0f, -1.0f,  1.0f, tfPX))
+            .put(Vertex(1.5f, -1.5f, -1.0f, tfPX))
+            .put(Vertex(1.5f, 1.5f, -1.0f, tfPX))
+            .put(Vertex(1.0f, 1.0f, 1.0f, tfPX))
+            .put(Vertex(1.0f, -1.0f, 1.0f, tfPX))
             // Face +Z
-            .put(Vertex(-1.0f, -1.0f,  1.0f, tfPZ))
-            .put(Vertex( 1.0f, -1.0f,  1.0f, tfPZ))
-            .put(Vertex( 1.0f,  1.0f,  1.0f, tfPZ))
-            .put(Vertex(-1.0f,  1.0f,  1.0f, tfPZ))
+            .put(Vertex(-1.0f, -1.0f, 1.0f, tfPZ))
+            .put(Vertex(1.0f, -1.0f, 1.0f, tfPZ))
+            .put(Vertex(1.0f, 1.0f, 1.0f, tfPZ))
+            .put(Vertex(-1.0f, 1.0f, 1.0f, tfPZ))
             // Face -X
-            .put(Vertex(-1.0f, -1.0f,  1.0f, tfNX))
-            .put(Vertex(-1.0f,  1.0f,  1.0f, tfNX))
-            .put(Vertex(-1.5f,  1.5f, -1.0f, tfNX))
+            .put(Vertex(-1.0f, -1.0f, 1.0f, tfNX))
+            .put(Vertex(-1.0f, 1.0f, 1.0f, tfNX))
+            .put(Vertex(-1.5f, 1.5f, -1.0f, tfNX))
             .put(Vertex(-1.5f, -1.5f, -1.0f, tfNX))
             // Face -Y
-            .put(Vertex(-1.0f, -1.0f,  1.0f, tfNY))
+            .put(Vertex(-1.0f, -1.0f, 1.0f, tfNY))
             .put(Vertex(-1.5f, -1.5f, -1.0f, tfNY))
-            .put(Vertex( 1.5f, -1.5f, -1.0f, tfNY))
-            .put(Vertex( 1.0f, -1.0f,  1.0f, tfNY))
+            .put(Vertex(1.5f, -1.5f, -1.0f, tfNY))
+            .put(Vertex(1.0f, -1.0f, 1.0f, tfNY))
             // Face +Y
-            .put(Vertex(-1.5f,  1.5f, -1.0f, tfPY))
-            .put(Vertex(-1.0f,  1.0f,  1.0f, tfPY))
-            .put(Vertex( 1.0f,  1.0f,  1.0f, tfPY))
-            .put(Vertex( 1.5f,  1.5f, -1.0f, tfPY))
+            .put(Vertex(-1.5f, 1.5f, -1.0f, tfPY))
+            .put(Vertex(-1.0f, 1.0f, 1.0f, tfPY))
+            .put(Vertex(1.0f, 1.0f, 1.0f, tfPY))
+            .put(Vertex(1.5f, 1.5f, -1.0f, tfPY))
             // Make sure the cursor is pointing in the right place in the byte buffer
             .flip()
 
@@ -373,8 +382,20 @@ class ModelActivity : AppCompatActivity() {
             // Because we interleave position and color data we must specify offset and stride
             // We could use de-interleaved data by declaring two buffers and giving each
             // attribute a different buffer index
-            .attribute(VertexBuffer.VertexAttribute.POSITION, 0, VertexBuffer.AttributeType.FLOAT3, 0,             vertexSize)
-            .attribute(VertexBuffer.VertexAttribute.TANGENTS, 0, VertexBuffer.AttributeType.FLOAT4, 3 * floatSize, vertexSize)
+            .attribute(
+                VertexBuffer.VertexAttribute.POSITION,
+                0,
+                VertexBuffer.AttributeType.FLOAT3,
+                0,
+                vertexSize
+            )
+            .attribute(
+                VertexBuffer.VertexAttribute.TANGENTS,
+                0,
+                VertexBuffer.AttributeType.FLOAT4,
+                3 * floatSize,
+                vertexSize
+            )
             .build(modelViewer.engine)
 
         // Feed the vertex data to the mesh
@@ -401,8 +422,8 @@ class ModelActivity : AppCompatActivity() {
     }
 
     private fun loadMaterial() {
-        readCompressedAsset("materials/lit.filamat").let {
-//            readUncompressedAsset("materials/lit.filamat").let {
+//        readCompressedAsset("materials/lit.filamat").let {
+        readUncompressedAsset("materials/lit.filamat").let {
             material = Material.Builder().payload(it, it.remaining()).build(modelViewer.engine)
         }
     }
