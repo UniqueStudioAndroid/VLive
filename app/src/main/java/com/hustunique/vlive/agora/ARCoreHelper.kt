@@ -149,7 +149,7 @@ class ARCoreHelper(
         GLES20.glDepthMask(true)
         GLES20.glEnable(GLES20.GL_DEPTH_TEST)
 
-        ShaderUtil.checkGLError(TAG, "BackgroundRendererDraw")
+        ShaderUtil.checkGLError(TAG, "RenderCamera")
         eglBase.swapBuffers()
     }
 

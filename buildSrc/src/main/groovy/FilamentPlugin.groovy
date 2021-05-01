@@ -47,8 +47,11 @@ class TaskWithBinary extends DefaultTask {
         if (binaryPath == null) {
             def tool = ["/bin/${binaryName}.exe", "/bin/${binaryName}"]
             def fullPath = tool.collect { path ->
-
-                Paths.get("/Users/xiaoyuxuan/open-source-lib/filament/out/release/filament", path).toFile()
+                if (System.properties['os.name'] == "Linux") {
+                    Paths.get("/home/little-csd/linuxDisk/androidGroup/filament/out/release/filament", path).toFile()
+                } else {
+                    Paths.get("/Users/xiaoyuxuan/open-source-lib/filament/out/release/filament", path).toFile()
+                }
 //                Paths.get(project.ext.filamentToolsPath.absolutePath, path).toFile()
             }
 
