@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.tasks.factory.dependsOn
+
 plugins {
     id("com.android.application")
     kotlin("android")
@@ -8,29 +10,34 @@ apply {
 }
 
 
-//tasks {
-//    val copyModel by registering(Copy::class) {
-//        from("models/BusterDrone/")
-//        from("models/RobotExpressive.glb")
-//        into("src/main/assets/models")
-//    }
-//
-//    preBuild.dependsOn(copyModel)
-//
-//    named("clean") {
-//        doFirst {
-//            delete("src/main/assets/models")
-//        }
-//    }
-//
-//}
+tasks {
+    val copyModel by registering(Copy::class) {
+        from("resource/models/")
+        into("src/main/assets/models/")
+    }
+
+    val copyShader by registering(Copy::class) {
+        from("resource/shaders/")
+        into("src/main/assets/shaders/")
+    }
+
+    preBuild.dependsOn(copyModel)
+    preBuild.dependsOn(copyShader)
+
+    named("clean") {
+        doFirst {
+            delete("src/main/assets")
+        }
+    }
+
+}
 
 extensions.configure<FilamentToolsPluginExtension> {
     cmgenArgs = "-q --format=ktx --size=256 --extract-blur=0.1 --deploy=src/main/assets/envs/default_env"
-    iblInputFile.set(project.layout.projectDirectory.file("models/env/lightroom_14b.hdr"))
+    iblInputFile.set(project.layout.projectDirectory.file("resource/env/lightroom_14b.hdr"))
     iblOutputDir.set(project.layout.projectDirectory.dir("src/main/assets/envs"))
 
-    materialInputDir.set(project.layout.projectDirectory.dir("models/materials"))
+    materialInputDir.set(project.layout.projectDirectory.dir("resource/materials"))
     materialOutputDir.set(project.layout.projectDirectory.dir("src/main/assets/materials"))
 }
 

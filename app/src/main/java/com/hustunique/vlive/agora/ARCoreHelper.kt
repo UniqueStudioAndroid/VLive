@@ -8,14 +8,12 @@ import android.os.HandlerThread
 import android.util.Log
 import android.view.Surface
 import com.google.ar.core.*
-import com.hustunique.vlive.toMString
 import com.hustunique.vlive.util.ShaderUtil
 import io.agora.rtc.gl.EglBase
 import io.agora.rtc.gl.GlUtil
 import java.io.IOException
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import java.nio.FloatBuffer
 import java.util.*
 
 /**
