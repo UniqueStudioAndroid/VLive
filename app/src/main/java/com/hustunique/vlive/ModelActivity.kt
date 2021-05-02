@@ -17,6 +17,8 @@ import com.hustunique.vlive.agora.AgoraModule
 import com.hustunique.vlive.agora.BufferSource
 import com.hustunique.vlive.databinding.ActivityModelBinding
 import com.hustunique.vlive.filament.ModelViewer
+import com.hustunique.vlive.util.readCompressedAsset
+import com.hustunique.vlive.util.readUncompressedAsset
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.channels.Channels
@@ -146,7 +148,6 @@ class ModelActivity : AppCompatActivity() {
             Log.i(TAG, "createRenderables: ${bytes.size}")
             ByteBuffer.wrap(bytes)
         }
-        RenderableManager.PrimitiveType.POINTS
 
         modelViewer.loadModelGlb(buffer)
 //        modelViewer.transformToUnitCube()
@@ -199,13 +200,6 @@ class ModelActivity : AppCompatActivity() {
         modelViewer.scene.addEntity(renderable)
     }
 
-    private fun readCompressedAsset(assetName: String): ByteBuffer {
-        Log.i(TAG, "readCompressedAsset: $assetName")
-        val input = assets.open(assetName)
-        val bytes = ByteArray(input.available())
-        input.read(bytes)
-        return ByteBuffer.wrap(bytes)
-    }
 
     override fun onResume() {
         super.onResume()
@@ -434,18 +428,6 @@ class ModelActivity : AppCompatActivity() {
         materialInstance.setParameter("roughness", 0.3f)
     }
 
-    private fun readUncompressedAsset(@Suppress("SameParameterValue") assetName: String): ByteBuffer {
-        assets.openFd(assetName).use { fd ->
-            val input = fd.createInputStream()
-            val dst = ByteBuffer.allocate(fd.length.toInt())
-
-            val src = Channels.newChannel(input)
-            src.read(dst)
-            src.close()
-
-            return dst.apply { rewind() }
-        }
-    }
 }
 
 fun FloatArray.toMString(): String = fold("Matrix: ") { R, d ->

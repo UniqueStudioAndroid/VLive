@@ -3,6 +3,7 @@ import com.android.build.gradle.internal.tasks.factory.dependsOn
 plugins {
     id("com.android.application")
     kotlin("android")
+    id("kotlin-android")
 }
 
 apply {
@@ -90,7 +91,6 @@ dependencies {
     implementation(Dep.AndroidX.APPCOMPAT)
     implementation(Dep.AndroidX.MATERIAL)
     implementation(Dep.AndroidX.CONSTRAINTLAYOUT)
-    implementation(Dep.AndroidX.LIVEDATA)
 
     implementation(Dep.CameraX.CAMERA2)
     implementation(Dep.CameraX.LIFE_CYCLE)
@@ -103,9 +103,12 @@ dependencies {
 
     implementation(Dep.Agora.AGORA)
     implementation(Dep.AndroidX.Lifecycle.COMMON_KTX)
+    implementation(Dep.AndroidX.Lifecycle.LIVEDATA)
     implementation(Dep.AndroidX.Lifecycle.LD_KTX)
     implementation(Dep.AndroidX.Lifecycle.VM_KTX)
     implementation(Dep.AndroidX.Lifecycle.RTM_KTX)
 
     implementation(Dep.ARCore.CORE)
+    implementation("androidx.appcompat:appcompat:1.2.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.0.4")
 }

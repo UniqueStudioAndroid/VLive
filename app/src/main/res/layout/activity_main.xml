@@ -34,4 +34,11 @@
         android:text="Agora"
         app:layout_constraintTop_toBottomOf="@id/btn_ar_core_entry"/>
 
+    <Button
+        android:id="@+id/btn_scene_entry"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:text="Scene"
+        app:layout_constraintTop_toBottomOf="@id/btn_agora_entry"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

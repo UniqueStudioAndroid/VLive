@@ -26,11 +26,11 @@ object Dep {
         const val APPCOMPAT = "androidx.appcompat:appcompat:1.2.0"
         const val MATERIAL = "com.google.android.material:material:1.3.0"
         const val CONSTRAINTLAYOUT = "androidx.constraintlayout:constraintlayout:2.0.4"
-        const val LIVEDATA = "androidx.lifecycle:lifecycle-livedata:2.3.0"
 
         object Lifecycle {
             private const val VERSION = "2.3.1"
             const val VM_KTX = "androidx.lifecycle:lifecycle-viewmodel-ktx:$VERSION"
+            const val LIVEDATA = "androidx.lifecycle:lifecycle-livedata:$VERSION"
             const val LD_KTX = "androidx.lifecycle:lifecycle-livedata-ktx:$VERSION"
             const val COMMON_KTX = "androidx.lifecycle:lifecycle-common-java8:$VERSION"
             const val RTM_KTX = "androidx.lifecycle:lifecycle-runtime-ktx:$VERSION"

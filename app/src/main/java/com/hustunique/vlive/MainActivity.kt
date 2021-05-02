@@ -3,15 +3,13 @@ package com.hustunique.vlive
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.hustunique.vlive.agora.AgoraActivity
 import com.google.ar.core.ArCoreApk
+import com.hustunique.vlive.agora.AgoraActivity
 import com.hustunique.vlive.databinding.ActivityMainBinding
 import com.hustunique.vlive.util.Utils
 import com.hustunique.vlive.util.startActivity
@@ -54,6 +52,9 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnArCoreEntry.setOnClickListener {
             testArCoreAvailability()
+        }
+        binding.btnSceneEntry.setOnClickListener {
+            startActivity<SceneActivity>()
         }
     }
 
