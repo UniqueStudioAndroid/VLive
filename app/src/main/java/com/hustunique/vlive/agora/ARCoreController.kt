@@ -1,13 +1,16 @@
 package com.hustunique.vlive.agora
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.opengl.GLES11Ext
 import android.opengl.GLES20
 import android.os.Handler
-import android.os.HandlerThread
 import android.util.Log
 import android.view.Surface
 import com.google.ar.core.*
+import com.hustunique.vlive.data.CameraTextureProvider
+import com.hustunique.vlive.data.ObjectMatrixProvider
 import com.hustunique.vlive.util.ShaderUtil
 import io.agora.rtc.gl.EglBase
 import io.agora.rtc.gl.GlUtil
@@ -21,26 +24,28 @@ import java.util.*
  *    e-mail : qpalwo@qq.com
  *    date   : 4/28/21
  */
-class ARCoreHelper(
+class ARCoreController(
     context: Context,
+    private val glHandler: Handler,
     surface: Surface? = null
-) : Runnable {
+) : Runnable, CameraTextureProvider, ObjectMatrixProvider {
 
     private lateinit var eglBase: EglBase
-    private val handlerThread = HandlerThread("ar_core_helper").apply {
-        start()
-    }
-    private val handler = Handler(handlerThread.looper)
-
     private lateinit var session: Session
 
-    val objectMatrix = FloatArray(16)
+    private val objectMatrixData = FloatArray(16)
+    private val objectMatrix = Matrix()
 
     private var cameraTexture: Int = 0
     private var cameraProgram: Int = -1
     private var cameraPositionAttrib: Int = -1
     private var cameraTexCoordAttrib: Int = -1
     private var cameraTextureUniform: Int = -1
+
+    private val buffer = ByteBuffer.allocateDirect(
+        640 * 480 * 4
+    ).order(ByteOrder.nativeOrder())
+        .position(0)
 
     init {
         post {
@@ -80,34 +85,61 @@ class ARCoreHelper(
     fun release() = post {
         session.close()
         eglBase.release()
-        handler.removeCallbacks(this)
-        handlerThread.quitSafely()
+        glHandler.removeCallbacks(this)
     }
 
     fun resume() = post {
         Log.i(TAG, "resume: ")
         session.resume()
-        handler.post(this)
+        glHandler.post(this)
     }
 
     fun pause() = post {
         session.pause()
-        handler.removeCallbacks(this)
+        glHandler.removeCallbacks(this)
+    }
+
+    private val bitmap = Bitmap.createBitmap(640, 480, Bitmap.Config.ARGB_8888)
+    private val rotateMatrix = Matrix().apply { postRotate(270f) }
+    fun pushImageToMLKIt(mlKitController: MLKitController) = post {
+        buffer.position(0)
+        GLES20.glReadPixels(
+            0,
+            0,
+            640,
+            480,
+            GLES20.GL_RGBA,
+            GLES20.GL_UNSIGNED_BYTE,
+            buffer,
+        )
+
+        buffer.position(0)
+        bitmap.copyPixelsFromBuffer(buffer)
+        val bitmapTemp = Bitmap.createBitmap(
+            bitmap,
+            0,
+            0,
+            640,
+            480,
+            rotateMatrix,
+            true
+        )
+        mlKitController.process(bitmapTemp)
     }
 
     override fun run() {
-        handler.post(this)
+        glHandler.post(this)
         session.setCameraTextureName(cameraTexture)
         session.update()
         session.getAllTrackables(AugmentedFace::class.java)
             .firstOrNull { it.trackingState == TrackingState.TRACKING }
             ?.getRegionPose(AugmentedFace.RegionType.NOSE_TIP)
-            ?.toMatrix(objectMatrix, 0)
-        objectMatrix[0] = objectMatrix[0] * -1
-        objectMatrix[4] = objectMatrix[4] * -1
-        objectMatrix[8] = objectMatrix[8] * -1
-        objectMatrix[12] = objectMatrix[12] * -1
-
+            ?.toMatrix(objectMatrixData, 0)
+        objectMatrixData[0] = objectMatrixData[0] * -1
+        objectMatrixData[4] = objectMatrixData[4] * -1
+        objectMatrixData[8] = objectMatrixData[8] * -1
+        objectMatrixData[12] = objectMatrixData[12] * -1
+        objectMatrix.setValues(objectMatrixData)
         renderCamera()
     }
 
@@ -182,7 +214,11 @@ class ARCoreHelper(
         ShaderUtil.checkGLError(TAG, "Program parameters")
     }
 
-    private fun post(action: () -> Unit) = handler.post {
+    override fun getCameraTextureId() = cameraTexture
+
+    override fun getObjectMatrix() = objectMatrix
+
+    private fun post(action: () -> Unit) = glHandler.post {
         action()
     }
 

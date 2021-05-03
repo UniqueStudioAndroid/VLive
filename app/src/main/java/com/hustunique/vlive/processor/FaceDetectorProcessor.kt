@@ -32,6 +32,7 @@ class FaceDetectorProcessor(context: Context, detectorOptions: FaceDetectorOptio
     }
 
     override fun onSuccess(results: List<Face>, graphicOverlay: GraphicOverlay) {
+        Log.i(TAG, "onSuccess: ")
         results.forEach {
             graphicOverlay.add(FaceGraphic(graphicOverlay, it))
             it.logForTest()
@@ -47,7 +48,7 @@ class FaceDetectorProcessor(context: Context, detectorOptions: FaceDetectorOptio
     }
 }
 
-private fun Face.logForTest() {
+fun Face.logForTest() {
     Log.v(
         MANUAL_TESTING_LOG,
         "face bounding box: " + boundingBox.flattenToString()
