@@ -6,6 +6,8 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.hustunique.vlive.databinding.ActivitySceneBinding
 import com.hustunique.vlive.filament.FilamentCameraController
+import com.hustunique.vlive.filament.model_object.SceneModelObject
+import com.hustunique.vlive.filament.model_object.VFaceModelObject
 import com.hustunique.vlive.util.readCompressedAsset
 
 class SceneActivity : AppCompatActivity() {
@@ -25,12 +27,8 @@ class SceneActivity : AppCompatActivity() {
 
         binding.filamentView.apply {
             bindController(controller)
-            filamentContext.apply {
-                loadGlb(readCompressedAsset("models/room.glb"))
-                val ibl = "default_env"
-                setIndirectLight(readCompressedAsset("envs/$ibl/${ibl}_ibl.ktx"))
-                setSkyBox(readCompressedAsset("envs/$ibl/${ibl}_skybox.ktx"))
-            }
+            addModelObject(VFaceModelObject())
+            addModelObject(SceneModelObject())
         }
         controller.bindControlView(
             binding.sceneLeft,

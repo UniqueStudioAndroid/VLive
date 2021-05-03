@@ -5,6 +5,7 @@ import android.hardware.SensorManager
 import android.view.MotionEvent
 import android.view.View
 import com.google.android.filament.Camera
+import com.google.android.filament.utils.Float3
 import com.google.android.filament.utils.Utils
 import com.hustunique.vlive.data.Vector3
 import com.hustunique.vlive.util.AngleHandler
@@ -23,6 +24,7 @@ class FilamentCameraController(
             Utils.init()
         }
 
+        val kDefaultObjectPosition = Float3(0.0f, 0.0f, -4.0f)
         private const val MOVE_DELTA = 1f
         private const val TAG = "FilamentCameraController"
 

@@ -1,5 +1,6 @@
 package com.hustunique.vlive.filament
 
+import android.util.Log
 import com.google.android.filament.Engine
 import com.google.android.filament.EntityManager
 import com.google.android.filament.gltfio.AssetLoader
@@ -14,10 +15,14 @@ import java.nio.Buffer
  *    date   : 5/2/21
  */
 class FilamentResourceHolder(
-    engine: Engine,
+    private val engine: Engine,
     private val onEntityReady: (IntArray) -> Unit,
     private val onEntityRemoved: (IntArray) -> Unit
 ) {
+
+    companion object {
+        private const val TAG = "FilamentResourceHolder"
+    }
 
     var normalizeSkinningWeights = true
     var recomputeBoundingBoxes = false
@@ -35,11 +40,11 @@ class FilamentResourceHolder(
         populateScene()
     }
 
-    fun loadResource(buffer: Buffer): Boolean = assetLoader.createAssetFromBinary(buffer)?.run {
+    fun loadResource(buffer: Buffer): FilamentAsset? = assetLoader.createAssetFromBinary(buffer)?.apply {
         resourceLoader.asyncBeginLoad(this)
         assetList.add(this)
         releaseSourceData()
-    } != null
+    }
 
 
     private fun populateScene() {
@@ -47,9 +52,8 @@ class FilamentResourceHolder(
         val popRenderables = {
             count = 0
             assetList.forEach {
-                count = it.popRenderables(readyRenderables)
-                if (count != 0) {
-                    return@forEach
+                if (count == 0) {
+                    count = it.popRenderables(readyRenderables)
                 }
             }
             count != 0
@@ -57,7 +61,6 @@ class FilamentResourceHolder(
         while (popRenderables()) {
             onEntityReady(readyRenderables.take(count).toIntArray())
         }
-//        onEntityReady(asset.lightEntities)
     }
 
     fun destroy() {

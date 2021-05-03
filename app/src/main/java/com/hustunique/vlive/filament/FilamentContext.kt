@@ -106,6 +106,10 @@ class FilamentContext(private val surfaceView: SurfaceView) {
         scene.skybox = KtxLoader.createSkybox(engine, buffer)
     }
 
+    fun getTransformManager() = engine.transformManager
+
+    fun getRenderableManager() = engine.renderableManager
+
     private fun releaseResource() {
         resourceHolder.destroy()
         engine.run {

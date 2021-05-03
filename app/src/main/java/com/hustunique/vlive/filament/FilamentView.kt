@@ -11,6 +11,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
+import com.hustunique.vlive.filament.model_object.FilamentBaseModelObject
+import java.nio.ByteBuffer
+import java.nio.channels.Channels
 
 /**
  *    author : Yuxuan Xiao
@@ -25,7 +28,9 @@ class FilamentView @JvmOverloads constructor(
         private const val TAG = "FilamentView"
     }
 
-    val filamentContext = FilamentContext(this)
+    private val filamentContext = FilamentContext(this)
+
+    val modelObjectList = mutableListOf<FilamentBaseModelObject>()
 
     private var controller: FilamentCameraController? = null
 
@@ -38,6 +43,7 @@ class FilamentView @JvmOverloads constructor(
         override fun doFrame(frameTimeNanos: Long) {
             choreographer.postFrameCallback(this)
             controller?.update(filamentContext.camera)
+            modelObjectList.forEach { it.update(frameTimeNanos) }
 
             filamentContext.render(frameTimeNanos)
         }
@@ -64,12 +70,25 @@ class FilamentView @JvmOverloads constructor(
             }
 
         })
+        filamentContext.apply {
+            val ibl = "default_env"
+            setIndirectLight(readCompressedAsset("envs/$ibl/${ibl}_ibl.ktx"))
+            setSkyBox(readCompressedAsset("envs/$ibl/${ibl}_skybox.ktx"))
+        }
     }
 
     fun bindController(filamentCameraController: FilamentCameraController) {
         this.controller = filamentCameraController.apply {
             bind(this@FilamentView)
         }
+    }
+
+    fun addModelObject(obj: FilamentBaseModelObject) {
+        obj.run {
+            bindToContext(filamentContext)
+            asset = filamentContext.loadGlb(readCompressedAsset(resourcePath))
+        }
+        modelObjectList.add(obj)
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -94,7 +113,28 @@ class FilamentView @JvmOverloads constructor(
         Log.i(TAG, "onDestroy: ")
         controller?.release()
         choreographer.removeFrameCallback(frameCallback)
+        modelObjectList.forEach { it.destroy() }
         filamentContext.release()
     }
 
+
+    fun readUncompressedAsset(@Suppress("SameParameterValue") assetName: String): ByteBuffer =
+        context.assets.openFd(assetName).use { fd ->
+            val input = fd.createInputStream()
+            val dst = ByteBuffer.allocate(fd.length.toInt())
+
+            val src = Channels.newChannel(input)
+            src.read(dst)
+            src.close()
+
+            return dst.apply { rewind() }
+        }
+
+
+    fun readCompressedAsset(assetName: String): ByteBuffer =
+        context.assets.open(assetName).use { input ->
+            val bytes = ByteArray(input.available())
+            input.read(bytes)
+            ByteBuffer.wrap(bytes)
+        }
 }
