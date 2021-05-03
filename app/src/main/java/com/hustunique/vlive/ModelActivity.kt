@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.PixelFormat
 import android.media.ImageReader
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.Choreographer
 import android.view.WindowManager
@@ -12,16 +13,15 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.filament.*
 import com.google.android.filament.utils.KtxLoader
 import com.google.android.filament.utils.Utils
-import com.hustunique.vlive.agora.ARCoreHelper
 import com.hustunique.vlive.agora.AgoraModule
 import com.hustunique.vlive.agora.BufferSource
+import com.hustunique.vlive.controller.ARCoreController
 import com.hustunique.vlive.databinding.ActivityModelBinding
 import com.hustunique.vlive.filament.ModelViewer
 import com.hustunique.vlive.util.readCompressedAsset
 import com.hustunique.vlive.util.readUncompressedAsset
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import java.nio.channels.Channels
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
@@ -49,7 +49,7 @@ class ModelActivity : AppCompatActivity() {
     private var bm = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
     private var reader: ImageReader? = null
 
-    private lateinit var arCoreHelper: ARCoreHelper
+    private lateinit var arCoreHelper: ARCoreController
 
     private lateinit var material: Material
     private lateinit var materialInstance: MaterialInstance
@@ -137,7 +137,7 @@ class ModelActivity : AppCompatActivity() {
         bloomOptions.enabled = true
         modelViewer.view.bloomOptions = bloomOptions
 
-        arCoreHelper = ARCoreHelper(this, cameraBgHelper.surface)
+        arCoreHelper = ARCoreController(this, Handler(), cameraBgHelper.surface)
     }
 
     private fun createRenderables() {

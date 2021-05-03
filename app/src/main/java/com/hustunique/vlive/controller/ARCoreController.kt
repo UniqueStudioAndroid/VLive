@@ -1,4 +1,4 @@
-package com.hustunique.vlive.agora
+package com.hustunique.vlive.controller
 
 import android.content.Context
 import android.graphics.Bitmap
