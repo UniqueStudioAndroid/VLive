@@ -22,54 +22,22 @@ import java.nio.channels.Channels
  */
 class FilamentView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : SurfaceView(context, attrs, defStyleAttr), LifecycleObserver {
+) : SurfaceView(context, attrs, defStyleAttr), LifecycleObserver, Choreographer.FrameCallback {
 
     companion object {
         private const val TAG = "FilamentView"
     }
 
-    val filamentContext = FilamentContext(this)
+    private val filamentContext = FilamentContext(this)
 
-    val modelObjectList = mutableListOf<FilamentBaseModelObject>()
+    private val modelObjectList = mutableListOf<FilamentBaseModelObject>()
 
     private var controller: FilamentCameraController? = null
 
     private val choreographer = Choreographer.getInstance()
 
-    private val frameCallback = object : Choreographer.FrameCallback {
-
-        fun a() {}
-
-        override fun doFrame(frameTimeNanos: Long) {
-            choreographer.postFrameCallback(this)
-            controller?.update(filamentContext.camera)
-            modelObjectList.forEach { it.update(frameTimeNanos) }
-
-            filamentContext.render(frameTimeNanos)
-        }
-
-    }
-
     init {
         (context as? LifecycleOwner)?.lifecycle?.addObserver(this)
-        holder.addCallback(object : SurfaceHolder.Callback {
-            override fun surfaceCreated(holder: SurfaceHolder) {
-
-            }
-
-            override fun surfaceChanged(
-                holder: SurfaceHolder,
-                format: Int,
-                width: Int,
-                height: Int
-            ) {
-                controller?.resize(width, height)
-            }
-
-            override fun surfaceDestroyed(holder: SurfaceHolder) {
-            }
-
-        })
         filamentContext.apply {
             val ibl = "default_env"
             setIndirectLight(readCompressedAsset("envs/$ibl/${ibl}_ibl.ktx"))
@@ -77,6 +45,14 @@ class FilamentView @JvmOverloads constructor(
 
             materialHolder.loadMaterial(readUncompressedAsset("materials/lit.filamat"))
         }
+    }
+
+    override fun doFrame(frameTimeNanos: Long) {
+        choreographer.postFrameCallback(this)
+        controller?.update(filamentContext.camera)
+        modelObjectList.forEach { it.update(frameTimeNanos) }
+
+        filamentContext.render(frameTimeNanos)
     }
 
     fun bindController(filamentCameraController: FilamentCameraController) {
@@ -100,25 +76,25 @@ class FilamentView @JvmOverloads constructor(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onResume() {
-        choreographer.postFrameCallback(frameCallback)
+        choreographer.postFrameCallback(this)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     fun onPause() {
-        choreographer.removeFrameCallback(frameCallback)
+        choreographer.removeFrameCallback(this)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun onDestroy() {
         Log.i(TAG, "onDestroy: ")
         controller?.release()
-        choreographer.removeFrameCallback(frameCallback)
+        choreographer.removeFrameCallback(this)
         modelObjectList.forEach { it.destroy() }
         filamentContext.release()
     }
 
 
-    fun readUncompressedAsset(@Suppress("SameParameterValue") assetName: String): ByteBuffer =
+    private fun readUncompressedAsset(@Suppress("SameParameterValue") assetName: String): ByteBuffer =
         context.assets.openFd(assetName).use { fd ->
             val input = fd.createInputStream()
             val dst = ByteBuffer.allocate(fd.length.toInt())
@@ -131,7 +107,7 @@ class FilamentView @JvmOverloads constructor(
         }
 
 
-    fun readCompressedAsset(assetName: String): ByteBuffer =
+    private fun readCompressedAsset(assetName: String): ByteBuffer =
         context.assets.open(assetName).use { input ->
             val bytes = ByteArray(input.available())
             input.read(bytes)

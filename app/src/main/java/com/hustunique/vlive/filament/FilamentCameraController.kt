@@ -36,14 +36,6 @@ class FilamentCameraController(
 //        private val RIGHT = Vector3(x = 1f)
     }
 
-//    private val cameraManipulator = Manipulator.Builder()
-//        .targetPosition(
-//            kDefaultObjectPosition.x,
-//            kDefaultObjectPosition.y,
-//            kDefaultObjectPosition.z
-//        ).build(Manipulator.Mode.ORBIT)
-
-    //    private var gestureDetector: GestureDetector? = null
     private val angleHandler = AngleHandler(context).apply { start() }
     private val baseMatrix = FloatArray(9).apply {
         this[0] = 1f
@@ -63,10 +55,6 @@ class FilamentCameraController(
     }
 
     fun bindControlView(reset: View) {
-//        left.setOnClickListener { onMove(MoveType.LEFT) }
-//        right.setOnClickListener { onMove(MoveType.RIGHT) }
-//        forward.setOnClickListener { onMove(MoveType.FORWARD) }
-//        back.setOnClickListener { onMove(MoveType.BACK) }
         reset.setOnClickListener { resetCalibration() }
     }
 
@@ -110,6 +98,8 @@ class FilamentCameraController(
                 tempVector.crossAssign(cameraFront, cameraUP)
                 cameraPos.add(tempVector, delta)
             }
+            MoveType.UP -> cameraPos.add(cameraUP, delta)
+            MoveType.DOWN -> cameraPos.sub(cameraUP, delta)
         }
     }
 
@@ -119,20 +109,15 @@ class FilamentCameraController(
     }
 
     enum class MoveType {
-        FORWARD, BACK, LEFT, RIGHT
+        FORWARD, BACK, LEFT, RIGHT, UP, DOWN
     }
 
     private var isSelected = false
     fun onTouchEvent(event: MotionEvent) {
-//        gestureDetector?.onTouchEvent(event)
         when (event.actionMasked) {
             ACTION_DOWN -> isSelected = true
             ACTION_UP, ACTION_CANCEL -> isSelected = false
         }
-    }
-
-    fun resize(width: Int, height: Int) {
-//        cameraManipulator.setViewport(width, height)
     }
 }
 
