@@ -6,6 +6,7 @@ import android.media.ImageReader
 import android.opengl.Matrix
 import android.os.Build
 import android.os.Handler
+import android.util.Log
 import android.util.Size
 import android.view.Display
 import android.view.Surface
@@ -24,7 +25,7 @@ class CameraBgHelper(
 ) {
 
     companion object {
-        private const val kLogTag = "CameraHelper"
+        private const val TAG = "CameraBgHelper"
         private const val kImageReaderMaxImages = 7
     }
 
@@ -87,10 +88,14 @@ class CameraBgHelper(
 
     fun pushExternalImageToFilament() {
         val stream = filamentStream
-        if (stream != null) {
-            imageReader.acquireLatestImage()?.also {
-                stream.setAcquiredImage(it.hardwareBuffer, Handler()) { it.close() }
-            }
+        if (stream != null && imageReader.maxImages > 0) {
+            Log.i(TAG, "pushExternalImageToFilament: ")
+//            imageReader.acquireLatestImage()?.also {
+//                stream.setAcquiredImage(it.hardwareBuffer, Handler()) {
+//                    Log.i(TAG, "pushExternalImageToFilament: close")
+//                    it.close()
+//                }
+//            }
         }
     }
 }

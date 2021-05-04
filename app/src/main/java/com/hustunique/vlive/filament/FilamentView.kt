@@ -28,7 +28,7 @@ class FilamentView @JvmOverloads constructor(
         private const val TAG = "FilamentView"
     }
 
-    private val filamentContext = FilamentContext(this)
+    val filamentContext = FilamentContext(this)
 
     val modelObjectList = mutableListOf<FilamentBaseModelObject>()
 
@@ -74,6 +74,8 @@ class FilamentView @JvmOverloads constructor(
             val ibl = "default_env"
             setIndirectLight(readCompressedAsset("envs/$ibl/${ibl}_ibl.ktx"))
             setSkyBox(readCompressedAsset("envs/$ibl/${ibl}_skybox.ktx"))
+
+            materialHolder.loadMaterial(readUncompressedAsset("materials/lit.filamat"))
         }
     }
 
