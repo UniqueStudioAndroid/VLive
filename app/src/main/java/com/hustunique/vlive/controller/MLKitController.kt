@@ -3,7 +3,10 @@ package com.hustunique.vlive.controller
 import android.graphics.Bitmap
 import android.util.Log
 import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.face.*
+import com.google.mlkit.vision.face.Face
+import com.google.mlkit.vision.face.FaceContour
+import com.google.mlkit.vision.face.FaceDetection
+import com.google.mlkit.vision.face.FaceDetectorOptions
 import com.hustunique.vlive.data.FacePropertyProvider
 
 class MLKitController : FacePropertyProvider {
@@ -30,7 +33,8 @@ class MLKitController : FacePropertyProvider {
             lEyeOpenWeight = it.leftEyeOpenProbability ?: 0f
             rEyeOpenWeight = it.rightEyeOpenProbability ?: 0f
 
-            val contourUpperPoints = it.getContour(FaceContour.UPPER_LIP_BOTTOM)?.points ?: emptyList()
+            val contourUpperPoints =
+                it.getContour(FaceContour.UPPER_LIP_BOTTOM)?.points ?: emptyList()
             val contourLowerPoints = it.getContour(FaceContour.LOWER_LIP_TOP)?.points ?: emptyList()
             val upperY = contourUpperPoints.sumByDouble { point -> point.y.toDouble() }
             val lowerY = contourLowerPoints.sumByDouble { point -> point.y.toDouble() }

@@ -6,8 +6,6 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventCallback
 import android.hardware.SensorManager
 import android.util.Log
-import com.hustunique.vlive.data.Quaternion
-import com.hustunique.vlive.toMString
 
 /**
  *    author : Yuxuan Xiao

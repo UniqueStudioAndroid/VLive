@@ -1,8 +1,6 @@
 package com.hustunique.vlive.filament
 
 import android.content.Context
-import android.hardware.SensorManager
-import android.util.Log
 import android.view.MotionEvent
 import android.view.MotionEvent.*
 import android.view.View

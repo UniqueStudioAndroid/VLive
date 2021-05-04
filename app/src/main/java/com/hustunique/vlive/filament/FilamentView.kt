@@ -5,7 +5,6 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.Choreographer
 import android.view.MotionEvent
-import android.view.SurfaceHolder
 import android.view.SurfaceView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
