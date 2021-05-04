@@ -80,9 +80,7 @@ class FilamentView @JvmOverloads constructor(
     }
 
     fun bindController(filamentCameraController: FilamentCameraController) {
-        this.controller = filamentCameraController.apply {
-            bind(this@FilamentView)
-        }
+        this.controller = filamentCameraController
     }
 
     fun addModelObject(obj: FilamentBaseModelObject) {

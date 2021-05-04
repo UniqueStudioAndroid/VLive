@@ -2,7 +2,9 @@ package com.hustunique.vlive.filament
 
 import android.content.Context
 import android.hardware.SensorManager
+import android.util.Log
 import android.view.MotionEvent
+import android.view.MotionEvent.*
 import android.view.View
 import com.google.android.filament.Camera
 import com.google.android.filament.utils.Float3
@@ -26,6 +28,7 @@ class FilamentCameraController(
 
         val kDefaultObjectPosition = Float3(0.0f, 0.0f, -4.0f)
         private const val MOVE_DELTA = 1f
+        private const val MOVE_PER_MS_BASE = 0.01f
         private const val TAG = "FilamentCameraController"
 
         private val UPWARD = Vector3(y = 1f)
@@ -40,7 +43,7 @@ class FilamentCameraController(
 //            kDefaultObjectPosition.z
 //        ).build(Manipulator.Mode.ORBIT)
 
-//    private var gestureDetector: GestureDetector? = null
+    //    private var gestureDetector: GestureDetector? = null
     private val angleHandler = AngleHandler(context).apply { start() }
     private val baseMatrix = FloatArray(9).apply {
         this[0] = 1f
@@ -59,24 +62,34 @@ class FilamentCameraController(
         angleHandler.stop()
     }
 
-    fun bindControlView(left: View, right: View, forward: View, back: View, reset: View) {
-        left.setOnClickListener { onMove(MoveType.LEFT) }
-        right.setOnClickListener { onMove(MoveType.RIGHT) }
-        forward.setOnClickListener { onMove(MoveType.FORWARD) }
-        back.setOnClickListener { onMove(MoveType.BACK) }
+    fun bindControlView(reset: View) {
+//        left.setOnClickListener { onMove(MoveType.LEFT) }
+//        right.setOnClickListener { onMove(MoveType.RIGHT) }
+//        forward.setOnClickListener { onMove(MoveType.FORWARD) }
+//        back.setOnClickListener { onMove(MoveType.BACK) }
         reset.setOnClickListener { resetCalibration() }
     }
 
+    private var lastUpdateTime = 0L
     fun update(camera: Camera) {
         // calculate rotation matrix
-        SensorManager.getRotationMatrixFromVector(rotationMatrix, angleHandler.rotationVector)
-        // compute camera Front direction and up direction
+        angleHandler.getRotationMatrix(rotationMatrix)
+        // compute camera's front direction after rotation
         cameraFront.clone(FRONT)
             .applyL(rotationMatrix)
             .applyL(baseMatrix)
+        // compute camera's up direction after rotation
         cameraUP.clone(UPWARD)
             .applyL(rotationMatrix)
             .applyL(baseMatrix)
+        // compute forward step & update last update time
+        val now = System.currentTimeMillis()
+        if (isSelected && lastUpdateTime > 0) {
+            val delta = (now - lastUpdateTime) * MOVE_PER_MS_BASE
+            onMove(MoveType.FORWARD, delta)
+        }
+        lastUpdateTime = now
+        // recompute camera's lookAt matrix
         cameraTarget.addAssign(cameraFront, cameraPos)
         camera.lookAt(
             cameraPos.x.toDouble(), cameraPos.y.toDouble(), cameraPos.z.toDouble(),
@@ -85,23 +98,23 @@ class FilamentCameraController(
         )
     }
 
-    private fun onMove(type: MoveType) {
+    private fun onMove(type: MoveType, delta: Float = MOVE_DELTA) {
         when (type) {
-            MoveType.FORWARD -> cameraPos.add(cameraFront, MOVE_DELTA)
-            MoveType.BACK -> cameraPos.sub(cameraFront, MOVE_DELTA)
+            MoveType.FORWARD -> cameraPos.add(cameraFront, delta)
+            MoveType.BACK -> cameraPos.sub(cameraFront, delta)
             MoveType.LEFT -> {
                 tempVector.crossAssign(cameraFront, cameraUP)
-                cameraPos.sub(tempVector, MOVE_DELTA)
+                cameraPos.sub(tempVector, delta)
             }
             MoveType.RIGHT -> {
                 tempVector.crossAssign(cameraFront, cameraUP)
-                cameraPos.add(tempVector, MOVE_DELTA)
+                cameraPos.add(tempVector, delta)
             }
         }
     }
 
     private fun resetCalibration() {
-        SensorManager.getRotationMatrixFromVector(baseMatrix, angleHandler.rotationVector)
+        angleHandler.getRotationMatrix(baseMatrix)
         baseMatrix.transpose()
     }
 
@@ -109,11 +122,13 @@ class FilamentCameraController(
         FORWARD, BACK, LEFT, RIGHT
     }
 
-    fun bind(view: View) {
-    }
-
+    private var isSelected = false
     fun onTouchEvent(event: MotionEvent) {
 //        gestureDetector?.onTouchEvent(event)
+        when (event.actionMasked) {
+            ACTION_DOWN -> isSelected = true
+            ACTION_UP, ACTION_CANCEL -> isSelected = false
+        }
     }
 
     fun resize(width: Int, height: Int) {

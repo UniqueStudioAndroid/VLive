@@ -36,13 +36,7 @@ class SceneActivity : AppCompatActivity() {
             addModelObject(screenModelObject)
             addModelObject(SceneModelObject())
         }
-        controller.bindControlView(
-            binding.sceneLeft,
-            binding.sceneRight,
-            binding.sceneForward,
-            binding.sceneBack,
-            binding.sceneReset,
-        )
+        controller.bindControlView(binding.sceneReset)
 
         arCoreHelper = ARCoreController(this, Handler(), screenModelObject.surface)
     }

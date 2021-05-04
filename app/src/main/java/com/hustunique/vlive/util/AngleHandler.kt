@@ -26,11 +26,20 @@ class AngleHandler(
 
     private val rotationSensor = sensorManager?.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
 
-    val rotationVector = FloatArray(4)
+    private val rotationVector = FloatArray(4)
 
     fun start() {
         sensorManager?.registerListener(this, rotationSensor, SensorManager.SENSOR_DELAY_UI)
         Log.i(TAG, "start: Listening sensor event")
+    }
+
+    fun stop() {
+        sensorManager?.unregisterListener(this)
+        Log.i(TAG, "start: handler stopped now")
+    }
+
+    fun getRotationMatrix(matrix: FloatArray) {
+        SensorManager.getRotationMatrixFromVector(matrix, rotationVector)
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
@@ -39,10 +48,5 @@ class AngleHandler(
                 event.values.copyInto(rotationVector, 0, 0, 4)
             }
         }
-    }
-
-    fun stop() {
-        sensorManager?.unregisterListener(this)
-        Log.i(TAG, "start: handler stopped now")
     }
 }
