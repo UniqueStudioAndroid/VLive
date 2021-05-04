@@ -14,7 +14,9 @@ class SceneActivity : AppCompatActivity() {
         ActivitySceneBinding.inflate(layoutInflater)
     }
 
-    private val controller = FilamentCameraController()
+    private val controller by lazy {
+        FilamentCameraController(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,8 +32,14 @@ class SceneActivity : AppCompatActivity() {
                 setSkyBox(readCompressedAsset("envs/$ibl/${ibl}_skybox.ktx"))
             }
         }
+        controller.bindControlView(
+            binding.sceneLeft,
+            binding.sceneRight,
+            binding.sceneForward,
+            binding.sceneBack,
+            binding.sceneReset,
+        )
     }
-
 
     private fun setupStatusBar() {
         window.run {

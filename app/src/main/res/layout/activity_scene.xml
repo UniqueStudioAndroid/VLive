@@ -3,11 +3,56 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".SceneActivity">
+
+    <LinearLayout
+        android:id="@+id/scene_btn_bar"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/scene_left"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="left"/>
+
+        <Button
+            android:id="@+id/scene_right"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="right"/>
+
+        <Button
+            android:id="@+id/scene_forward"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="forward" />
+
+        <Button
+            android:id="@+id/scene_back"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="back"/>
+
+        <Button
+            android:id="@+id/scene_reset"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="reset"/>
+    </LinearLayout>
 
     <com.hustunique.vlive.filament.FilamentView
         android:id="@+id/filament_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/scene_btn_bar"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

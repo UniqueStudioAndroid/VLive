@@ -92,7 +92,7 @@ class FilamentView @JvmOverloads constructor(
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun onDestroy() {
         Log.i(TAG, "onDestroy: ")
-        controller?.unbind()
+        controller?.release()
         choreographer.removeFrameCallback(frameCallback)
         filamentContext.release()
     }
