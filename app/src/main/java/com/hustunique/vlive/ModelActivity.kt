@@ -49,7 +49,7 @@ class ModelActivity : AppCompatActivity() {
     private var bm = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
     private var reader: ImageReader? = null
 
-    private lateinit var arCoreHelper: ARCoreController
+//    private lateinit var arCoreHelper: ARCoreController
 
     private lateinit var material: Material
     private lateinit var materialInstance: MaterialInstance
@@ -137,7 +137,7 @@ class ModelActivity : AppCompatActivity() {
         bloomOptions.enabled = true
         modelViewer.view.bloomOptions = bloomOptions
 
-        arCoreHelper = ARCoreController(this, Handler(), cameraBgHelper.surface)
+//        arCoreHelper = ARCoreController(this, Handler(), cameraBgHelper.surface)
     }
 
     private fun createRenderables() {
@@ -203,19 +203,19 @@ class ModelActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        arCoreHelper.resume()
+//        arCoreHelper.resume()
         choreographer.postFrameCallback(frameScheduler)
     }
 
     override fun onPause() {
         super.onPause()
-        arCoreHelper.pause()
+//        arCoreHelper.pause()
         choreographer.removeFrameCallback(frameScheduler)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        arCoreHelper.release()
+//        arCoreHelper.release()
         choreographer.removeFrameCallback(frameScheduler)
         modelViewer.destroyModel()
     }

@@ -9,17 +9,17 @@ import com.hustunique.vlive.CameraBgHelper
  *    e-mail : qpalwo@qq.com
  *    date   : 5/3/21
  */
-class ScreenModelObject(private val display: Display) : FilamentBaseModelObject("models/screen.glb") {
+class ScreenModelObject(private val cameraBgHelper: CameraBgHelper) : FilamentBaseModelObject("models/screen.glb") {
 
     companion object {
         private const val TAG = "ScreenModelObject"
     }
 
-    private val cameraBgHelper by lazy {
-        CameraBgHelper(filamentContext!!.engine, filamentContext!!.materialHolder.videoMaterial!!, display).apply {
-            initHelper()
-        }
-    }
+//    private val cameraBgHelper by lazy {
+//        CameraBgHelper(filamentContext!!.engine, filamentContext!!.materialHolder.videoMaterial!!, display).apply {
+//            initHelper()
+//        }
+//    }
 
     val surface by lazy { cameraBgHelper.surface }
 

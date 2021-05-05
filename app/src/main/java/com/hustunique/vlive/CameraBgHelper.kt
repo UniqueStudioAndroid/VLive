@@ -1,6 +1,7 @@
 package com.hustunique.vlive
 
 import android.graphics.ImageFormat
+import android.graphics.SurfaceTexture
 import android.hardware.HardwareBuffer
 import android.media.ImageReader
 import android.opengl.Matrix
@@ -21,7 +22,7 @@ import com.google.android.filament.*
 class CameraBgHelper(
     private val filamentEngine: Engine,
     private val filamentMaterial: MaterialInstance,
-    private val display: Display
+    private val display: Display,
 ) {
 
     companion object {
@@ -32,6 +33,8 @@ class CameraBgHelper(
     private var resolution = Size(640, 480)
     private var filamentTexture: Texture? = null
     private var filamentStream: Stream? = null
+
+    var inTexture: Int = 0
 
     @RequiresApi(Build.VERSION_CODES.Q)
     private val imageReader = ImageReader.newInstance(
@@ -45,9 +48,17 @@ class CameraBgHelper(
     val surface: Surface
         get() = imageReader.surface
 
+    var surfaceTexture: SurfaceTexture? = null
+
 
     fun initHelper() {
-        filamentStream = Stream.Builder().build(filamentEngine)
+//        surfaceTexture = SurfaceTexture(inTexture)
+        filamentStream = Stream.Builder()
+//            .stream(surfaceTexture!!)
+            .stream(inTexture.toLong())
+            .width(640)
+            .height(480)
+            .build(filamentEngine)
         filamentTexture = Texture.Builder()
             .sampler(Texture.Sampler.SAMPLER_EXTERNAL)
             .format(Texture.InternalFormat.RGB8)
@@ -87,15 +98,15 @@ class CameraBgHelper(
     }
 
     fun pushExternalImageToFilament() {
-        val stream = filamentStream
-        if (stream != null && imageReader.maxImages > 0) {
-            Log.i(TAG, "pushExternalImageToFilament: ")
+//        val stream = filamentStream
+//        if (stream != null && imageReader.maxImages > 0) {
+//            Log.i(TAG, "pushExternalImageToFilament: ")
 //            imageReader.acquireLatestImage()?.also {
 //                stream.setAcquiredImage(it.hardwareBuffer, Handler()) {
 //                    Log.i(TAG, "pushExternalImageToFilament: close")
 //                    it.close()
 //                }
 //            }
-        }
+//        }
     }
 }

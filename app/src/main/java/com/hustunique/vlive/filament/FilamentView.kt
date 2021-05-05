@@ -27,7 +27,15 @@ class FilamentView @JvmOverloads constructor(
         private const val TAG = "FilamentView"
     }
 
-    private val filamentContext = FilamentContext(this)
+    var filamentContext: FilamentContext? = null
+        //FilamentContext(this)
+        set(value) {
+            field?.release()
+            field = value
+            if (value != null) {
+                initContext()
+            }
+        }
 
     private val modelObjectList = mutableListOf<FilamentBaseModelObject>()
 
@@ -37,7 +45,11 @@ class FilamentView @JvmOverloads constructor(
 
     init {
         (context as? LifecycleOwner)?.lifecycle?.addObserver(this)
-        filamentContext.apply {
+        initContext()
+    }
+
+    private fun initContext() {
+        filamentContext?.apply {
             val ibl = "default_env"
             setIndirectLight(readCompressedAsset("envs/$ibl/${ibl}_ibl.ktx"))
             setSkyBox(readCompressedAsset("envs/$ibl/${ibl}_skybox.ktx"))
@@ -48,10 +60,10 @@ class FilamentView @JvmOverloads constructor(
 
     override fun doFrame(frameTimeNanos: Long) {
         choreographer.postFrameCallback(this)
-        controller?.update(filamentContext.camera)
+        filamentContext?.let { controller?.update(it.camera) }
         modelObjectList.forEach { it.update(frameTimeNanos) }
 
-        filamentContext.render(frameTimeNanos)
+        filamentContext?.render(frameTimeNanos)
     }
 
     fun bindController(filamentCameraController: FilamentCameraController) {
@@ -60,8 +72,10 @@ class FilamentView @JvmOverloads constructor(
 
     fun addModelObject(obj: FilamentBaseModelObject) {
         obj.run {
-            bindToContext(filamentContext)
-            asset = filamentContext.loadGlb(readCompressedAsset(resourcePath))
+            filamentContext?.let {
+                bindToContext(it)
+                asset = it.loadGlb(readCompressedAsset(resourcePath))
+            }
         }
         modelObjectList.add(obj)
     }
@@ -89,7 +103,7 @@ class FilamentView @JvmOverloads constructor(
         controller?.release()
         choreographer.removeFrameCallback(this)
         modelObjectList.forEach { it.destroy() }
-        filamentContext.release()
+        filamentContext?.release()
     }
 
 

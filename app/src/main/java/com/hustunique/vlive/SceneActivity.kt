@@ -1,17 +1,23 @@
 package com.hustunique.vlive
 
-import android.graphics.Color
 import android.os.Bundle
-import android.os.Handler
+import android.util.Log
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.hustunique.vlive.controller.ARCoreController
+import com.hustunique.vlive.controller.MLKitController
 import com.hustunique.vlive.databinding.ActivitySceneBinding
 import com.hustunique.vlive.filament.FilamentCameraController
+import com.hustunique.vlive.filament.FilamentContext
 import com.hustunique.vlive.filament.model_object.SceneModelObject
 import com.hustunique.vlive.filament.model_object.ScreenModelObject
+import com.hustunique.vlive.opengl.LocalFrameManager
 
 class SceneActivity : AppCompatActivity() {
+
+    companion object {
+        private const val TAG = "SceneActivity"
+    }
 
     private val binding by lazy {
         ActivitySceneBinding.inflate(layoutInflater)
@@ -23,22 +29,46 @@ class SceneActivity : AppCompatActivity() {
 
     lateinit var screenModelObject: ScreenModelObject
 
+    private val localFrameManager = LocalFrameManager().apply {
+        init()
+    }
+
+    private lateinit var filamentContext: FilamentContext
+
     private lateinit var arCoreHelper: ARCoreController
+
+    private val mlKit: MLKitController = MLKitController()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        setupStatusBar()
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         binding.filamentView.apply {
+            filamentContext = FilamentContext(this, localFrameManager.getEglContext())
             bindController(controller)
-            screenModelObject = ScreenModelObject(windowManager.defaultDisplay)
+
+            val cameraBgHelper = CameraBgHelper(
+                filamentContext!!.engine,
+                filamentContext!!.materialHolder.videoMaterial!!,
+                windowManager.defaultDisplay
+            )
+            localFrameManager.getHandler().post {
+                cameraBgHelper.inTexture = localFrameManager.getOesTexture()
+                cameraBgHelper.initHelper()
+            }
+            screenModelObject = ScreenModelObject(cameraBgHelper)
             addModelObject(screenModelObject)
             addModelObject(SceneModelObject())
         }
         controller.bindControlView(binding.sceneReset)
 
-        arCoreHelper = ARCoreController(this, Handler(), screenModelObject.surface)
+        localFrameManager.onImage = {
+            Log.i(TAG, "onCreate: onimage")
+            mlKit.process(it)
+        }
+
+        arCoreHelper = ARCoreController(this, localFrameManager)
     }
 
 
@@ -55,14 +85,7 @@ class SceneActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         arCoreHelper.release()
+        localFrameManager.release()
     }
 
-    private fun setupStatusBar() {
-        window.run {
-            addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            statusBarColor = Color.TRANSPARENT
-            navigationBarColor = Color.TRANSPARENT
-        }
-    }
 }

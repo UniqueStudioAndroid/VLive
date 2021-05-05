@@ -1,6 +1,7 @@
 package com.hustunique.vlive.controller
 
 import android.graphics.Bitmap
+import android.media.Image
 import android.util.Log
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.Face
@@ -55,6 +56,19 @@ class MLKitController : FacePropertyProvider {
             .addOnSuccessListener { results -> onProcess(results) }
             .addOnFailureListener { e -> e.printStackTrace() }
 //            .addOnCompleteListener { image.close() }
+    }
+
+    fun process(image: Image) {
+        Log.i(TAG, "process: ")
+        detector.process(
+            InputImage.fromMediaImage(
+                image,
+                0
+            )
+        )
+            .addOnSuccessListener { results -> onProcess(results) }
+            .addOnFailureListener { e -> e.printStackTrace() }
+            .addOnCompleteListener { image.close() }
     }
 
     override fun getLEyeOpenWeight() = lEyeOpenWeight

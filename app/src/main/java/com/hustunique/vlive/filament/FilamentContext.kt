@@ -1,5 +1,6 @@
 package com.hustunique.vlive.filament
 
+import android.opengl.EGLContext
 import android.view.Surface
 import android.view.SurfaceView
 import com.google.android.filament.*
@@ -14,7 +15,7 @@ import java.nio.Buffer
  *    e-mail : qpalwo@qq.com
  *    date   : 5/2/21
  */
-class FilamentContext(private val surfaceView: SurfaceView) {
+class FilamentContext(private val surfaceView: SurfaceView, sharedContext: EGLContext? = null) {
 
     companion object {
         init {
@@ -25,7 +26,7 @@ class FilamentContext(private val surfaceView: SurfaceView) {
         private const val kFarPlane = 1000.0    // 1 km
     }
 
-    val engine = Engine.create()
+    val engine = Engine.create()//if (sharedContext == null) Engine.create() else Engine.create(sharedContext)
 
     private val displayHelper = DisplayHelper(surfaceView.context)
 

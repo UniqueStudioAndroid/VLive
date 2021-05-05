@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".MainActivity">
 
     <Button
@@ -25,20 +26,20 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:text="AR Core"
-        app:layout_constraintTop_toBottomOf="@id/btn_model_entry"/>
+        app:layout_constraintTop_toBottomOf="@id/btn_model_entry" />
 
     <Button
         android:id="@+id/btn_agora_entry"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:text="Agora"
-        app:layout_constraintTop_toBottomOf="@id/btn_ar_core_entry"/>
+        app:layout_constraintTop_toBottomOf="@id/btn_ar_core_entry" />
 
     <Button
         android:id="@+id/btn_scene_entry"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:text="Scene"
-        app:layout_constraintTop_toBottomOf="@id/btn_agora_entry"/>
+        app:layout_constraintTop_toBottomOf="@id/btn_agora_entry" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,13 +3,14 @@ package com.hustunique.vlive.util
 import android.content.Context
 import android.opengl.GLES20
 import android.util.Log
-import java.io.BufferedReader
 import java.io.IOException
-import java.io.InputStreamReader
 import java.util.*
 
 /** Shader helper functions.  */
 object ShaderUtil {
+
+    private const val TAG = "ShaderUtil"
+
     /**
      * Converts a raw text file, saved as a resource, into an OpenGL ES shader.
      *
@@ -49,6 +50,29 @@ object ShaderUtil {
         // If the compilation failed, delete the shader.
         if (compileStatus[0] == 0) {
             Log.e(tag, "Error compiling shader: " + GLES20.glGetShaderInfoLog(shader))
+            GLES20.glDeleteShader(shader)
+            shader = 0
+        }
+        if (shader == 0) {
+            throw RuntimeException("Error creating shader.")
+        }
+        return shader
+    }
+
+
+    fun loadShader(code: String, type: Int): Int {
+        // Compiles shader code.
+        var shader = GLES20.glCreateShader(type)
+        GLES20.glShaderSource(shader, code)
+        GLES20.glCompileShader(shader)
+
+        // Get the compilation status.
+        val compileStatus = IntArray(1)
+        GLES20.glGetShaderiv(shader, GLES20.GL_COMPILE_STATUS, compileStatus, 0)
+
+        // If the compilation failed, delete the shader.
+        if (compileStatus[0] == 0) {
+            Log.e(TAG, "Error compiling shader: " + GLES20.glGetShaderInfoLog(shader))
             GLES20.glDeleteShader(shader)
             shader = 0
         }
