@@ -28,12 +28,12 @@ class AngleHandler(
 
     fun start() {
         sensorManager?.registerListener(this, rotationSensor, SensorManager.SENSOR_DELAY_UI)
-        Log.i(TAG, "start: Listening sensor event")
+        Log.i(TAG, "Angle handler start")
     }
 
     fun stop() {
         sensorManager?.unregisterListener(this)
-        Log.i(TAG, "start: handler stopped now")
+        Log.i(TAG, "Angle handler stop")
     }
 
     fun getRotationMatrix(matrix: FloatArray) {

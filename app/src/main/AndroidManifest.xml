@@ -25,7 +25,6 @@
         android:theme="@style/Theme.VLive">
         <activity android:name=".SceneActivity"></activity>
         <activity android:name=".agora.AgoraActivity" />
-        <activity android:name=".ARCoreActivity" />
         <activity android:name=".CameraXActivity" />
         <activity android:name=".ModelActivity" />
         <activity android:name=".MainActivity">

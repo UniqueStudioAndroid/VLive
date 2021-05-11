@@ -56,7 +56,6 @@ class FilamentCameraController(
         reset.setOnClickListener { resetCalibration() }
     }
 
-    private var lastUpdateTime = 0L
     fun update(camera: Camera) {
         // calculate rotation matrix
         angleHandler.getRotationMatrix(rotationMatrix)
@@ -69,12 +68,7 @@ class FilamentCameraController(
             .applyL(rotationMatrix)
             .applyL(baseMatrix)
         // compute forward step & update last update time
-        val now = System.currentTimeMillis()
-        if (isSelected && lastUpdateTime > 0) {
-            val delta = (now - lastUpdateTime) * MOVE_PER_MS_BASE
-            onMove(MoveType.FORWARD, delta)
-        }
-        lastUpdateTime = now
+        computeWalk()
         // recompute camera's lookAt matrix
         cameraTarget.addAssign(cameraFront, cameraPos)
         camera.lookAt(
@@ -84,20 +78,35 @@ class FilamentCameraController(
         )
     }
 
-    private fun onMove(type: MoveType, delta: Float = MOVE_DELTA) {
+    private var lastUpdateTime = 0L
+    private fun computeWalk() {
+        val now = System.currentTimeMillis()
+        if (lastUpdateTime > 0 && isSelected) {
+            onMove(MoveDirType.PLANE_FORWARD)
+        }
+        lastUpdateTime = now
+    }
+
+    private fun onMove(type: MoveDirType, delta: Float = MOVE_DELTA) {
         when (type) {
-            MoveType.FORWARD -> cameraPos.add(cameraFront, delta)
-            MoveType.BACK -> cameraPos.sub(cameraFront, delta)
-            MoveType.LEFT -> {
+            MoveDirType.FORWARD -> cameraPos.add(cameraFront, delta)
+            MoveDirType.BACK -> cameraPos.sub(cameraFront, delta)
+            MoveDirType.LEFT -> {
                 tempVector.crossAssign(cameraFront, cameraUP)
                 cameraPos.sub(tempVector, delta)
             }
-            MoveType.RIGHT -> {
+            MoveDirType.RIGHT -> {
                 tempVector.crossAssign(cameraFront, cameraUP)
                 cameraPos.add(tempVector, delta)
             }
-            MoveType.UP -> cameraPos.add(cameraUP, delta)
-            MoveType.DOWN -> cameraPos.sub(cameraUP, delta)
+            MoveDirType.UP -> cameraPos.add(cameraUP, delta)
+            MoveDirType.DOWN -> cameraPos.sub(cameraUP, delta)
+            MoveDirType.PLANE_FORWARD -> {
+                tempVector.clone(cameraFront)
+                tempVector.y = 0f
+                tempVector.normalize()
+                cameraPos.add(tempVector, delta)
+            }
         }
     }
 
@@ -106,8 +115,8 @@ class FilamentCameraController(
         baseMatrix.transpose()
     }
 
-    enum class MoveType {
-        FORWARD, BACK, LEFT, RIGHT, UP, DOWN
+    enum class MoveDirType {
+        FORWARD, BACK, LEFT, RIGHT, UP, DOWN, PLANE_FORWARD
     }
 
     private var isSelected = false
