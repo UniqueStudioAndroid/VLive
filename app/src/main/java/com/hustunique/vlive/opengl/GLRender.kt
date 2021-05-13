@@ -1,7 +1,6 @@
 package com.hustunique.vlive.opengl
 
 import android.opengl.EGLContext
-import android.opengl.GLES20
 import android.os.Handler
 import android.os.HandlerThread
 import android.view.Surface
@@ -11,7 +10,7 @@ import android.view.Surface
  *    e-mail : qpalwo@qq.com
  *    date   : 5/5/21
  */
-class GLRender(eglContext: EGLContext?) : RenderTask {
+class GLRender(eglContext: EGLContext? = null) : RenderTask {
 
     private val renderThread = HandlerThread("GL_Render").apply {
         start()
@@ -21,7 +20,7 @@ class GLRender(eglContext: EGLContext?) : RenderTask {
 
     private val renderTasks = mutableListOf<RenderTask>()
 
-    private val eglHelper by lazy {  EGLHelper(eglContext) }
+    private val eglHelper by lazy { EGLHelper(eglContext) }
 
     // must be called before init()
     fun bindSurface(surface: Surface) {
@@ -36,6 +35,9 @@ class GLRender(eglContext: EGLContext?) : RenderTask {
 
     override fun init() {
         post {
+            if (!eglHelper.hasSurface) {
+                eglHelper.bindSurface()
+            }
             eglHelper.makeCurrent()
             renderTasks.forEach(RenderTask::init)
         }

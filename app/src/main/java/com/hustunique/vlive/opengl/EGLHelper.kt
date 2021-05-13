@@ -43,6 +43,8 @@ class EGLHelper(sharedContext: EGLContext?) {
 
     private var eglSurface = EGL14.EGL_NO_SURFACE
 
+    var hasSurface = false
+
     fun bindSurface(surface: Surface) {
         checkNotRelease()
         val surfaceAttr = intArrayOf(EGL14.EGL_NONE)
@@ -50,6 +52,7 @@ class EGLHelper(sharedContext: EGLContext?) {
         if (eglSurface == EGL14.EGL_NO_SURFACE) {
             throw RuntimeException("no surface")
         }
+        hasSurface = true
     }
 
     fun bindSurface() {
@@ -59,6 +62,7 @@ class EGLHelper(sharedContext: EGLContext?) {
         if (eglSurface == EGL14.EGL_NO_SURFACE) {
             throw RuntimeException("no surface")
         }
+        hasSurface = true
     }
 
     fun swapBuffer() {

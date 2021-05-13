@@ -54,7 +54,7 @@ class FilamentView @JvmOverloads constructor(
             setIndirectLight(readCompressedAsset("envs/$ibl/${ibl}_ibl.ktx"))
             setSkyBox(readCompressedAsset("envs/$ibl/${ibl}_skybox.ktx"))
 
-            materialHolder.loadMaterial(readUncompressedAsset("materials/lit.filamat"))
+            materialHolder.loadVideoMaterial(readUncompressedAsset("materials/lit.filamat"))
         }
     }
 

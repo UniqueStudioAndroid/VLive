@@ -4,13 +4,14 @@ import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import com.hustunique.vlive.controller.ARCoreController
+import com.hustunique.vlive.agora.AgoraModule
 import com.hustunique.vlive.controller.MLKitController
 import com.hustunique.vlive.databinding.ActivitySceneBinding
 import com.hustunique.vlive.filament.FilamentCameraController
 import com.hustunique.vlive.filament.FilamentContext
 import com.hustunique.vlive.filament.model_object.SceneModelObject
 import com.hustunique.vlive.filament.model_object.ScreenModelObject
+import com.hustunique.vlive.opengl.GLRender
 import com.hustunique.vlive.opengl.LocalFrameManager
 
 class SceneActivity : AppCompatActivity() {
@@ -33,9 +34,11 @@ class SceneActivity : AppCompatActivity() {
         init()
     }
 
-    private lateinit var filamentContext: FilamentContext
+//    private lateinit var arCoreHelper: ARCoreController
 
-    private lateinit var arCoreHelper: ARCoreController
+    private lateinit var glRender: GLRender
+
+    private lateinit var agoraModule: AgoraModule
 
     private val mlKit: MLKitController = MLKitController()
 
@@ -44,21 +47,22 @@ class SceneActivity : AppCompatActivity() {
         setContentView(binding.root)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
+        glRender = GLRender().apply {
+            init()
+        }
+
+        agoraModule = AgoraModule(this, {
+            screenModelObject = ScreenModelObject(glRender.getEglContext()?.nativeHandle ?: 0L)
+            agoraModule.setRemoteVideoRender(it, screenModelObject.videoConsumer)
+            binding.filamentView.addModelObject(screenModelObject)
+        }).apply {
+            initAgora()
+        }
+
         binding.filamentView.apply {
-            filamentContext = FilamentContext(this, localFrameManager.getEglContext())
+            filamentContext = FilamentContext(this, glRender.getEglContext())
             bindController(controller)
 
-            val cameraBgHelper = CameraBgHelper(
-                filamentContext!!.engine,
-                filamentContext!!.materialHolder.videoMaterial!!,
-                windowManager.defaultDisplay
-            )
-            localFrameManager.getHandler().post {
-                cameraBgHelper.inTexture = localFrameManager.getOesTexture()
-                cameraBgHelper.initHelper()
-            }
-            screenModelObject = ScreenModelObject(cameraBgHelper)
-            addModelObject(screenModelObject)
             addModelObject(SceneModelObject())
         }
         controller.bindControlView(binding.sceneReset)
@@ -68,23 +72,24 @@ class SceneActivity : AppCompatActivity() {
             mlKit.process(it)
         }
 
-        arCoreHelper = ARCoreController(this, localFrameManager)
+//        arCoreHelper = ARCoreController(this, localFrameManager)
     }
 
 
     override fun onResume() {
         super.onResume()
-        arCoreHelper.resume()
+//        arCoreHelper.resume()
     }
 
     override fun onPause() {
         super.onPause()
-        arCoreHelper.pause()
+//        arCoreHelper.pause()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        arCoreHelper.release()
+        agoraModule.destroyAgora()
+//        arCoreHelper.release()
         localFrameManager.release()
     }
 

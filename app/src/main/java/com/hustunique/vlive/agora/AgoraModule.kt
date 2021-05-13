@@ -39,6 +39,7 @@ class AgoraModule(
     private val mRtcEventHandler = object : IRtcEngineEventHandler() {
 
         override fun onUserJoined(uid: Int, elapsed: Int) {
+            Log.i(TAG, "onUserJoined() called with: uid = $uid, elapsed = $elapsed")
             activity.lifecycleScope.launchWhenCreated {
                 withContext(Dispatchers.Main) {
                     onUserJoinedAction(uid)
@@ -64,10 +65,6 @@ class AgoraModule(
             Log.e(TAG, "onError: $err")
         }
 
-        override fun onLocalVideoStats(stats: LocalVideoStats?) {
-            super.onLocalVideoStats(stats)
-            Log.i(TAG, "onLocalVideoStats() called with: stats = ${stats?.codecType} ${stats?.encodedBitrate}")
-        }
 
         override fun onFirstLocalVideoFrame(width: Int, height: Int, elapsed: Int) {
             super.onFirstLocalVideoFrame(width, height, elapsed)
@@ -101,12 +98,17 @@ class AgoraModule(
     }
 
 
-    fun initAgora(videoSource: IVideoSource): View {
+    fun initAgora(videoSource: IVideoSource? = null): View {
         initializeAgoraEngine()
         val view = setupLocalVideo()
-        mRtcEngine?.setVideoSource(videoSource)
+//        mRtcEngine?.setLocalVideoRenderer(rawVideoConsumer)
+//        mRtcEngine?.setVideoSource(videoSource)
         joinChannel()
         return view
+    }
+
+    fun setRemoteVideoRender(uid: Int, videoConsumer: AgoraRawVideoConsumer) {
+        mRtcEngine?.setRemoteVideoRenderer(uid, videoConsumer)
     }
 
 
@@ -122,7 +124,7 @@ class AgoraModule(
     }
 
     private fun joinChannel() {
-        mRtcEngine?.joinChannel(AgoraActivity.TOKEN, "test1", "Extra Optional Data", 0)
+        mRtcEngine?.joinChannel(null, "test1", "Extra Optional Data", 0)
     }
 
     private fun leaveChannel() {

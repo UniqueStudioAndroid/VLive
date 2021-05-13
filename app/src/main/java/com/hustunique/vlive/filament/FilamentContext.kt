@@ -26,7 +26,7 @@ class FilamentContext(private val surfaceView: SurfaceView, sharedContext: EGLCo
         private const val kFarPlane = 1000.0    // 1 km
     }
 
-    val engine = Engine.create()//if (sharedContext == null) Engine.create() else Engine.create(sharedContext)
+    val engine = if (sharedContext == null) Engine.create() else Engine.create(sharedContext)
 
     private val displayHelper = DisplayHelper(surfaceView.context)
 
@@ -63,7 +63,7 @@ class FilamentContext(private val surfaceView: SurfaceView, sharedContext: EGLCo
     private val resourceHolder =
         FilamentResourceHolder(engine, scene::addEntities, scene::removeEntities)
 
-    val materialHolder = MaterialHolder(engine)
+    val materialHolder = FilamentMaterialHolder(engine)
 
     val swapChainList: MutableList<SwapChain> = mutableListOf()
     private var displaySwapChain: SwapChain? = null

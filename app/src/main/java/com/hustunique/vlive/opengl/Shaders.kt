@@ -37,5 +37,19 @@ void main() {
 }
     """
 
+    const val texFragShader = """
+#version 300 es
+
+precision mediump float;
+in vec2 v_TexCoord;
+out vec4 outColor;
+uniform sampler2D sTexture;
+
+
+void main() {
+    outColor = texture(sTexture, v_TexCoord);
+}
+    """
+
 
 }

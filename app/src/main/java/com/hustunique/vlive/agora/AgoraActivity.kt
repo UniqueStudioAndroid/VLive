@@ -20,7 +20,7 @@ class AgoraActivity : AppCompatActivity() {
         private const val TAG = "AgoraActivity"
 
         const val TOKEN =
-            "006df638f80c1754b298ff1fde8c77db579IABdFsw6meT3OLLfzGbcj+1tqykCh5Fjek7grm9u1fulmuLcsooAAAAAEADr9jhXiG+KYAEAAQCIb4pg"
+            "006df638f80c1754b298ff1fde8c77db579IAD78y3fP0a4LJzptFBjBHAjhgc2dkmv0nYMOtHwtc0wH+LcsooAAAAAEACRer0xidCcYAEAAQCJ0Jxg"
     }
 
     private val binding by lazy {
