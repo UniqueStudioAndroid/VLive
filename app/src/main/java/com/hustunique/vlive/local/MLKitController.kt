@@ -1,19 +1,23 @@
-package com.hustunique.vlive.controller
+package com.hustunique.vlive.local
 
 import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.media.Image
+import android.media.ImageReader
 import android.util.Log
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceContour
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
-import com.hustunique.vlive.data.FacePropertyProvider
 
-class MLKitController : FacePropertyProvider {
+@LocalGLThread
+class MLKitController(
+    private val onStateChange: (Float, Float, Float) -> Unit
+) {
 
     private val detectOptions = FaceDetectorOptions.Builder()
-        .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
+        .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_NONE)
         .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
         .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
         .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
@@ -23,13 +27,13 @@ class MLKitController : FacePropertyProvider {
     private var mouthOpenWeight = 0f
     private var lEyeOpenWeight = 0f
     private var rEyeOpenWeight = 0f
+    private val maxMouthOpen = 100.0
 
     fun stop() {
         detector.close()
     }
 
     private fun onProcess(faces: List<Face>) {
-        Log.i(TAG, "onProcess: ")
         faces.firstOrNull()?.let {
             lEyeOpenWeight = it.leftEyeOpenProbability ?: 0f
             rEyeOpenWeight = it.rightEyeOpenProbability ?: 0f
@@ -39,43 +43,36 @@ class MLKitController : FacePropertyProvider {
             val contourLowerPoints = it.getContour(FaceContour.LOWER_LIP_TOP)?.points ?: emptyList()
             val upperY = contourUpperPoints.sumByDouble { point -> point.y.toDouble() }
             val lowerY = contourLowerPoints.sumByDouble { point -> point.y.toDouble() }
-            mouthOpenWeight = ((upperY - lowerY) / 20f)
+            mouthOpenWeight = ((lowerY - upperY) / maxMouthOpen)
                 .coerceIn(0.0, 1.0)
                 .toFloat()
         }
+        onStateChange(lEyeOpenWeight, rEyeOpenWeight, mouthOpenWeight)
+        Log.i(TAG, "onProcess: \n\tlEye: $lEyeOpenWeight\n\trEye: $rEyeOpenWeight\n\tMouth: $mouthOpenWeight")
     }
 
-    fun process(bitmap: Bitmap) {
-        Log.i(TAG, "process: ")
-        detector.process(
-            InputImage.fromBitmap(
-                bitmap,
-                0
-            )
-        )
+    private var processing = false
+    private val matrix = Matrix().apply { postRotate(270f) }
+    private val bitmap = Bitmap.createBitmap(640, 480, Bitmap.Config.ARGB_8888)
+    private fun process(image: Image) {
+        processing = true
+        bitmap.copyPixelsFromBuffer(image.planes[0].buffer)
+        val rotated = Bitmap.createBitmap(bitmap, 0, 0, 640, 480, matrix, true)
+        detector.process(InputImage.fromBitmap(rotated, 0))
             .addOnSuccessListener { results -> onProcess(results) }
             .addOnFailureListener { e -> e.printStackTrace() }
-//            .addOnCompleteListener { image.close() }
+            .addOnCompleteListener {
+                image.close()
+                processing = false
+            }
     }
 
-    fun process(image: Image) {
-        Log.i(TAG, "process: ")
-        detector.process(
-            InputImage.fromMediaImage(
-                image,
-                0
-            )
-        )
-            .addOnSuccessListener { results -> onProcess(results) }
-            .addOnFailureListener { e -> e.printStackTrace() }
-            .addOnCompleteListener { image.close() }
+    fun onImageAvailable(reader: ImageReader) {
+        reader.acquireNextImage()?.let { img ->
+            if (!processing) process(img)
+            else img.close()
+        }
     }
-
-    override fun getLEyeOpenWeight() = lEyeOpenWeight
-
-    override fun getREyeOpenWeight() = rEyeOpenWeight
-
-    override fun getMouthOpenWeight() = mouthOpenWeight
 
     companion object {
         private const val TAG = "MLKitHelper"

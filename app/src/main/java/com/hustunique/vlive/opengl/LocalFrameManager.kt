@@ -19,7 +19,7 @@ class LocalFrameManager {
 
     private val imageReader = ImageReader.newInstance(640, 480, ImageFormat.YUV_420_888, 7)
 
-    private val oesTextureRenderTask = OesTextureRenderTask()
+    private val oesTextureRenderTask = OesTextureRenderTask(0)
 
     var onImage: (Image) -> Unit = { it.close() }
 
@@ -32,7 +32,7 @@ class LocalFrameManager {
         }
         glRender.post {
             inputTexture = GlUtil.generateTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES)
-            oesTextureRenderTask.inTexture = inputTexture
+//            oesTextureRenderTask.inTexture = inputTexture
         }
         imageReader.setOnImageAvailableListener(
             {

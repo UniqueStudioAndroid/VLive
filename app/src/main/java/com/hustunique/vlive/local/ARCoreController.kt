@@ -1,15 +1,11 @@
-package com.hustunique.vlive.controller
+package com.hustunique.vlive.local
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.Matrix
+import android.os.Handler
 import android.util.Log
 import com.google.ar.core.*
-import com.hustunique.vlive.data.CameraTextureProvider
-import com.hustunique.vlive.data.ObjectMatrixProvider
-import com.hustunique.vlive.opengl.LocalFrameManager
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
+import java.nio.FloatBuffer
 import java.util.*
 
 /**
@@ -17,31 +13,21 @@ import java.util.*
  *    e-mail : qpalwo@qq.com
  *    date   : 4/28/21
  */
+@LocalGLThread
 class ARCoreController(
     context: Context,
-    private val localFrameManager: LocalFrameManager
-) : Runnable, CameraTextureProvider, ObjectMatrixProvider {
+    private val glHandler: Handler,
+    private val oesTexture: Int,
+    private val onNewFrame: () -> Unit,
+) : Runnable {
 
     private lateinit var session: Session
-    private val glHandler = localFrameManager.getHandler()
 
     private val objectMatrixData = FloatArray(16)
     private val objectMatrix = Matrix()
 
-    private var cameraTexture: Int = 0
-
-
-    private val buffer = ByteBuffer.allocateDirect(
-        640 * 480 * 4
-    ).order(ByteOrder.nativeOrder())
-        .position(0)
-
     init {
-        post {
-            cameraTexture = localFrameManager.getOesTexture()
-
-            configSession(context)
-        }
+        configSession(context)
     }
 
     private fun configSession(context: Context) {
@@ -59,32 +45,27 @@ class ARCoreController(
         config.augmentedFaceMode = Config.AugmentedFaceMode.MESH3D
         session.configure(config)
 
-        session.setCameraTextureName(cameraTexture)
-        Log.i(TAG, "configSession: $cameraTexture")
+        Log.i(TAG, "configSession: $oesTexture")
     }
 
-    fun release() = post {
+    fun release() {
         session.close()
         glHandler.removeCallbacks(this)
     }
 
-    fun resume() = post {
+    fun resume() {
         Log.i(TAG, "resume: ")
         session.resume()
         glHandler.post(this)
     }
 
-    fun pause() = post {
+    fun pause() {
         session.pause()
         glHandler.removeCallbacks(this)
     }
 
-    private val bitmap = Bitmap.createBitmap(640, 480, Bitmap.Config.ARGB_8888)
-    private val rotateMatrix = Matrix().apply { postRotate(270f) }
-
     override fun run() {
-        glHandler.post(this)
-        session.setCameraTextureName(cameraTexture)
+        session.setCameraTextureName(oesTexture)
         session.update()
         session.getAllTrackables(AugmentedFace::class.java)
             .firstOrNull { it.trackingState == TrackingState.TRACKING }
@@ -95,20 +76,16 @@ class ARCoreController(
         objectMatrixData[8] = objectMatrixData[8] * -1
         objectMatrixData[12] = objectMatrixData[12] * -1
         objectMatrix.setValues(objectMatrixData)
-        localFrameManager.refreshImageReader()
+        onNewFrame()
+
+        glHandler.post(this)
     }
 
-
-    override fun getCameraTextureId() = cameraTexture
-
-    override fun getObjectMatrix() = objectMatrix
-
-    private fun post(action: () -> Unit) = glHandler.post {
-        action()
+    fun getObjectMatrixData(buffer: FloatBuffer) {
+        buffer.put(objectMatrixData)
     }
 
     companion object {
         private const val TAG = "SurfaceTextureHelper"
-
     }
 }

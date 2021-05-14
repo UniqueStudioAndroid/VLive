@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.PixelFormat
 import android.media.ImageReader
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.Choreographer
 import android.view.WindowManager
@@ -15,7 +14,6 @@ import com.google.android.filament.utils.KtxLoader
 import com.google.android.filament.utils.Utils
 import com.hustunique.vlive.agora.AgoraModule
 import com.hustunique.vlive.agora.BufferSource
-import com.hustunique.vlive.controller.ARCoreController
 import com.hustunique.vlive.databinding.ActivityModelBinding
 import com.hustunique.vlive.filament.ModelViewer
 import com.hustunique.vlive.util.readCompressedAsset

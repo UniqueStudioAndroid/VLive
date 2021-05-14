@@ -11,7 +11,9 @@ import java.nio.ByteOrder
  *    e-mail : qpalwo@qq.com
  *    date   : 5/5/21
  */
-class OesTextureRenderTask : RenderTask {
+class OesTextureRenderTask(
+    private val inTexture: Int,
+) : RenderTask {
 
     companion object {
         private const val TAG = "OesTextureRenderTask"
@@ -49,7 +51,6 @@ class OesTextureRenderTask : RenderTask {
     private var positionAttrib: Int = -1
     private var texCoordAttrib: Int = -1
     private var textureUniform: Int = -1
-    var inTexture: Int = 0
 
     override fun init() {
         val vertexShader = ShaderUtil.loadShader(
@@ -112,7 +113,7 @@ class OesTextureRenderTask : RenderTask {
         GLES20.glDepthMask(true)
         GLES20.glEnable(GLES20.GL_DEPTH_TEST)
 
-        ShaderUtil.checkGLError(TAG, "RenderCamera")
+        ShaderUtil.checkGLError(TAG, "OES renderer")
     }
 
     override fun release() {

@@ -82,7 +82,8 @@ class FilamentCameraController(
     private fun computeWalk() {
         val now = System.currentTimeMillis()
         if (lastUpdateTime > 0 && isSelected) {
-            onMove(MoveDirType.PLANE_FORWARD)
+            val delta = (now - lastUpdateTime) * MOVE_PER_MS_BASE
+            onMove(MoveDirType.PLANE_FORWARD, delta)
         }
         lastUpdateTime = now
     }
