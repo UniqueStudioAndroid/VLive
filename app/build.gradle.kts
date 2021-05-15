@@ -102,6 +102,8 @@ dependencies {
     implementation(Dep.Filament.FILAMAT)
 
     implementation(Dep.Agora.AGORA)
+    implementation(Dep.Agora.RTM)
+
     implementation(Dep.AndroidX.Lifecycle.COMMON_KTX)
     implementation(Dep.AndroidX.Lifecycle.LIVEDATA)
     implementation(Dep.AndroidX.Lifecycle.LD_KTX)

@@ -58,6 +58,7 @@ object Dep {
 
     object Agora {
         const val AGORA = "com.github.agorabuilder:native-full-sdk:3.4.1"
+        const val RTM = "com.github.agorabuilder:rtm-sdk:1.4.5"
     }
 
     object ARCore {

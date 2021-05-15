@@ -117,7 +117,7 @@ class AgoraModule(
             setZOrderMediaOverlay(true)
         }
         mRtcEngine?.apply {
-            enableVideo()
+//            enableVideo()
             setupLocalVideo(VideoCanvas(surface, VideoCanvas.RENDER_MODE_FIT, 0))
         }
         return surface
