@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.hustunique.vlive.agora.AgoraModule
 import com.hustunique.vlive.databinding.ActivitySceneBinding
 import com.hustunique.vlive.filament.FilamentCameraController
+import com.hustunique.vlive.filament.FilamentContext
+import com.hustunique.vlive.filament.model_object.SceneModelObject
 import com.hustunique.vlive.filament.model_object.ScreenModelObject
 import com.hustunique.vlive.local.LocalVideoConsumerStub
 import com.hustunique.vlive.local.LocalVideoModule
@@ -39,33 +41,33 @@ class SceneActivity : AppCompatActivity() {
         setContentView(binding.root)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-//        glRender = GLRender().apply {
-//            init()
-//        }
+        glRender = GLRender().apply {
+            init()
+        }
 
-//        agoraModule = AgoraModule(this, {
-//            screenModelObject = ScreenModelObject(glRender.getEglContext()?.nativeHandle ?: 0L)
-//            agoraModule.setRemoteVideoRender(it, screenModelObject.videoConsumer)
-//            binding.filamentView.addModelObject(screenModelObject)
-//        }).apply {
-//            initAgora()
-//        }
+        agoraModule = AgoraModule(this, {
+            screenModelObject = ScreenModelObject(glRender.getEglContext()?.nativeHandle ?: 0L)
+            agoraModule.setRemoteVideoRender(it, screenModelObject.videoConsumer)
+            binding.filamentView.addModelObject(screenModelObject)
+        }).apply {
+            initAgora()
+        }
 
         localVideoModel = LocalVideoModule(this, LocalVideoConsumerStub(LocalVideoType.VIRTUAL))
 
-//        binding.filamentView.apply {
-//            filamentContext = FilamentContext(this, glRender.getEglContext())
-//            bindController(controller)
-//
-//            addModelObject(SceneModelObject())
-//        }
-//        controller.bindControlView(binding.sceneReset)
+        binding.filamentView.apply {
+            filamentContext = FilamentContext(this, glRender.getEglContext())
+            bindController(controller)
+
+            addModelObject(SceneModelObject())
+        }
+        controller.bindControlView(binding.sceneReset)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-//        agoraModule.destroyAgora()
-//        glRender.release()
-//        controller.release()
+        agoraModule.destroyAgora()
+        glRender.release()
+        controller.release()
     }
 }

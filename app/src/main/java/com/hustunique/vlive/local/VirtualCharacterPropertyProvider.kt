@@ -25,7 +25,7 @@ class VirtualCharacterPropertyProvider(
     private val localVideoRenderThread = HandlerThread("lo cal_video_renderer").apply { start() }
     private val glHandler = Handler(localVideoRenderThread.looper)
 
-    private val imageReader = ImageReader.newInstance(640, 480, PixelFormat.RGBA_8888, 3)
+    private val imageReader = ImageReader.newInstance(120, 160, PixelFormat.RGBA_8888, 3)
 
     private lateinit var arCore: ARCoreController
     private lateinit var mlKit: MLKitController

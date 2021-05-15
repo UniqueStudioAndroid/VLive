@@ -39,10 +39,10 @@ class OesTextureRenderTask(
             .asFloatBuffer()
             .put(
                 floatArrayOf(
-                    0f, 1f,
-                    1f, 1f,
                     0f, 0f,
-                    1f, 0f
+                    0f, 1f,
+                    1f, 0f,
+                    1f, 1f
                 )
             )
     }
@@ -80,6 +80,7 @@ class OesTextureRenderTask(
     override fun render() {
         GLES20.glDisable(GLES20.GL_DEPTH_TEST)
         GLES20.glDepthMask(false)
+        GLES20.glViewport(0, 0, 120, 160)
 
         GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, inTexture)
         GLES20.glUseProgram(renderProgram)

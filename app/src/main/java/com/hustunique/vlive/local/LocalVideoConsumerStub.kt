@@ -14,7 +14,7 @@ class LocalVideoConsumerStub(
     }
 
     override fun onPropertyReady(property: CharacterProperty) {
-        Log.i(TAG, "onMatrixReady: ")
+        Log.i(TAG, "onMatrixReady: ${property.lEyeOpenProbability} ${property.eEyeOpenProbability} ${property.mouthOpenWeight}")
     }
 
     override fun getConsumeType() = type

@@ -1,7 +1,6 @@
 package com.hustunique.vlive.local
 
 import android.graphics.Bitmap
-import android.graphics.Matrix
 import android.media.Image
 import android.media.ImageReader
 import android.util.Log
@@ -27,7 +26,7 @@ class MLKitController(
     private var mouthOpenWeight = 0f
     private var lEyeOpenWeight = 0f
     private var rEyeOpenWeight = 0f
-    private val maxMouthOpen = 100.0
+    private val maxMouthOpen = 80.0
 
     fun stop() {
         detector.close()
@@ -52,13 +51,21 @@ class MLKitController(
     }
 
     private var processing = false
-    private val matrix = Matrix().apply { postRotate(270f) }
-    private val bitmap = Bitmap.createBitmap(640, 480, Bitmap.Config.ARGB_8888)
+    private var bitmap: Bitmap? = null
     private fun process(image: Image) {
         processing = true
-        bitmap.copyPixelsFromBuffer(image.planes[0].buffer)
-        val rotated = Bitmap.createBitmap(bitmap, 0, 0, 640, 480, matrix, true)
-        detector.process(InputImage.fromBitmap(rotated, 0))
+
+        val pixelStride: Int = image.planes[0].pixelStride
+        val rowStride: Int = image.planes[0].rowStride
+        val rowPadding: Int = rowStride - pixelStride * image.width
+        val buffer = image.planes[0].buffer
+        val w = image.width + rowPadding / pixelStride
+
+        if (bitmap == null) {
+            bitmap = Bitmap.createBitmap(w, image.height, Bitmap.Config.ARGB_8888)
+        }
+        bitmap?.copyPixelsFromBuffer(buffer)
+        detector.process(InputImage.fromBitmap(bitmap!!, 0))
             .addOnSuccessListener { results -> onProcess(results) }
             .addOnFailureListener { e -> e.printStackTrace() }
             .addOnCompleteListener {
