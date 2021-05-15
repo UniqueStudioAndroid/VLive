@@ -119,9 +119,18 @@ class AgoraMessageModule(
             Log.i(TAG, "sendMessage: no channel now")
             return
         }
-        Log.i(TAG, "sendMessage: $msg")
         rtmClient?.createMessage()?.apply {
             rawMessage = msg.toByteArray()
+            rtmChannel?.sendMessage(this, object : ResultCallback<Void> {
+                override fun onSuccess(p0: Void?) {
+                    Log.i(TAG, "sendMessage: $msg")
+                }
+
+                override fun onFailure(p0: ErrorInfo?) {
+                    Log.e(TAG, "onFailure: ${p0.toString()}")
+                }
+
+            })
         }
     }
 
