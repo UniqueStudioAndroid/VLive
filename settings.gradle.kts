@@ -1,3 +1,3 @@
 include (":app")
 rootProject.name = "VLive"
-include(":sles")
+include(":vlive_audio")

@@ -64,4 +64,6 @@ object Dep {
     object ARCore {
         const val CORE = "com.google.ar:core:1.23.0"
     }
+
+    const val OBOE = "com.google.oboe:oboe:1.5.0"
 }

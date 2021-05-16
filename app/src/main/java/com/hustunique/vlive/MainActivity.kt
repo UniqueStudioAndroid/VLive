@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.ar.core.ArCoreApk
+import com.hustunique.resonance_audio.AudioRender
 import com.hustunique.vlive.agora.AgoraActivity
 import com.hustunique.vlive.databinding.ActivityMainBinding
 import com.hustunique.vlive.util.Utils
@@ -21,6 +22,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val t = AudioRender
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -43,11 +45,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnAgoraEntry.setOnClickListener {
-            if (!allPermissionsGranted()) {
-                Toast.makeText(this, "No permission, no work!", Toast.LENGTH_SHORT).show()
-            } else {
+//            if (!allPermissionsGranted()) {
+//                Toast.makeText(this, "No permission, no work!", Toast.LENGTH_SHORT).show()
+//            } else {
                 startActivity<AgoraActivity>()
-            }
+//            }
         }
 
         binding.btnArCoreEntry.setOnClickListener {

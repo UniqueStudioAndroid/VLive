@@ -55,6 +55,12 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        ndk {
+            abiFilters.apply {
+                add("armeabi-v7a")
+//                add("arm64-v8a")
+            }
+        }
     }
 
     buildTypes {
@@ -84,7 +90,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":sles"))
+    implementation(project(":vlive_audio"))
 
     implementation(kotlin("stdlib", Dep.Kt.KOTLIN_VERSION))
     implementation(Dep.MLKit.ML_KIT_FACE)

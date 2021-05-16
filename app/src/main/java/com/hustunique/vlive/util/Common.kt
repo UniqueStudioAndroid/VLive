@@ -3,6 +3,7 @@ package com.hustunique.vlive.util
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.util.SparseArray
 import java.nio.ByteBuffer
 import java.nio.channels.Channels
 
@@ -35,3 +36,10 @@ fun Activity.readCompressedAsset(assetName: String): ByteBuffer =
         input.read(bytes)
         ByteBuffer.wrap(bytes)
     }
+
+fun <T> SparseArray<T>.putIfAbsent(key: Int, value: T): T {
+    if (get(key) == null) {
+        put(key, value)
+    }
+    return value
+}

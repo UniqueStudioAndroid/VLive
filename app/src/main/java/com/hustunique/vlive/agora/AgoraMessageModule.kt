@@ -13,7 +13,8 @@ import io.agora.rtm.*
  */
 class AgoraMessageModule(
     context: Context,
-    private val messageCallback: (CharacterProperty) -> Unit
+    private val posMessageCallback: (CharacterProperty, Int) -> Unit,
+    private val modeMessageCallback: (Boolean, Int) -> Unit
 ) {
 
     companion object {
@@ -70,9 +71,13 @@ class AgoraMessageModule(
             if (p0 == null) {
                 return
             }
-            val msg = CharacterProperty.fromArray(p0.rawMessage)
-            Log.i(TAG, "onMessageReceived: $msg")
-            messageCallback(msg)
+            if (p0.messageType == 2) {
+                val msg = CharacterProperty.fromArray(p0.rawMessage)
+                Log.i(TAG, "onMessageReceived: $msg")
+                posMessageCallback(msg, p1?.userId?.toIntOrNull() ?: 0)
+            } else {
+                modeMessageCallback(p0.text == "video", p1?.userId?.toIntOrNull() ?: 0)
+            }
         }
 
         override fun onImageMessageReceived(p0: RtmImageMessage?, p1: RtmChannelMember?) {
@@ -96,7 +101,7 @@ class AgoraMessageModule(
                 context.getString(R.string.agora_app_id),
                 rtmClientListener
             ).apply {
-                login(null, System.currentTimeMillis().toString(), object : ResultCallback<Void> {
+                login(null, AgoraModule.MUID.toString(), object : ResultCallback<Void> {
                     override fun onSuccess(p0: Void?) {
                         loginSuccess = true
                         Log.i(TAG, "onSuccess: login")
@@ -123,7 +128,26 @@ class AgoraMessageModule(
             rawMessage = msg.toByteArray()
             rtmChannel?.sendMessage(this, object : ResultCallback<Void> {
                 override fun onSuccess(p0: Void?) {
-                    Log.i(TAG, "sendMessage: $msg")
+                    Log.d(TAG, "sendMessage: $msg")
+                }
+
+                override fun onFailure(p0: ErrorInfo?) {
+                    Log.e(TAG, "onFailure: ${p0.toString()}")
+                }
+
+            })
+        }
+    }
+
+    fun sendMessage(isVideo: Boolean) {
+        if (!joinChannelSuccess) {
+            Log.i(TAG, "sendMessage: no channel now")
+            return
+        }
+        rtmClient?.createMessage(if (isVideo) "video" else "virtual")?.apply {
+            rtmChannel?.sendMessage(this, object : ResultCallback<Void> {
+                override fun onSuccess(p0: Void?) {
+                    Log.d(TAG, "sendMessage: $isVideo")
                 }
 
                 override fun onFailure(p0: ErrorInfo?) {

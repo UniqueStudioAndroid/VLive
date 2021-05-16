@@ -4,6 +4,7 @@ import android.util.Log
 import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
+import com.hustunique.resonance_audio.AudioConfig
 import com.hustunique.vlive.R
 import io.agora.rtc.Constants
 import io.agora.rtc.IRtcEngineEventHandler
@@ -26,15 +27,24 @@ import java.util.*
 class AgoraModule(
     private val activity: ComponentActivity,
     private val onUserJoinedAction: (Int) -> Unit = {},
-    private val onUserLeaveAction: () -> Unit = {}
+    private val onUserLeaveAction: (Int) -> Unit = {}
 ) {
 
     companion object {
         private const val TAG = "AgoraModule"
+
+        val MUID = System.currentTimeMillis().toInt()
     }
 
     private var mRtcEngine: RtcEngine? = null
 
+    private var audioModule: AudioModule? = null
+
+    private val audioFrameObserver = AgoraAudioFrameObserver({ array, numSamples, uid ->
+        audioModule?.feedData(uid, numSamples, array)
+    }, { array, numSamples ->
+        audioModule?.getData(array, numSamples)
+    })
 
     private val mRtcEventHandler = object : IRtcEngineEventHandler() {
 
@@ -44,13 +54,18 @@ class AgoraModule(
                 withContext(Dispatchers.Main) {
                     onUserJoinedAction(uid)
                 }
+                if (audioModule == null) {
+                    audioModule = AudioModule().apply {
+                        init()
+                    }
+                }
             }
         }
 
         override fun onUserOffline(uid: Int, reason: Int) {
             activity.lifecycleScope.launchWhenCreated {
                 withContext(Dispatchers.Main) {
-                    onUserLeaveAction()
+                    onUserLeaveAction(uid)
                 }
             }
         }
@@ -103,8 +118,25 @@ class AgoraModule(
         val view = setupLocalVideo()
 //        mRtcEngine?.setLocalVideoRenderer(rawVideoConsumer)
 //        mRtcEngine?.setVideoSource(videoSource)
+
+        setAudioObserver()
         joinChannel()
         return view
+    }
+
+    private fun setAudioObserver() {
+
+        mRtcEngine?.run {
+            registerAudioFrameObserver(audioFrameObserver)
+//            setExternalAudioSource(true, AudioConfig.SAMPLE_RATE, AudioConfig.NUM_CHANNELS)
+//            setExternalAudioSink(true, AudioConfig.SAMPLE_RATE, AudioConfig.NUM_CHANNELS)
+            setPlaybackAudioFrameParameters(
+                AudioConfig.SAMPLE_RATE,
+                AudioConfig.NUM_CHANNELS,
+                Constants.RAW_AUDIO_FRAME_OP_MODE_WRITE_ONLY,
+                960
+            )
+        }
     }
 
     fun setRemoteVideoRender(uid: Int, videoConsumer: AgoraRawVideoConsumer) {
@@ -124,7 +156,7 @@ class AgoraModule(
     }
 
     private fun joinChannel() {
-        mRtcEngine?.joinChannel(null, "test1", "Extra Optional Data", 0)
+        mRtcEngine?.joinChannel(null, "test1", "Extra Optional Data", MUID)
     }
 
     private fun leaveChannel() {
@@ -158,6 +190,8 @@ class AgoraModule(
     }
 
     fun destroyAgora() {
+        audioModule?.release()
+        audioModule = null
         leaveChannel()
         RtcEngine.destroy()
     }

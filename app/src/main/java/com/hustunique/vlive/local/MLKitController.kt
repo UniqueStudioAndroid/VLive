@@ -47,7 +47,7 @@ class MLKitController(
                 .toFloat()
         }
         onStateChange(lEyeOpenWeight, rEyeOpenWeight, mouthOpenWeight)
-        Log.i(TAG, "onProcess: \n\tlEye: $lEyeOpenWeight\n\trEye: $rEyeOpenWeight\n\tMouth: $mouthOpenWeight")
+        Log.d(TAG, "onProcess: \n\tlEye: $lEyeOpenWeight\n\trEye: $rEyeOpenWeight\n\tMouth: $mouthOpenWeight")
     }
 
     private var processing = false
@@ -82,6 +82,6 @@ class MLKitController(
     }
 
     companion object {
-        private const val TAG = "MLKitHelper"
+        private const val TAG = "MLKitController"
     }
 }

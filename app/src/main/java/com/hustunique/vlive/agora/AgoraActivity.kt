@@ -19,8 +19,6 @@ class AgoraActivity : AppCompatActivity() {
     companion object {
         private const val TAG = "AgoraActivity"
 
-        const val TOKEN =
-            "006df638f80c1754b298ff1fde8c77db579IAD78y3fP0a4LJzptFBjBHAjhgc2dkmv0nYMOtHwtc0wH+LcsooAAAAAEACRer0xidCcYAEAAQCJ0Jxg"
     }
 
     private val binding by lazy {
@@ -67,7 +65,7 @@ class AgoraActivity : AppCompatActivity() {
     }
 
     private fun joinChannel() {
-        mRtcEngine?.joinChannel(TOKEN, "test1", "Extra Optional Data", 0)
+        mRtcEngine?.joinChannel(null, "test1", "Extra Optional Data", 0)
     }
 
     private fun setupRemoteVideo(uid: Int) {
@@ -104,8 +102,6 @@ class AgoraActivity : AppCompatActivity() {
             config.mLogConfig = logConfig
             mRtcEngine =
                 RtcEngine.create(config)
-//            mRtcEngine =
-//                RtcEngine.create(baseContext, getString(R.string.agora_app_id), mRtcEventHandler)
         } catch (e: Exception) {
             Log.e(TAG, Log.getStackTraceString(e))
 

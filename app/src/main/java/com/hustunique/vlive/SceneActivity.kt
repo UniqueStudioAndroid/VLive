@@ -2,7 +2,6 @@ package com.hustunique.vlive
 
 import android.media.Image
 import android.os.Bundle
-import android.util.Log
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.hustunique.vlive.agora.AgoraMessageModule
@@ -12,10 +11,7 @@ import com.hustunique.vlive.filament.FilamentCameraController
 import com.hustunique.vlive.filament.FilamentContext
 import com.hustunique.vlive.filament.model_object.SceneModelObject
 import com.hustunique.vlive.filament.model_object.ScreenModelObject
-import com.hustunique.vlive.local.CharacterProperty
-import com.hustunique.vlive.local.LocalVideoModule
-import com.hustunique.vlive.local.LocalVideoSink
-import com.hustunique.vlive.local.LocalVideoType
+import com.hustunique.vlive.local.*
 import com.hustunique.vlive.opengl.GLRender
 
 class SceneActivity : AppCompatActivity() {
@@ -40,10 +36,10 @@ class SceneActivity : AppCompatActivity() {
 
     private lateinit var localVideoModel: LocalVideoModule
 
+    private val groupMemberManager = GroupMemberManager()
+
     private val agoraMessageModule by lazy {
-        AgoraMessageModule(this) {
-            Log.i(TAG, "onMessage: $it")
-        }
+        AgoraMessageModule(this, groupMemberManager::onMatrix, groupMemberManager::rtmModeChoose)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,13 +51,13 @@ class SceneActivity : AppCompatActivity() {
             init()
         }
 
-        agoraModule = AgoraModule(this, {
-            screenModelObject = ScreenModelObject(glRender.getEglContext()?.nativeHandle ?: 0L)
-            agoraModule.setRemoteVideoRender(it, screenModelObject.videoConsumer)
-            binding.filamentView.addModelObject(screenModelObject)
-        }).apply {
-            initAgora()
-        }
+        agoraModule =
+            AgoraModule(this, groupMemberManager::rtcJoin, groupMemberManager::rtcQuit).apply {
+                initAgora()
+            }
+//            screenModelObject = ScreenModelObject(glRender.getEglContext()?.nativeHandle ?: 0L)
+//            agoraModule.setRemoteVideoRender(it, screenModelObject.videoConsumer)
+//            binding.filamentView.addModelObject(screenModelObject)
 
         localVideoModel = LocalVideoModule(this, object : LocalVideoSink {
             override fun onFrame(image: Image) {
