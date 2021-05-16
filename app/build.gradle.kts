@@ -84,6 +84,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":sles"))
+
     implementation(kotlin("stdlib", Dep.Kt.KOTLIN_VERSION))
     implementation(Dep.MLKit.ML_KIT_FACE)
     implementation(Dep.Kt.COROUTINE)
