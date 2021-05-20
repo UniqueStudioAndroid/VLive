@@ -18,8 +18,11 @@ pub fn rsp_ok<T: Serialize>(msg: T) -> VLiveRsp<T> {
     }
 }
 
-pub fn rsp_err(msg: String) -> VLiveErr {
-    VLiveErr { code: -1, msg }
+pub fn rsp_err(msg: &str) -> VLiveErr {
+    VLiveErr {
+        code: -1,
+        msg: String::from(msg),
+    }
 }
 
 #[derive(Serialize)]
