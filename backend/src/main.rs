@@ -1,28 +1,47 @@
-#[macro_use]
-extern crate lazy_static;
-
-use std::collections::HashMap;
 use std::convert::Infallible;
 use std::net::SocketAddr;
 
-use hyper::{Body, HeaderMap, Method, Request, Response, Server, StatusCode};
 use hyper::service::{make_service_fn, service_fn};
+use hyper::{Body, Request, Response, Server, StatusCode};
+
+use backend::basic::VLiveErr;
+use backend::model;
 
 type EntryResult<T> = Result<T, Infallible>;
-type Handle = fn(Vec<u8>, String) -> Vec<u8>;
-
-// lazy_static! {
-//     static ref FUNC_TABLE: HashMap<String, Handle> = [
-//         "/user/reg",
-//     ].iter().cloned().collect();
-// }
 
 async fn entry(req: Request<Body>) -> EntryResult<Response<Body>> {
     println!("Receive request from {}", req.uri());
 
-    let rsp = String::from("Hello world!").as_bytes().to_vec();
+    let mut response = Response::new(Body::empty());
 
-    Ok(Response::new(Body::from(rsp)))
+    let (parts, body) = req.into_parts();
+    let data = match hyper::body::to_bytes(body).await {
+        Ok(data) => data.to_vec(),
+        Err(_) => {
+            *response.status_mut() = StatusCode::BAD_REQUEST;
+            return Ok(response);
+        }
+    };
+
+    let path = parts.uri.path();
+
+    *response.body_mut() = Body::from(
+        match path {
+            "/user/reg" => model::register(data),
+            _ => Err(VLiveErr::not_found(path)),
+        }
+        .map_or_else(
+            |e| serde_json::to_vec(&e).unwrap(),
+            |r| serde_json::to_vec(&r).unwrap(),
+        ),
+    );
+
+    println!(
+        "Process request for {}, status = {}",
+        path,
+        response.status()
+    );
+    Ok(response)
 }
 
 async fn shutdown_signal() {
@@ -35,9 +54,7 @@ async fn shutdown_signal() {
 async fn main() {
     let addr = SocketAddr::from(([127, 0, 0, 1], 12346));
 
-    let make_svc = make_service_fn(|_conn| async {
-        Ok::<_, Infallible>(service_fn(entry))
-    });
+    let make_svc = make_service_fn(|_conn| async { Ok::<_, Infallible>(service_fn(entry)) });
 
     let server = Server::bind(&addr).serve(make_svc);
 
