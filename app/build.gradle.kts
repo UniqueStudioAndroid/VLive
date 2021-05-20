@@ -4,6 +4,7 @@ plugins {
     id("com.android.application")
     kotlin("android")
     id("kotlin-android")
+    id("kotlin-kapt")
 }
 
 apply {
@@ -34,7 +35,8 @@ tasks {
 }
 
 extensions.configure<FilamentToolsPluginExtension> {
-    cmgenArgs = "-q --format=ktx --size=256 --extract-blur=0.1 --deploy=src/main/assets/envs/default_env"
+    cmgenArgs =
+        "-q --format=ktx --size=256 --extract-blur=0.1 --deploy=src/main/assets/envs/default_env"
     iblInputFile.set(project.layout.projectDirectory.file("resource/env/lightroom_14b.hdr"))
     iblOutputDir.set(project.layout.projectDirectory.dir("src/main/assets/envs"))
 
@@ -99,6 +101,7 @@ dependencies {
     implementation(Dep.AndroidX.APPCOMPAT)
     implementation(Dep.AndroidX.MATERIAL)
     implementation(Dep.AndroidX.CONSTRAINTLAYOUT)
+    implementation(Dep.AndroidX.DATA_STORE)
 
     implementation(Dep.CameraX.CAMERA2)
     implementation(Dep.CameraX.LIFE_CYCLE)
@@ -119,4 +122,16 @@ dependencies {
     implementation(Dep.AndroidX.Lifecycle.RTM_KTX)
 
     implementation(Dep.ARCore.CORE)
+
+    implementation(Dep.OKHTTP)
+    implementation(Dep.OKHTTP_LOGGER)
+    implementation(Dep.RETROFIT)
+    implementation(Dep.RETROFIT_MOSHI)
+    implementation(Dep.MOSHI)
+    implementation(Dep.RECYCLERVIEW_ADAPTER_HELPER)
+    implementation("androidx.appcompat:appcompat:1.2.0")
+    implementation("com.google.android.material:material:1.3.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.0.4")
+
+    kapt(Dep.MOSHI_COMPILER)
 }

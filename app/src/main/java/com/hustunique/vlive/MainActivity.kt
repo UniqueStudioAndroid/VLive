@@ -12,6 +12,8 @@ import com.google.ar.core.ArCoreApk
 import com.hustunique.resonance_audio.AudioRender
 import com.hustunique.vlive.agora.AgoraActivity
 import com.hustunique.vlive.databinding.ActivityMainBinding
+import com.hustunique.vlive.ui.LoginActivity
+import com.hustunique.vlive.util.UserInfoManager
 import com.hustunique.vlive.util.Utils
 import com.hustunique.vlive.util.startActivity
 import java.util.*
@@ -21,6 +23,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (UserInfoManager.uid.isEmpty()) {
+            startActivity<LoginActivity>()
+            finish()
+        }
 
         val t = AudioRender
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -48,7 +54,7 @@ class MainActivity : AppCompatActivity() {
 //            if (!allPermissionsGranted()) {
 //                Toast.makeText(this, "No permission, no work!", Toast.LENGTH_SHORT).show()
 //            } else {
-                startActivity<AgoraActivity>()
+            startActivity<AgoraActivity>()
 //            }
         }
 

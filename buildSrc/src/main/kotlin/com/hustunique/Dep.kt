@@ -1,4 +1,3 @@
-
 object Dep {
 
     object Build {
@@ -26,6 +25,7 @@ object Dep {
         const val APPCOMPAT = "androidx.appcompat:appcompat:1.2.0"
         const val MATERIAL = "com.google.android.material:material:1.3.0"
         const val CONSTRAINTLAYOUT = "androidx.constraintlayout:constraintlayout:2.0.4"
+        const val DATA_STORE = "androidx.datastore:datastore-preferences:1.0.0-beta01"
 
         object Lifecycle {
             private const val VERSION = "2.3.1"
@@ -66,4 +66,17 @@ object Dep {
     }
 
     const val OBOE = "com.google.oboe:oboe:1.5.0"
+
+    private const val RETROFIT_VER = "2.9.0"
+    const val RETROFIT = "com.squareup.retrofit2:retrofit:${RETROFIT_VER}"
+    const val RETROFIT_MOSHI = "com.squareup.retrofit2:converter-moshi:${RETROFIT_VER}"
+
+    private const val OKHTTP_VER = "4.9.0"
+    const val OKHTTP = "com.squareup.okhttp3:okhttp:${OKHTTP_VER}"
+    const val OKHTTP_LOGGER = "com.squareup.okhttp3:logging-interceptor:${OKHTTP_VER}"
+
+    private const val MOSHI_VER = "1.10.0"
+    const val MOSHI = "com.squareup.moshi:moshi:${MOSHI_VER}"
+    const val MOSHI_COMPILER = "com.squareup.moshi:moshi-kotlin-codegen:${MOSHI_VER}"
+    const val RECYCLERVIEW_ADAPTER_HELPER = "com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.6"
 }
