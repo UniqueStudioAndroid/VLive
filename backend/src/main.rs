@@ -35,7 +35,7 @@ async fn entry(req: Request<Body>) -> EntryResult<Response<Body>> {
         }
         .map_or_else(
             |e| serde_json::to_vec(&e).unwrap(),
-            |r| serde_json::to_vec(&r).unwrap(),
+            |r| r,
         ),
     );
 

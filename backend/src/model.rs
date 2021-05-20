@@ -15,7 +15,7 @@ lazy_static! {
 
 const BASE_USER_SIZE: usize = 10000;
 
-pub fn register(data: Vec<u8>) -> VLiveResult<UserRegRsp> {
+pub fn register(data: Vec<u8>) -> VLiveResult {
     let req: UserRegReq = serde_json::from_slice(&data)?;
     let mut model = MODEL.lock().unwrap();
     let uid = (model.users.len() + BASE_USER_SIZE).to_string();
@@ -27,10 +27,10 @@ pub fn register(data: Vec<u8>) -> VLiveResult<UserRegRsp> {
     println!("Add user: {:?}", &user);
 
     model.users.insert(uid.clone(), Arc::new(user));
-    Ok(rsp_ok(UserRegRsp { uid }))
+    rsp_ok(UserRegRsp { uid })
 }
 
-pub fn create_channel(data: Vec<u8>) -> VLiveResult<String> {
+pub fn create_channel(data: Vec<u8>) -> VLiveResult {
     let req: ChannelCreateReq = serde_json::from_slice(&data)?;
     let mut model = MODEL.lock().unwrap();
 
@@ -41,54 +41,54 @@ pub fn create_channel(data: Vec<u8>) -> VLiveResult<String> {
         users: HashSet::new(),
     };
     model.channels.insert(cid, channel);
-    Ok(rsp_ok(String::new()))
+    rsp_ok(String::new())
 }
 
-pub fn join_channel(data: Vec<u8>) -> VLiveResult<ChannelJoinRsp> {
+pub fn join_channel(data: Vec<u8>) -> VLiveResult {
     let req: ChannelJoinReq = serde_json::from_slice(&data)?;
     let mut model = MODEL.lock().unwrap();
 
     let user = match model.users.get(&req.uid) {
         Some(v) => v,
-        None => return Err(rsp_err("User not exist")),
+        None => return rsp_err("User not exist"),
     }
     .clone();
 
     model.channels.get_mut(&req.cid).map_or_else(
-        || Err(rsp_err("Channel not exist")),
+        || rsp_err("Channel not exist"),
         |c| {
             if c.users.contains(&user) {
-                return Err(rsp_err("Duplicate"));
+                return rsp_err("Duplicate");
             }
             c.users.insert(user);
             // let count = c.users.len();
-            Ok(rsp_ok(ChannelJoinRsp {
+            rsp_ok(ChannelJoinRsp {
                 pos: vec![0, 0, -4],
-            }))
+            })
         },
     )
 }
 
-pub fn leave_channel(data: Vec<u8>) -> VLiveResult<String> {
+pub fn leave_channel(data: Vec<u8>) -> VLiveResult {
     let req: ChannelLeaveReq = serde_json::from_slice(&data)?;
     let mut model = MODEL.lock().unwrap();
 
     let user = match model.users.get(&req.uid) {
         Some(v) => v,
-        None => return Err(rsp_err("User not exist")),
+        None => return rsp_err("User not exist"),
     }
     .clone();
 
     model.channels.get_mut(&req.cid).map_or_else(
-        || Err(rsp_err("Channel not exist")),
+        || rsp_err("Channel not exist"),
         |c| {
             c.users.remove(&user);
-            Ok(rsp_ok(String::new()))
+            rsp_ok(String::new())
         },
     )
 }
 
-pub fn list_channel(_: Vec<u8>) -> VLiveResult<Vec<ChannelListRsp>> {
+pub fn list_channel(_: Vec<u8>) -> VLiveResult {
     let model = MODEL.lock().unwrap();
     let mut rsp = Vec::new();
 
@@ -101,5 +101,5 @@ pub fn list_channel(_: Vec<u8>) -> VLiveResult<Vec<ChannelListRsp>> {
         });
     });
 
-    Ok(rsp_ok(rsp))
+    rsp_ok(rsp)
 }

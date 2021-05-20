@@ -1,7 +1,7 @@
 use serde::Serialize;
 use serde_json::Error;
 
-pub type VLiveResult<T> = Result<VLiveRsp<T>, VLiveErr>;
+pub type VLiveResult = Result<Vec<u8>, VLiveErr>;
 
 #[derive(Serialize)]
 pub struct VLiveRsp<T: Serialize> {
@@ -10,19 +10,20 @@ pub struct VLiveRsp<T: Serialize> {
     data: T,
 }
 
-pub fn rsp_ok<T: Serialize>(msg: T) -> VLiveRsp<T> {
-    VLiveRsp {
+pub fn rsp_ok<T: Serialize>(msg: T) -> VLiveResult {
+    let rsp = VLiveRsp {
         code: 0,
         msg: "".to_string(),
         data: msg,
-    }
+    };
+    Ok(serde_json::to_vec(&rsp).unwrap())
 }
 
-pub fn rsp_err(msg: &str) -> VLiveErr {
-    VLiveErr {
+pub fn rsp_err(msg: &str) -> VLiveResult {
+    Err(VLiveErr {
         code: -1,
         msg: String::from(msg),
-    }
+    })
 }
 
 #[derive(Serialize)]
