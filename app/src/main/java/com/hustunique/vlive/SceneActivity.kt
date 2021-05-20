@@ -9,6 +9,7 @@ import com.hustunique.vlive.agora.AgoraModule
 import com.hustunique.vlive.databinding.ActivitySceneBinding
 import com.hustunique.vlive.filament.FilamentCameraController
 import com.hustunique.vlive.filament.FilamentContext
+import com.hustunique.vlive.filament.model_object.ActorModelObject
 import com.hustunique.vlive.filament.model_object.SceneModelObject
 import com.hustunique.vlive.filament.model_object.ScreenModelObject
 import com.hustunique.vlive.local.*
@@ -74,6 +75,7 @@ class SceneActivity : AppCompatActivity() {
             filamentContext = FilamentContext(this, glRender.getEglContext())
             bindController(controller)
 
+            addModelObject(ActorModelObject())
             addModelObject(SceneModelObject())
         }
         controller.bindControlView(binding.sceneReset)

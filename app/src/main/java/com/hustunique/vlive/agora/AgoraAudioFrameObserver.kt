@@ -52,7 +52,7 @@ class AgoraAudioFrameObserver(
         samplesPerSec: Int,
         uid: Int
     ): Boolean {
-        Log.i(
+        Log.d(
             TAG,
             "onPlaybackFrameBeforeMixing() called with: samples = $samples, numOfSamples = $numOfSamples, bytesPerSample = $bytesPerSample, channels = $channels, samplesPerSec = $samplesPerSec, uid = $uid"
         )

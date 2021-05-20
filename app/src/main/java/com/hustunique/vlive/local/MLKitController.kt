@@ -47,7 +47,10 @@ class MLKitController(
                 .toFloat()
         }
         onStateChange(lEyeOpenWeight, rEyeOpenWeight, mouthOpenWeight)
-        Log.d(TAG, "onProcess: \n\tlEye: $lEyeOpenWeight\n\trEye: $rEyeOpenWeight\n\tMouth: $mouthOpenWeight")
+        Log.d(
+            TAG,
+            "onProcess: \n\tlEye: $lEyeOpenWeight\n\trEye: $rEyeOpenWeight\n\tMouth: $mouthOpenWeight"
+        )
     }
 
     private var processing = false

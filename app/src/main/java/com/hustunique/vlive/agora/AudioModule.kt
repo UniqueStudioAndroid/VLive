@@ -8,6 +8,8 @@ import com.hustunique.resonance_audio.AudioPlayer
 import com.hustunique.resonance_audio.AudioRender
 import java.nio.ByteBuffer
 import java.util.concurrent.ConcurrentLinkedQueue
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
  *    author : Yuxuan Xiao
@@ -34,10 +36,6 @@ class AudioModule {
     private val memberMap = HashMap<Int, Int>()
 
     private var numFrames = 480
-        set(value) {
-            field = value
-            outBuffer = ByteBuffer.allocateDirect(bufferSizePreFrame * numFrames)
-        }
 
     private val bufferSizePreFrame = AudioConfig.NUM_CHANNELS * 2
 
@@ -47,8 +45,6 @@ class AudioModule {
     private val dataQueue = ConcurrentLinkedQueue<ByteBuffer>()
 
     private val emptyQueue = ConcurrentLinkedQueue<ByteBuffer>()
-
-    private var outBuffer = ByteBuffer.allocateDirect(bufferSizePreFrame * numFrames)
 
     private val processRunnable = object : Runnable {
         override fun run() {
@@ -66,9 +62,9 @@ class AudioModule {
                 dataQueue.offer(buffer)
             }
             Log.i(TAG, "getData: $res")
-            if (running) {
-                handler.postDelayed(this, if (res) 0 else 10)
-            }
+//            if (running) {
+//                handler.postDelayed(this, if (res) 0 else 10)
+//            }
         }
     }
 
@@ -79,15 +75,13 @@ class AudioModule {
             }
         }
         running = true
-        handler.post(processRunnable)
+//        handler.post(processRunnable)
     }
+
 
     fun feedData(uid: Int, frames: Int, array: ByteArray) {
         if (numFrames != frames) {
-            synchronized(outBuffer) {
-                numFrames = frames
-            }
-
+            numFrames = frames
         }
         var sourceId = memberMap[uid]
         if (sourceId == null) {
@@ -98,9 +92,10 @@ class AudioModule {
     }
 
     fun getData(buffer: ByteArray, numFrames: Int) {
+        handler.post(processRunnable)
         dataQueue.poll()?.let {
             it.position(0)
-            it.put(buffer, 0, buffer.size.coerceAtMost(outBuffer.capacity()))
+            it.get(buffer, 0, buffer.size.coerceAtMost(it.capacity()))
             emptyQueue.offer(it)
         }
     }
