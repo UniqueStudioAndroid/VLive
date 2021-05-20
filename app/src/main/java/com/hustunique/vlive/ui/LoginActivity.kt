@@ -32,7 +32,7 @@ class LoginActivity : AppCompatActivity() {
                 Service.userReg(binding.username.text.toString(), binding.sexSwitch.isChecked)
                     .apply {
                         if (successful) {
-                            startActivity<MainActivity>()
+                            startActivity<ChannelListActivity>()
                             finish()
                         } else {
                             ToastUtil.makeLong(msg ?: "")

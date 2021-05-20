@@ -31,6 +31,7 @@ async fn entry(req: Request<Body>) -> EntryResult<Response<Body>> {
             "/channel/join" => model::join_channel(data),
             "/channel/leave" => model::leave_channel(data),
             "/channel/list" => model::list_channel(data),
+            "/channel/create" => model::create_channel(data),
             _ => Err(VLiveErr::not_found(path)),
         }
         .map_or_else(

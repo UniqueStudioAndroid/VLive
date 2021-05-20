@@ -20,4 +20,6 @@ object Constants {
 
     const val CHANNEL_LIST = "channel/list" // void
 
+    const val CHANNEL_CREATE = "channel/create"
+
 }

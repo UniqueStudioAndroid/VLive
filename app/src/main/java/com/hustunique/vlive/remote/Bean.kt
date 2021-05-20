@@ -43,18 +43,16 @@ data class RegRsp(
 
 @JsonClass(generateAdapter = true)
 data class JoinRspData(
-    @Json(name = "uid")
-    val uid: String,
-    @Json(name = "channel_id")
-    val channelId: String,
+    @Json(name = "pos")
+    val pos: List<Int>,
 )
 
 @JsonClass(generateAdapter = true)
 data class Channel(
-    @Json(name = "id")
+    @Json(name = "cid")
     val id: String,
     @Json(name = "desc")
     val desc: String,
-    @Json(name = "member_count")
+    @Json(name = "count")
     val memberCount: Int
 )

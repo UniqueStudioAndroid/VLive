@@ -52,7 +52,7 @@ object Service {
         }
         remoteApi.channelJoin(JsonUtil.jsonReqBody {
             it["uid"] = UserInfoManager.uid
-            it["channel_id"] = channelId
+            it["cid"] = channelId
         })
     }
 
@@ -62,7 +62,7 @@ object Service {
         }
         remoteApi.channelLeave(JsonUtil.jsonReqBody {
             it["uid"] = UserInfoManager.uid
-            it["channel_id"] = channelId
+            it["cid"] = channelId
         })
     }
 
@@ -70,5 +70,11 @@ object Service {
         remoteApi.channelList(JsonUtil.jsonReqBody { })
     }
 
+    suspend fun createChannel(channelName: String, desc: String) = netReq {
+        remoteApi.createChannel(JsonUtil.jsonReqBody {
+            it["cid"] = channelName
+            it["desc"] = desc
+        })
+    }
 
 }
