@@ -31,9 +31,12 @@ class ChannelListActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (UserInfoManager.uid.isEmpty()) {
-            startActivity<LoginActivity>()
-            finish()
+        lifecycleScope.launchWhenCreated {
+            UserInfoManager.blockRefreshUid()
+            if (UserInfoManager.uid.isEmpty()) {
+                startActivity<LoginActivity>()
+                finish()
+            }
         }
         setContentView(binding.root)
         initView()

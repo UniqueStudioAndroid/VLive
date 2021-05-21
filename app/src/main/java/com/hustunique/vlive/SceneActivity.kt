@@ -70,13 +70,14 @@ class SceneActivity : AppCompatActivity() {
             channelId,
             groupMemberManager::onMatrix,
             groupMemberManager::rtmModeChoose
-        ).also { localController.onUpdate = it::sendMessage }
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        localController.onUpdate = agoraMessageModule::sendMessage
 
         glRender = GLRender().apply {
             init()
@@ -107,7 +108,6 @@ class SceneActivity : AppCompatActivity() {
                     finish()
                     return@apply
                 }
-                agoraMessageModule.sendMessage(ChannelListActivity.videoMode)
                 data?.let {
                     it.memberList.forEach {
                         groupMemberManager.rtmModeChoose(it.videoMode, it.uid.toIntOrNull() ?: 0)

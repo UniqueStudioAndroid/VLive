@@ -27,6 +27,10 @@ object UserInfoManager {
         }
     }
 
+    suspend fun blockRefreshUid() {
+        uid = VLiveApplication.application.dataStore.data.map { it[uidKey] }.first() ?: ""
+    }
+
     fun saveUid(uid: String) {
         this.uid = uid
         GlobalScope.launch {

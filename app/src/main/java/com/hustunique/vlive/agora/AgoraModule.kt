@@ -174,17 +174,17 @@ class AgoraModule(
 
     private fun initializeAgoraEngine() {
         try {
-            val logConfig = LogConfig()
-            logConfig.level = Constants.LogLevel.getValue(Constants.LogLevel.LOG_LEVEL_INFO)
-            val ts: String = SimpleDateFormat("yyyyMMdd").format(Date())
-            logConfig.filePath = "/sdcard/$ts.log"
-            logConfig.fileSize = 2048 * 10
+//            val logConfig = LogConfig()
+//            logConfig.level = Constants.LogLevel.getValue(Constants.LogLevel.LOG_LEVEL_INFO)
+//            val ts: String = SimpleDateFormat("yyyyMMdd").format(Date())
+//            logConfig.filePath = "/sdcard/$ts.log"
+//            logConfig.fileSize = 2048 * 10
 
             val config = RtcEngineConfig()
             config.mAppId = activity.getString(R.string.agora_app_id)
             config.mEventHandler = mRtcEventHandler
             config.mContext = activity.applicationContext
-            config.mLogConfig = logConfig
+//            config.mLogConfig = logConfig
             mRtcEngine =
                 RtcEngine.create(config)
         } catch (e: Exception) {

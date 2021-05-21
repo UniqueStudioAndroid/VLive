@@ -59,7 +59,7 @@ class FilamentView @JvmOverloads constructor(
     }
 
     override fun doFrame(frameTimeNanos: Long) {
-        choreographer.postFrameCallback(this)
+        choreographer.postFrameCallbackDelayed(this, 32)
         filamentContext?.let { controller?.update(it.camera) }
         modelObjectList.forEach { it.update(frameTimeNanos) }
 

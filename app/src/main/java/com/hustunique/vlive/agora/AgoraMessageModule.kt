@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.hustunique.vlive.R
 import com.hustunique.vlive.local.CharacterProperty
+import com.hustunique.vlive.ui.ChannelListActivity
 import com.hustunique.vlive.util.UserInfoManager
 import io.agora.rtm.*
 
@@ -78,6 +79,7 @@ class AgoraMessageModule(
                 Log.i(TAG, "onMessageReceived: $msg")
                 posMessageCallback(msg, p1?.userId?.toIntOrNull() ?: 0)
             } else {
+                Log.i(TAG, "onTextMessageReceived: ${p0.text}")
                 modeMessageCallback(p0.text == "video", p1?.userId?.toIntOrNull() ?: 0)
             }
         }
@@ -144,15 +146,18 @@ class AgoraMessageModule(
     fun sendMessage(isVideo: Boolean) {
         if (!joinChannelSuccess) {
             Log.i(TAG, "sendMessage: no channel now")
+            Log.i(TAG, "sendTextMessage: no channel ")
             return
         }
+        Log.i(TAG, "sendTextMessage: ")
         rtmClient?.createMessage(if (isVideo) "video" else "virtual")?.apply {
             rtmChannel?.sendMessage(this, object : ResultCallback<Void> {
                 override fun onSuccess(p0: Void?) {
-                    Log.d(TAG, "sendMessage: $isVideo")
+                    Log.i(TAG, "sendTextMessage: $isVideo")
                 }
 
                 override fun onFailure(p0: ErrorInfo?) {
+                    Log.i(TAG, "sendTextMessage: fail ")
                     Log.e(TAG, "onFailure: ${p0.toString()}")
                 }
 
@@ -171,6 +176,7 @@ class AgoraMessageModule(
                 join(object : ResultCallback<Void> {
                     override fun onSuccess(p0: Void?) {
                         joinChannelSuccess = true
+                        sendMessage(ChannelListActivity.videoMode)
                         Log.i(TAG, "onSuccess: join channel")
                     }
 

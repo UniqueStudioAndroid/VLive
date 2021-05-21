@@ -45,6 +45,7 @@ class GroupMemberManager(
 
     @Synchronized
     fun rtmModeChoose(video: Boolean, uid: Int) {
+        Log.i(TAG, "rtmModeChoose() called with: video = $video, uid = $uid")
         memberInfo.putIfAbsent(uid, MemberInfo())
         memberInfo.get(uid).apply { videoMode = video }
     }

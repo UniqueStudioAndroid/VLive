@@ -31,7 +31,7 @@ class AudioModule {
 
     private val audioRender = AudioRender()
 
-    private var audioPlayer: AudioPlayer? = null
+//    private var audioPlayer: AudioPlayer? = null
 
     private val memberMap = HashMap<Int, Int>()
 
@@ -69,11 +69,11 @@ class AudioModule {
     }
 
     fun init() {
-        handler.post {
-            audioPlayer = AudioPlayer().apply {
-                startPlay()
-            }
-        }
+//        handler.post {
+//            audioPlayer = AudioPlayer().apply {
+//                startPlay()
+//            }
+//        }
         running = true
 //        handler.post(processRunnable)
     }
@@ -109,7 +109,7 @@ class AudioModule {
             }
             release()
         }
-        audioPlayer?.release()
+//        audioPlayer?.release()
     }
 
 
