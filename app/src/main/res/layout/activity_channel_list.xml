@@ -26,6 +26,12 @@
             android:layout_weight="1"
             android:text="创建房间" />
 
+        <CheckBox
+            android:id="@+id/cb_mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="视频" />
+
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView

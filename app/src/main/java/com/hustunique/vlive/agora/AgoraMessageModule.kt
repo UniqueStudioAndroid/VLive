@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.hustunique.vlive.R
 import com.hustunique.vlive.local.CharacterProperty
+import com.hustunique.vlive.util.UserInfoManager
 import io.agora.rtm.*
 
 /**
@@ -101,7 +102,7 @@ class AgoraMessageModule(
                 context.getString(R.string.agora_app_id),
                 rtmClientListener
             ).apply {
-                login(null, AgoraModule.MUID.toString(), object : ResultCallback<Void> {
+                login(null, UserInfoManager.uid, object : ResultCallback<Void> {
                     override fun onSuccess(p0: Void?) {
                         loginSuccess = true
                         Log.i(TAG, "onSuccess: login")

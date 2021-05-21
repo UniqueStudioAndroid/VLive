@@ -16,6 +16,12 @@ import com.hustunique.vlive.util.startActivity
 
 class ChannelListActivity : AppCompatActivity() {
 
+    companion object {
+        private const val TAG = "ChannelListActivity"
+
+        var videoMode = false
+    }
+
     private val binding by lazy {
         ActivityChannelListBinding.inflate(layoutInflater)
     }
@@ -50,6 +56,7 @@ class ChannelListActivity : AppCompatActivity() {
         binding.createRoom.setOnClickListener {
             startActivity<CreateRoomActivity>()
         }
+        binding.cbMode.setOnCheckedChangeListener { _, isChecked -> videoMode = isChecked }
     }
 
     private fun initData() {

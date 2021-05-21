@@ -29,7 +29,7 @@ interface RemoteApi {
     suspend fun channelList(@Body requestBody: RequestBody): BaseRsp<List<Channel>>
 
     @Headers("Content-Type: application/json")
-    @POST(Constants.CHANNEL_LIST)
-    suspend fun createChannel(@Body requestBody: RequestBody): BaseRsp<List<String>>
+    @POST(Constants.CHANNEL_CREATE)
+    suspend fun createChannel(@Body requestBody: RequestBody): BaseRsp<String>
 
 }

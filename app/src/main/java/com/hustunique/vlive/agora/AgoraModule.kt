@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 import com.hustunique.resonance_audio.AudioConfig
 import com.hustunique.vlive.R
+import com.hustunique.vlive.util.UserInfoManager
 import io.agora.rtc.Constants
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
@@ -156,7 +157,12 @@ class AgoraModule(
     }
 
     private fun joinChannel() {
-        mRtcEngine?.joinChannel(null, "test1", "Extra Optional Data", MUID)
+        mRtcEngine?.joinChannel(
+            null,
+            "test1",
+            "Extra Optional Data",
+            UserInfoManager.uid.toIntOrNull() ?: 0
+        )
     }
 
     private fun leaveChannel() {
