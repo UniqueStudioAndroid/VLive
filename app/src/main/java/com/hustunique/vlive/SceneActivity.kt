@@ -1,19 +1,20 @@
 package com.hustunique.vlive
 
-import android.media.Image
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.hustunique.vlive.agora.AgoraMessageModule
 import com.hustunique.vlive.agora.AgoraModule
 import com.hustunique.vlive.databinding.ActivitySceneBinding
-import com.hustunique.vlive.filament.FilamentCameraController
 import com.hustunique.vlive.filament.FilamentContext
+import com.hustunique.vlive.filament.FilamentLocalController
 import com.hustunique.vlive.filament.model_object.ActorModelObject
 import com.hustunique.vlive.filament.model_object.SceneModelObject
 import com.hustunique.vlive.filament.model_object.ScreenModelObject
-import com.hustunique.vlive.local.*
+import com.hustunique.vlive.local.GroupMemberManager
+import com.hustunique.vlive.local.VirtualCharacterPropertyProvider
 import com.hustunique.vlive.opengl.GLRender
+import com.hustunique.vlive.ui.ChannelListActivity
 
 class SceneActivity : AppCompatActivity() {
 
@@ -25,8 +26,13 @@ class SceneActivity : AppCompatActivity() {
         ActivitySceneBinding.inflate(layoutInflater)
     }
 
-    private val controller by lazy {
-        FilamentCameraController(this)
+    private val localController by lazy {
+        FilamentLocalController(this)
+    }
+    private val characterPropertyProvider by lazy {
+        if (ChannelListActivity.videoMode) {
+            VirtualCharacterPropertyProvider(this, localController::onCharacterPropertyReady)
+        } else null
     }
 
     lateinit var screenModelObject: ScreenModelObject
@@ -34,8 +40,6 @@ class SceneActivity : AppCompatActivity() {
     private lateinit var glRender: GLRender
 
     private lateinit var agoraModule: AgoraModule
-
-    private lateinit var localVideoModel: LocalVideoModule
 
     private val groupMemberManager = GroupMemberManager()
 
@@ -60,31 +64,32 @@ class SceneActivity : AppCompatActivity() {
 //            agoraModule.setRemoteVideoRender(it, screenModelObject.videoConsumer)
 //            binding.filamentView.addModelObject(screenModelObject)
 
-        localVideoModel = LocalVideoModule(this, object : LocalVideoSink {
-            override fun onFrame(image: Image) {
-            }
-
-            override fun onPropertyReady(property: CharacterProperty) {
-                agoraMessageModule.sendMessage(property)
-            }
-
-            override fun getConsumeType(): LocalVideoType = LocalVideoType.VIRTUAL
-        })
-
         binding.filamentView.apply {
             filamentContext = FilamentContext(this, glRender.getEglContext())
-            bindController(controller)
+            bindController(localController)
 
             addModelObject(ActorModelObject())
             addModelObject(SceneModelObject())
         }
-        controller.bindControlView(binding.sceneReset)
+        localController.bindControlView(binding.sceneReset)
+
     }
 
     override fun onDestroy() {
         super.onDestroy()
         agoraModule.destroyAgora()
         glRender.release()
-        controller.release()
+        localController.release()
+        characterPropertyProvider?.destroy()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        characterPropertyProvider?.resume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        characterPropertyProvider?.pause()
     }
 }

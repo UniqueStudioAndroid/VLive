@@ -7,15 +7,18 @@ import android.view.View
 import com.google.android.filament.Camera
 import com.google.android.filament.utils.Float3
 import com.google.android.filament.utils.Utils
+import com.hustunique.vlive.data.Transformation
 import com.hustunique.vlive.data.Vector3
+import com.hustunique.vlive.local.CharacterProperty
 import com.hustunique.vlive.util.AngleHandler
+import java.nio.FloatBuffer
 
 /**
  *    author : Yuxuan Xiao
  *    e-mail : qpalwo@qq.com
  *    date   : 5/2/21
  */
-class FilamentCameraController(
+class FilamentLocalController(
     context: Context
 ) {
 
@@ -28,6 +31,7 @@ class FilamentCameraController(
         private const val MOVE_DELTA = 1f
         private const val MOVE_PER_MS_BASE = 0.01f
         private const val TAG = "FilamentCameraController"
+        private const val TRANSMIT_DATA_SIZE = 12 * 4
 
         private val UPWARD = Vector3(y = 1f)
         private val FRONT = Vector3(z = -1f)
@@ -41,6 +45,7 @@ class FilamentCameraController(
         this[8] = 1f
     }
     private val rotationMatrix = FloatArray(9)
+    private val objectTransformation = Transformation()
 
     private val cameraPos = Vector3()
     private val cameraFront = Vector3(z = -1f)
@@ -56,17 +61,22 @@ class FilamentCameraController(
         reset.setOnClickListener { resetCalibration() }
     }
 
-    fun update(camera: Camera) {
+    fun resetPosition(v: Vector3) {
+        cameraPos.clone(v)
+    }
+
+    fun update(camera: Camera): ByteArray {
         // calculate rotation matrix
         angleHandler.getRotationMatrix(rotationMatrix)
+
+        matMul(baseMatrix, rotationMatrix)
+
         // compute camera's front direction after rotation
         cameraFront.clone(FRONT)
             .applyL(rotationMatrix)
-            .applyL(baseMatrix)
         // compute camera's up direction after rotation
         cameraUP.clone(UPWARD)
             .applyL(rotationMatrix)
-            .applyL(baseMatrix)
         // compute forward step & update last update time
         computeWalk()
         // recompute camera's lookAt matrix
@@ -76,6 +86,11 @@ class FilamentCameraController(
             cameraTarget.x.toDouble(), cameraTarget.y.toDouble(), cameraTarget.z.toDouble(),
             cameraUP.x.toDouble(), cameraUP.y.toDouble(), cameraUP.z.toDouble()
         )
+
+        objectTransformation.setRotation(rotationMatrix)
+        objectTransformation.setTransformation(cameraPos)
+        property.objectMatrix = FloatBuffer.wrap(objectTransformation.data)
+        return property.toByteArray()
     }
 
     private var lastUpdateTime = 0L
@@ -127,6 +142,11 @@ class FilamentCameraController(
             ACTION_UP, ACTION_CANCEL -> isSelected = false
         }
     }
+
+    private var property: CharacterProperty = CharacterProperty.empty()
+    fun onCharacterPropertyReady(property: CharacterProperty) {
+        this.property = property
+    }
 }
 
 private fun FloatArray.transpose() {
@@ -144,4 +164,31 @@ private fun FloatArray.transpose() {
         this[6] = temp2
         this[7] = temp5
     }
+}
+
+private fun matMul(m1: FloatArray, m2: FloatArray) {
+    // 0 1 2
+    // 3 4 5
+    // 6 7 8
+    val c1 = m1[0] * m2[0] + m1[1] * m2[3] + m1[2] * m2[6]
+    val c2 = m1[0] * m2[1] + m1[1] * m2[4] + m1[2] * m2[7]
+    val c3 = m1[0] * m2[2] + m1[1] * m2[5] + m1[2] * m2[8]
+
+    val c4 = m1[3] * m2[0] + m1[4] * m2[3] + m1[5] * m2[6]
+    val c5 = m1[3] * m2[1] + m1[4] * m2[4] + m1[5] * m2[7]
+    val c6 = m1[3] * m2[2] + m1[4] * m2[5] + m1[5] * m2[8]
+
+    val c7 = m1[6] * m2[0] + m1[7] * m2[3] + m1[8] * m2[6]
+    val c8 = m1[6] * m2[1] + m1[7] * m2[4] + m1[8] * m2[7]
+    val c9 = m1[6] * m2[2] + m1[7] * m2[5] + m1[8] * m2[8]
+
+    m2[0] = c1
+    m2[1] = c2
+    m2[2] = c3
+    m2[3] = c4
+    m2[4] = c5
+    m2[5] = c6
+    m2[6] = c7
+    m2[7] = c8
+    m2[8] = c9
 }

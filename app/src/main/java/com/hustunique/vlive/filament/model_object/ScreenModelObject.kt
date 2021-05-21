@@ -17,15 +17,11 @@ class ScreenModelObject(eglHandler: Long) : FilamentBaseModelObject("models/scre
 
     val videoConsumer = AgoraRawVideoConsumer()
 
-    override val scaleBase: Int
-        get() = 1
-
     private var screenEntity: Int = 0
 
     private lateinit var materialInstance: MaterialInstance
 
     override fun onAssetSet() {
-        super.onAssetSet()
         screenEntity = asset?.getFirstEntityByName("screen") ?: 0
         materialInstance = filamentContext?.materialHolder?.videoMaterial?.createInstance()!!
         materialInstance.setParameter("baseColor", Colors.RgbType.SRGB, 1.0f, 0.85f, 0.57f)
@@ -45,7 +41,6 @@ class ScreenModelObject(eglHandler: Long) : FilamentBaseModelObject("models/scre
     }
 
     override fun update(frameTimeNanos: Long) {
-        super.update(frameTimeNanos)
         videoConsumer.updateStream()
     }
 }

@@ -10,14 +10,10 @@ import kotlin.math.sin
  *    date   : 5/3/21
  */
 class VFaceModelObject : FilamentBaseModelObject("models/nfface.glb") {
-    override val scaleBase: Int
-        get() = 1
-
     private var eyeEntity = 0
     private var mouthEntity = 0
 
     override fun onAssetSet() {
-        super.onAssetSet()
         eyeEntity = asset?.getFirstEntityByName("HyperNURBS_6C4dObjectSymmetry_6Polygon") ?: 0
         mouthEntity = asset?.getFirstEntityByName("HyperNURBS") ?: 0
     }
@@ -42,7 +38,6 @@ class VFaceModelObject : FilamentBaseModelObject("models/nfface.glb") {
     }
 
     override fun update(frameTimeNanos: Long) {
-        super.update(frameTimeNanos)
         setAnim(frameTimeNanos)
     }
 }

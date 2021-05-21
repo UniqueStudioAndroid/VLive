@@ -1,12 +1,11 @@
 package com.hustunique.vlive.filament.model_object
 
 import android.util.Log
-import androidx.annotation.CallSuper
 import com.google.android.filament.gltfio.FilamentAsset
 import com.google.android.filament.utils.*
-import com.hustunique.vlive.filament.FilamentCameraController
 import com.hustunique.vlive.filament.FilamentContext
-import com.hustunique.vlive.filament.FilamentModelObjectController
+import com.hustunique.vlive.filament.FilamentLocalController
+import com.hustunique.vlive.local.CharacterProperty
 
 /**
  *    author : Yuxuan Xiao
@@ -19,10 +18,6 @@ abstract class FilamentBaseModelObject(val resourcePath: String) {
         private const val TAG = "FilamentBaseModelObject"
     }
 
-    protected val controllerList = mutableListOf<FilamentModelObjectController>()
-
-    protected abstract val scaleBase: Int
-
     var asset: FilamentAsset? = null
         set(value) {
             field = value
@@ -32,27 +27,14 @@ abstract class FilamentBaseModelObject(val resourcePath: String) {
         }
 
     protected var filamentContext: FilamentContext? = null
+    protected var property: CharacterProperty? = null
 
-    protected open fun onAssetSet() {
-        transformToCube()
-    }
+    abstract fun onAssetSet()
 
-
-    fun addController(controller: FilamentModelObjectController) {
-        controllerList.add(controller)
-    }
-
-    fun removeController(controller: FilamentModelObjectController) {
-        controllerList.remove(controller)
-    }
+    abstract fun update(frameTimeNanos: Long)
 
     fun bindToContext(context: FilamentContext) {
         filamentContext = context
-    }
-
-    @CallSuper
-    open fun update(frameTimeNanos: Long) {
-
     }
 
     fun destroy() {
@@ -60,7 +42,11 @@ abstract class FilamentBaseModelObject(val resourcePath: String) {
         filamentContext = null
     }
 
-    private fun transformToCube(centerPoint: Float3 = FilamentCameraController.kDefaultObjectPosition) {
+    fun onProperty(property: CharacterProperty) {
+        this.property = property
+    }
+
+    private fun transformToCube(centerPoint: Float3 = FilamentLocalController.kDefaultObjectPosition) {
         if (filamentContext == null) {
             throw IllegalStateException("do not attached to a engine")
         }
@@ -74,7 +60,7 @@ abstract class FilamentBaseModelObject(val resourcePath: String) {
             )
             Log.i(TAG, "transformToCube: ${center.x} ${center.y} ${center.z} $resourcePath")
             val maxExtent = 2.0f * max(halfExtent)
-            val scaleFactor = 2.0f / maxExtent * scaleBase
+            val scaleFactor = 2.0f / maxExtent
             center -= centerPoint / scaleFactor
             val transform = scale(Float3(scaleFactor)) * translation(-center)
             tm.setTransform(tm.getInstance(asset.root), transpose(transform).toFloatArray())

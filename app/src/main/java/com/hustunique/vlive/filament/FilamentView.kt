@@ -39,7 +39,7 @@ class FilamentView @JvmOverloads constructor(
 
     private val modelObjectList = mutableListOf<FilamentBaseModelObject>()
 
-    private var controller: FilamentCameraController? = null
+    private var controller: FilamentLocalController? = null
 
     private val choreographer = Choreographer.getInstance()
 
@@ -66,7 +66,7 @@ class FilamentView @JvmOverloads constructor(
         filamentContext?.render(frameTimeNanos)
     }
 
-    fun bindController(filamentCameraController: FilamentCameraController) {
+    fun bindController(filamentCameraController: FilamentLocalController) {
         this.controller = filamentCameraController
     }
 

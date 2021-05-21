@@ -20,7 +20,7 @@ import java.nio.FloatBuffer
  */
 class VirtualCharacterPropertyProvider(
     context: Context,
-    private val localVideoSink: LocalVideoSink,
+    onPropertyReady: (CharacterProperty) -> Unit,
 ) {
     private val localVideoRenderThread = HandlerThread("lo cal_video_renderer").apply { start() }
     private val glHandler = Handler(localVideoRenderThread.looper)
@@ -34,7 +34,6 @@ class VirtualCharacterPropertyProvider(
     private lateinit var oesRenderer: RenderTask
 
     init {
-        require(localVideoSink.getConsumeType() == LocalVideoType.VIRTUAL)
         glHandler.post {
             // bind image reader's surface to opengl's context and initialize render tasks
             eglHelper.bindSurface(imageReader.surface)
@@ -54,7 +53,7 @@ class VirtualCharacterPropertyProvider(
                 glHandler.post {
                     val buffer = FloatBuffer.allocate(16)
                     arCore.getObjectMatrixData(buffer)
-                    localVideoSink.onPropertyReady(CharacterProperty(f1, f2, f3, buffer))
+                    onPropertyReady(CharacterProperty(f1, f2, f3, buffer, FloatBuffer.allocate(16)))
                 }
             }
 
