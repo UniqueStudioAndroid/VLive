@@ -34,10 +34,7 @@ async fn entry(req: Request<Body>) -> EntryResult<Response<Body>> {
             "/channel/create" => model::create_channel(data),
             _ => Err(VLiveErr::not_found(path)),
         }
-        .map_or_else(
-            |e| serde_json::to_vec(&e).unwrap(),
-            |r| r,
-        ),
+        .map_or_else(|e| serde_json::to_vec(&e).unwrap(), |r| r),
     );
 
     println!(
