@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 import com.hustunique.resonance_audio.AudioConfig
 import com.hustunique.vlive.R
+import com.hustunique.vlive.ui.ChannelListActivity
 import com.hustunique.vlive.util.UserInfoManager
 import io.agora.rtc.Constants
 import io.agora.rtc.IRtcEngineEventHandler
@@ -39,7 +40,8 @@ class AgoraModule(
 
     private var mRtcEngine: RtcEngine? = null
 
-    private var audioModule: AudioModule? = null
+    var audioModule: AudioModule? = null
+        private set
 
     private val audioFrameObserver = AgoraAudioFrameObserver({ array, numSamples, uid ->
         audioModule?.feedData(uid, numSamples, array)
@@ -121,7 +123,6 @@ class AgoraModule(
 //        mRtcEngine?.setVideoSource(videoSource)
 
         setAudioObserver()
-        joinChannel()
         return view
     }
 
@@ -150,16 +151,18 @@ class AgoraModule(
             setZOrderMediaOverlay(true)
         }
         mRtcEngine?.apply {
-//            enableVideo()
+            if (ChannelListActivity.videoMode) {
+                enableVideo()
+            }
             setupLocalVideo(VideoCanvas(surface, VideoCanvas.RENDER_MODE_FIT, 0))
         }
         return surface
     }
 
-    private fun joinChannel() {
+    fun joinChannel(channelId: String) {
         mRtcEngine?.joinChannel(
             null,
-            "test1",
+            channelId,
             "Extra Optional Data",
             UserInfoManager.uid.toIntOrNull() ?: 0
         )

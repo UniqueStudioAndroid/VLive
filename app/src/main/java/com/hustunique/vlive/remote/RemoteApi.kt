@@ -18,11 +18,11 @@ interface RemoteApi {
 
     @Headers("Content-Type: application/json")
     @POST(Constants.CHANNEL_JOIN)
-    suspend fun channelJoin(@Body requestBody: RequestBody): BaseRsp<JoinRspData>
+    suspend fun channelJoin(@Body channelJoinReq: ChannelJoinReq): BaseRsp<JoinRspData>
 
     @Headers("Content-Type: application/json")
     @POST(Constants.CHANNEL_LEAVE)
-    suspend fun channelLeave(@Body requestBody: RequestBody): BaseRsp<List<String>>
+    suspend fun channelLeave(@Body requestBody: RequestBody): BaseRsp<String>
 
     @Headers("Content-Type: application/json")
     @POST(Constants.CHANNEL_LIST)

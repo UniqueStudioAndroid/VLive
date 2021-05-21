@@ -38,6 +38,8 @@ class FilamentLocalController(
 //        private val RIGHT = Vector3(x = 1f)
     }
 
+    var onUpdate: ((CharacterProperty) -> Unit)? = null
+
     private val angleHandler = AngleHandler(context).apply { start() }
     private val baseMatrix = FloatArray(9).apply {
         this[0] = 1f
@@ -65,7 +67,7 @@ class FilamentLocalController(
         cameraPos.clone(v)
     }
 
-    fun update(camera: Camera): ByteArray {
+    fun update(camera: Camera) {
         // calculate rotation matrix
         angleHandler.getRotationMatrix(rotationMatrix)
 
@@ -90,7 +92,7 @@ class FilamentLocalController(
         objectTransformation.setRotation(rotationMatrix)
         objectTransformation.setTransformation(cameraPos)
         property.objectMatrix = FloatBuffer.wrap(objectTransformation.data)
-        return property.toByteArray()
+        onUpdate?.invoke(property)
     }
 
     private var lastUpdateTime = 0L

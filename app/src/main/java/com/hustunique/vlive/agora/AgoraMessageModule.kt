@@ -14,6 +14,7 @@ import io.agora.rtm.*
  */
 class AgoraMessageModule(
     context: Context,
+    channelId: String,
     private val posMessageCallback: (CharacterProperty, Int) -> Unit,
     private val modeMessageCallback: (Boolean, Int) -> Unit
 ) {
@@ -106,7 +107,7 @@ class AgoraMessageModule(
                     override fun onSuccess(p0: Void?) {
                         loginSuccess = true
                         Log.i(TAG, "onSuccess: login")
-                        joinChannel()
+                        joinChannel(channelId)
                     }
 
                     override fun onFailure(p0: ErrorInfo?) {
@@ -159,9 +160,14 @@ class AgoraMessageModule(
         }
     }
 
-    private fun joinChannel() {
+    fun release() {
+        rtmChannel?.release()
+        rtmClient?.release()
+    }
+
+    private fun joinChannel(channelId: String) {
         try {
-            rtmChannel = rtmClient?.createChannel("test1", rtmChannelListener)?.apply {
+            rtmChannel = rtmClient?.createChannel(channelId, rtmChannelListener)?.apply {
                 join(object : ResultCallback<Void> {
                     override fun onSuccess(p0: Void?) {
                         joinChannelSuccess = true

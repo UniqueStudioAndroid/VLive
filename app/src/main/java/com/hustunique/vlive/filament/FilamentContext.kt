@@ -8,6 +8,7 @@ import com.google.android.filament.android.DisplayHelper
 import com.google.android.filament.android.UiHelper
 import com.google.android.filament.utils.KtxLoader
 import com.google.android.filament.utils.Utils
+import com.hustunique.vlive.filament.model_object.FilamentBaseModelObject
 import java.nio.Buffer
 
 /**
@@ -107,6 +108,11 @@ class FilamentContext(private val surfaceView: SurfaceView, sharedContext: EGLCo
 
     fun setSkyBox(buffer: Buffer) {
         scene.skybox = KtxLoader.createSkybox(engine, buffer)
+    }
+
+    fun removeObj(obj: FilamentBaseModelObject) {
+        obj.asset?.run(resourceHolder::removeAsset)
+        obj.destroy()
     }
 
     fun getTransformManager() = engine.transformManager

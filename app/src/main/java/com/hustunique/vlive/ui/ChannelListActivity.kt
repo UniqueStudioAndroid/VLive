@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.hustunique.vlive.R
+import com.hustunique.vlive.SceneActivity
 import com.hustunique.vlive.databinding.ActivityChannelListBinding
 import com.hustunique.vlive.remote.Channel
 import com.hustunique.vlive.remote.Service
@@ -80,6 +81,10 @@ class ChannelListAdapter : BaseQuickAdapter<Channel, BaseViewHolder>(R.layout.it
     override fun convert(holder: BaseViewHolder, item: Channel) {
         holder.setText(R.id.channel_name, item.id)
             .setText(R.id.channel_desc, item.desc)
+
+        holder.itemView.setOnClickListener {
+            SceneActivity.startActivity(context, item.id)
+        }
     }
 
 }

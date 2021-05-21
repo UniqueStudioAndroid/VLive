@@ -80,6 +80,11 @@ class FilamentView @JvmOverloads constructor(
         modelObjectList.add(obj)
     }
 
+    fun removeModelObject(obj: FilamentBaseModelObject) {
+        modelObjectList.remove(obj)
+        filamentContext?.removeObj(obj)
+    }
+
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         event?.let {
             controller?.onTouchEvent(it)

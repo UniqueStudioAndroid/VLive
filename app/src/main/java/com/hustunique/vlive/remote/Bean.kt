@@ -42,9 +42,29 @@ data class RegRsp(
 )
 
 @JsonClass(generateAdapter = true)
+data class ChannelJoinReq(
+    @Json(name = "uid")
+    val uid: String,
+    @Json(name = "cid")
+    val cid: String,
+    @Json(name = "video_mode")
+    val videoMode: Boolean
+)
+
+@JsonClass(generateAdapter = true)
 data class JoinRspData(
     @Json(name = "pos")
     val pos: List<Int>,
+    @Json(name = "users")
+    val memberList: List<ChannelMemberInfo>
+)
+
+@JsonClass(generateAdapter = true)
+data class ChannelMemberInfo(
+    @Json(name = "uid")
+    val uid: String,
+    @Json(name = "video_mode")
+    val videoMode: Boolean
 )
 
 @JsonClass(generateAdapter = true)

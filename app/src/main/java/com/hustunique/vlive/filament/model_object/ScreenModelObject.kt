@@ -9,7 +9,7 @@ import com.hustunique.vlive.agora.AgoraRawVideoConsumer
  *    e-mail : qpalwo@qq.com
  *    date   : 5/3/21
  */
-class ScreenModelObject(eglHandler: Long) : FilamentBaseModelObject("models/screen.glb") {
+class ScreenModelObject : FilamentBaseModelObject("models/screen.glb") {
 
     companion object {
         private const val TAG = "ScreenModelObject"

@@ -1,6 +1,7 @@
 package com.hustunique.vlive.remote
 
 import com.hustunique.vlive.BuildConfig
+import com.hustunique.vlive.ui.ChannelListActivity
 import com.hustunique.vlive.util.JsonUtil
 import com.hustunique.vlive.util.UserInfoManager
 import com.hustunique.vlive.util.netReq
@@ -50,10 +51,13 @@ object Service {
         if (UserInfoManager.uid.isEmpty()) {
             return@netReq BaseRsp(-1, "do not login", null)
         }
-        remoteApi.channelJoin(JsonUtil.jsonReqBody {
-            it["uid"] = UserInfoManager.uid
-            it["cid"] = channelId
-        })
+        remoteApi.channelJoin(
+            ChannelJoinReq(
+                UserInfoManager.uid,
+                channelId,
+                ChannelListActivity.videoMode
+            )
+        )
     }
 
     suspend fun channelLeave(channelId: String) = netReq {

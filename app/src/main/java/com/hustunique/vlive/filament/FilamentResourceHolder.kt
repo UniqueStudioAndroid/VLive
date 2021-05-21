@@ -40,11 +40,12 @@ class FilamentResourceHolder(
         populateScene()
     }
 
-    fun loadResource(buffer: Buffer): FilamentAsset? = assetLoader.createAssetFromBinary(buffer)?.apply {
-        resourceLoader.asyncBeginLoad(this)
-        assetList.add(this)
-        releaseSourceData()
-    }
+    fun loadResource(buffer: Buffer): FilamentAsset? =
+        assetLoader.createAssetFromBinary(buffer)?.apply {
+            resourceLoader.asyncBeginLoad(this)
+            assetList.add(this)
+            releaseSourceData()
+        }
 
 
     private fun populateScene() {
@@ -61,6 +62,13 @@ class FilamentResourceHolder(
         while (popRenderables()) {
             onEntityReady(readyRenderables.take(count).toIntArray())
         }
+    }
+
+    fun removeAsset(asset: FilamentAsset) {
+        Log.i(TAG, "removeAsset: ")
+        assetList.remove(asset)
+        onEntityRemoved(asset.entities)
+        assetLoader.destroyAsset(asset)
     }
 
     fun destroy() {
