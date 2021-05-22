@@ -12,13 +12,10 @@ import io.agora.rtc.Constants
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
 import io.agora.rtc.RtcEngineConfig
-import io.agora.rtc.RtcEngineConfig.LogConfig
 import io.agora.rtc.mediaio.IVideoSource
 import io.agora.rtc.video.VideoCanvas
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
-import java.util.*
 
 
 /**
@@ -34,8 +31,6 @@ class AgoraModule(
 
     companion object {
         private const val TAG = "AgoraModule"
-
-        val MUID = System.currentTimeMillis().toInt()
     }
 
     private var mRtcEngine: RtcEngine? = null
@@ -127,11 +122,12 @@ class AgoraModule(
     }
 
     private fun setAudioObserver() {
-
         mRtcEngine?.run {
+            setAudioProfile(
+                Constants.AUDIO_PROFILE_MUSIC_HIGH_QUALITY_STEREO,
+                Constants.AUDIO_SCENARIO_GAME_STREAMING
+            )
             registerAudioFrameObserver(audioFrameObserver)
-//            setExternalAudioSource(true, AudioConfig.SAMPLE_RATE, AudioConfig.NUM_CHANNELS)
-//            setExternalAudioSink(true, AudioConfig.SAMPLE_RATE, AudioConfig.NUM_CHANNELS)
             setPlaybackAudioFrameParameters(
                 AudioConfig.SAMPLE_RATE,
                 AudioConfig.NUM_CHANNELS,

@@ -23,10 +23,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (UserInfoManager.uid.isEmpty()) {
-            startActivity<LoginActivity>()
-            finish()
-        }
+//        if (UserInfoManager.uid.isEmpty()) {
+//            startActivity<LoginActivity>()
+//            finish()
+//        }
 
         val t = AudioRender
         binding = ActivityMainBinding.inflate(layoutInflater)

@@ -65,7 +65,7 @@ class AgoraActivity : AppCompatActivity() {
     }
 
     private fun joinChannel() {
-        mRtcEngine?.joinChannel(null, "test1", "Extra Optional Data", 0)
+        mRtcEngine?.joinChannel(null, "hi", "Extra Optional Data", 0)
     }
 
     private fun setupRemoteVideo(uid: Int) {

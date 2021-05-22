@@ -5,10 +5,9 @@ package com.hustunique.vlive.filament.model_object
  *    e-mail : qpalwo@qq.com
  *    date   : 5/3/21
  */
-class SceneModelObject : FilamentBaseModelObject("models/room.glb") {
+class SceneModelObject : FilamentBaseModelObject("models/room1.glb") {
     override fun onAssetSet() {
     }
-
     override fun update(frameTimeNanos: Long) {
     }
 }

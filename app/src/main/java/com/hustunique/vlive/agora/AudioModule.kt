@@ -4,12 +4,9 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.util.Log
 import com.hustunique.resonance_audio.AudioConfig
-import com.hustunique.resonance_audio.AudioPlayer
 import com.hustunique.resonance_audio.AudioRender
 import java.nio.ByteBuffer
 import java.util.concurrent.ConcurrentLinkedQueue
-import kotlin.math.cos
-import kotlin.math.sin
 
 /**
  *    author : Yuxuan Xiao
@@ -58,10 +55,10 @@ class AudioModule {
             val res = audioRender.getOutput(buffer, numFrames)
             if (!res) {
                 emptyQueue.offer(buffer)
+                Log.i(TAG, "getData: $res")
             } else {
                 dataQueue.offer(buffer)
             }
-            Log.i(TAG, "getData: $res")
 //            if (running) {
 //                handler.postDelayed(this, if (res) 0 else 10)
 //            }
@@ -97,7 +94,8 @@ class AudioModule {
             it.position(0)
             it.get(buffer, 0, buffer.size.coerceAtMost(it.capacity()))
             emptyQueue.offer(it)
-        }
+            Log.d(TAG, "getData: bfSize: ${buffer.size} dataSize: ${it.capacity()}")
+        } ?: Log.i(TAG, "audio getdata null")
     }
 
     fun release() {
