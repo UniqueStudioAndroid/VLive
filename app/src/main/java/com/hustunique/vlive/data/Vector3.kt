@@ -96,6 +96,8 @@ data class Vector3(
         buffer.put(z)
     }
 
+    override fun toString() = "($x, $y, $z)"
+
     companion object {
         fun add(v1: Vector3, v2: Vector3): Vector3 {
             val target = v1.clone()
@@ -114,5 +116,7 @@ data class Vector3(
             y = -v1.x * v2.z + v1.z * v2.x,
             z = v1.x * v2.y - v1.y * v2.x,
         )
+
+        fun readFromBuffer(buffer: FloatBuffer) = Vector3(buffer.get(), buffer.get(), buffer.get())
     }
 }

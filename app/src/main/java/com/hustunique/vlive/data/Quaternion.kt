@@ -4,8 +4,8 @@ import java.nio.FloatBuffer
 import kotlin.math.sqrt
 
 class Quaternion(
+    val n: Vector3 = Vector3(),
     var a: Float = 1f,
-    val n: Vector3 = Vector3()
 ) {
     fun addAssign(q1: Quaternion, q2: Quaternion) = apply {
         a = q1.a + q2.a
@@ -37,17 +37,8 @@ class Quaternion(
     }
 
     fun writeToBuffer(data: FloatBuffer) = apply {
-        data.put(n.x)
-        data.put(n.y)
-        data.put(n.z)
+        n.writeToBuffer(data)
         data.put(a)
-    }
-
-    fun readFromBuffer(data: FloatBuffer) = apply {
-        n.x = data.get()
-        n.y = data.get()
-        n.z = data.get()
-        a = data.get()
     }
 
     fun toRotation(R: FloatArray) {
@@ -85,6 +76,8 @@ class Quaternion(
         n.z = q1.n.z
     }
 
+    override fun toString() = "[$a, $n]"
+
     companion object {
         fun mul(q1: Quaternion, q2: Quaternion) = Quaternion(
             a = q1.a * q2.a - q1.n.dot(q2.n),
@@ -92,5 +85,10 @@ class Quaternion(
                 .add(q2.n, q1.a)
                 .add(q1.n, q2.a),
         ).normalize()
+
+        fun readFromBuffer(data: FloatBuffer) = Quaternion(
+            Vector3.readFromBuffer(data),
+            data.get()
+        )
     }
 }

@@ -1,6 +1,9 @@
 package com.hustunique.vlive.filament.model_object
 
 import com.google.android.filament.TransformManager
+import com.hustunique.vlive.data.MathUtil
+import com.hustunique.vlive.data.Quaternion
+import com.hustunique.vlive.data.Vector3
 
 /**
  *    author : Yuxuan Xiao
@@ -10,6 +13,7 @@ import com.google.android.filament.TransformManager
 class ActorModelObject : FilamentBaseModelObject("models/actor.glb") {
     private var rootInstance: Int = 0
     private var transformManager: TransformManager? = null
+    private val transformMatrix = FloatArray(16)
 
     override fun onAssetSet() {
         asset?.let {
@@ -22,7 +26,12 @@ class ActorModelObject : FilamentBaseModelObject("models/actor.glb") {
     override fun update(frameTimeNanos: Long) {
         transformManager?.let { tm ->
             property?.let {
-                tm.setTransform(rootInstance, it.objectData.array())
+                val buffer = it.objectData
+                buffer.rewind()
+                val q = Quaternion.readFromBuffer(buffer)
+                val pos = Vector3.readFromBuffer(buffer)
+                MathUtil.packRotationAndPosT(q, pos, transformMatrix)
+                tm.setTransform(rootInstance, transformMatrix)
             }
         }
     }

@@ -69,7 +69,7 @@ pub fn join_channel(data: Vec<u8>) -> VLiveResult {
                 return rsp_err("Duplicate");
             }
             let index = c.users.len();
-            if index > POSITIONS.len() {
+            if index >= POSITIONS.len() {
                 return rsp_err("Too many users");
             }
             let rsp = ChannelJoinRsp {

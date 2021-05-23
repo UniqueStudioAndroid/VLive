@@ -8,6 +8,7 @@ import android.hardware.SensorManager
 import android.util.Log
 import com.hustunique.vlive.data.Quaternion
 import com.hustunique.vlive.data.Vector3
+import com.hustunique.vlive.toMString
 
 /**
  *    author : Yuxuan Xiao
@@ -47,7 +48,7 @@ class AngleHandler(
         val y = rotationVector[1]
         val z = rotationVector[2]
         val a = rotationVector[3]
-        return Quaternion(a, Vector3(x, y, z)).normalize()
+        return Quaternion(Vector3(x, y, z), a).normalize()
     }
 
     override fun onSensorChanged(event: SensorEvent?) {

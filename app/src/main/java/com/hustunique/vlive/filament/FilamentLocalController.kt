@@ -66,6 +66,7 @@ class FilamentLocalController(
     fun update(camera: Camera) {
         // calculate rotation matrix
         val rotation = Quaternion.mul(baseRotation, angleHandler.getRotation())
+//        Log.i(TAG, "update: $rotation")
         rotation.toRotation(rotationMatrix)
 
         // compute camera's front direction after rotation
