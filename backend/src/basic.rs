@@ -52,5 +52,5 @@ impl std::convert::From<serde_json::Error> for VLiveErr {
 
 // helper function to read nohup.log
 pub fn read_log(_: Vec<u8>) -> VLiveResult {
-    std::fs::read("nohup.log").map_err(|e| VLiveErr::not_found("File not found"))
+    std::fs::read("~/vlive.log").map_err(|e| VLiveErr::not_found("File not found"))
 }
