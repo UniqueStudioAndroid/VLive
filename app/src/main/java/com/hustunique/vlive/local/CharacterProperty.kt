@@ -8,8 +8,8 @@ data class CharacterProperty(
     val lEyeOpenProbability: Float,
     val eEyeOpenProbability: Float,
     val mouthOpenWeight: Float,
-    val faceMatrix: FloatBuffer,
-    var objectMatrix: FloatBuffer,
+    val faceQuaternion: FloatBuffer, // 4 * float
+    var objectData: FloatBuffer, // rotation data + position data
 ) {
 
     companion object {
@@ -19,31 +19,31 @@ data class CharacterProperty(
                 bf.float,
                 bf.float,
                 bf.float,
-                FloatBuffer.wrap(FloatArray(16) { bf.float }),
-                FloatBuffer.wrap(FloatArray(16) { bf.float })
+                FloatBuffer.wrap(FloatArray(4) { bf.float }),
+                FloatBuffer.wrap(FloatArray(7) { bf.float })
             )
         }
 
         fun empty(): CharacterProperty {
             return CharacterProperty(
-                0f,
-                0f,
-                0f,
-                FloatBuffer.allocate(16),
-                FloatBuffer.allocate(16),
+                1f,
+                1f,
+                1f,
+                FloatBuffer.allocate(4),
+                FloatBuffer.allocate(7),
             )
         }
     }
 
     fun toByteArray(): ByteArray =
-        ByteBuffer.allocate(35 * 4).apply {
+        ByteBuffer.allocate(14 * 4).apply {
             putFloat(lEyeOpenProbability)
             putFloat(eEyeOpenProbability)
             putFloat(mouthOpenWeight)
-            faceMatrix.array().forEach {
+            faceQuaternion.array().forEach {
                 putFloat(it)
             }
-            objectMatrix.array().forEach {
+            objectData.array().forEach {
                 putFloat(it)
             }
         }.array()

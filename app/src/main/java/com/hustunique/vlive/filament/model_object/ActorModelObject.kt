@@ -22,7 +22,7 @@ class ActorModelObject : FilamentBaseModelObject("models/actor.glb") {
     override fun update(frameTimeNanos: Long) {
         transformManager?.let { tm ->
             property?.let {
-                tm.setTransform(rootInstance, it.objectMatrix.array())
+                tm.setTransform(rootInstance, it.objectData.array())
             }
         }
     }

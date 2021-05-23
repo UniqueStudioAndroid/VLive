@@ -7,7 +7,7 @@ import android.view.View
 import com.google.android.filament.Camera
 import com.google.android.filament.utils.Float3
 import com.google.android.filament.utils.Utils
-import com.hustunique.vlive.data.Transformation
+import com.hustunique.vlive.data.Quaternion
 import com.hustunique.vlive.data.Vector3
 import com.hustunique.vlive.local.CharacterProperty
 import com.hustunique.vlive.util.AngleHandler
@@ -41,13 +41,9 @@ class FilamentLocalController(
     var onUpdate: ((CharacterProperty) -> Unit)? = null
 
     private val angleHandler = AngleHandler(context).apply { start() }
-    private val baseMatrix = FloatArray(9).apply {
-        this[0] = 1f
-        this[4] = 1f
-        this[8] = 1f
-    }
+    private var baseRotation = Quaternion()
     private val rotationMatrix = FloatArray(9)
-    private val objectTransformation = Transformation()
+    private val rotationBuffer = FloatBuffer.allocate(7)
 
     private val cameraPos = Vector3()
     private val cameraFront = Vector3(z = -1f)
@@ -69,9 +65,8 @@ class FilamentLocalController(
 
     fun update(camera: Camera) {
         // calculate rotation matrix
-        angleHandler.getRotationMatrix(rotationMatrix)
-
-        matMul(baseMatrix, rotationMatrix)
+        val rotation = Quaternion.mul(baseRotation, angleHandler.getRotation())
+        rotation.toRotation(rotationMatrix)
 
         // compute camera's front direction after rotation
         cameraFront.clone(FRONT)
@@ -89,9 +84,10 @@ class FilamentLocalController(
             cameraUP.x.toDouble(), cameraUP.y.toDouble(), cameraUP.z.toDouble()
         )
 
-        objectTransformation.setRotation(rotationMatrix)
-        objectTransformation.setTransformation(cameraPos)
-        property.objectMatrix = FloatBuffer.wrap(objectTransformation.data)
+        rotationBuffer.rewind()
+        rotation.writeToBuffer(rotationBuffer)
+        cameraPos.writeToBuffer(rotationBuffer)
+        property.objectData = rotationBuffer
         onUpdate?.invoke(property)
     }
 
@@ -129,8 +125,8 @@ class FilamentLocalController(
     }
 
     private fun resetCalibration() {
-        angleHandler.getRotationMatrix(baseMatrix)
-        baseMatrix.transpose()
+        baseRotation = angleHandler.getRotation()
+        baseRotation.inverse()
     }
 
     enum class MoveDirType {

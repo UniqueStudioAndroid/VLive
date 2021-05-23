@@ -6,6 +6,8 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventCallback
 import android.hardware.SensorManager
 import android.util.Log
+import com.hustunique.vlive.data.Quaternion
+import com.hustunique.vlive.data.Vector3
 
 /**
  *    author : Yuxuan Xiao
@@ -38,6 +40,14 @@ class AngleHandler(
 
     fun getRotationMatrix(matrix: FloatArray) {
         SensorManager.getRotationMatrixFromVector(matrix, rotationVector)
+    }
+
+    fun getRotation(): Quaternion {
+        val x = rotationVector[0]
+        val y = rotationVector[1]
+        val z = rotationVector[2]
+        val a = rotationVector[3]
+        return Quaternion(a, Vector3(x, y, z)).normalize()
     }
 
     override fun onSensorChanged(event: SensorEvent?) {

@@ -1,6 +1,6 @@
 package com.hustunique.vlive.data
 
-import java.nio.ByteBuffer
+import java.nio.FloatBuffer
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -90,10 +90,10 @@ data class Vector3(
         data[8] = (c1 * c2)
     }
 
-    fun writeToBuffer(buffer: ByteBuffer) {
-        buffer.putFloat(x)
-        buffer.putFloat(y)
-        buffer.putFloat(z)
+    fun writeToBuffer(buffer: FloatBuffer) {
+        buffer.put(x)
+        buffer.put(y)
+        buffer.put(z)
     }
 
     companion object {
@@ -108,5 +108,11 @@ data class Vector3(
             target.sub(v2)
             return target
         }
+
+        fun mul(v1: Vector3, v2: Vector3) = Vector3(
+            x = v1.y * v2.z - v1.z * v2.y,
+            y = -v1.x * v2.z + v1.z * v2.x,
+            z = v1.x * v2.y - v1.y * v2.x,
+        )
     }
 }

@@ -51,9 +51,10 @@ class VirtualCharacterPropertyProvider(
             // setup MLKit to detect eye open properties and face contours
             val mlKit = MLKitController { f1, f2, f3 ->
                 glHandler.post {
-                    val buffer = FloatBuffer.allocate(16)
-                    arCore.getObjectMatrixData(buffer)
-                    onPropertyReady(CharacterProperty(f1, f2, f3, buffer, FloatBuffer.allocate(16)))
+                    // TODO: store quaternion data instead
+                    val buffer = FloatBuffer.allocate(4)
+//                    arCore.getObjectMatrixData(buffer)
+                    onPropertyReady(CharacterProperty(f1, f2, f3, buffer, FloatBuffer.allocate(7)))
                 }
             }
 
