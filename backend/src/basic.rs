@@ -39,6 +39,12 @@ impl VLiveErr {
             msg: format!("Function {} not found", s),
         }
     }
+    pub fn err(s: &str) -> Self {
+        VLiveErr {
+            code: -1,
+            msg: s.to_string(),
+        }
+    }
 }
 
 impl std::convert::From<serde_json::Error> for VLiveErr {
@@ -52,5 +58,13 @@ impl std::convert::From<serde_json::Error> for VLiveErr {
 
 // helper function to read nohup.log
 pub fn read_log(_: Vec<u8>) -> VLiveResult {
-    std::fs::read("/log/vlive.log").map_err(|_| VLiveErr::not_found("File not found"))
+    std::fs::read("/log/vlive.log").map_err(|_| VLiveErr::err("File not found"))
+}
+
+// helper function to clear nohup.log
+pub fn remove_log(_: Vec<u8>) -> VLiveResult {
+    std::fs::write("/log/vlive.log", "").map_or_else(
+        |_| rsp_err("Write to log file failed"),
+        |_| rsp_ok("Remove log success"),
+    )
 }

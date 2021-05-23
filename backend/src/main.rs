@@ -29,6 +29,7 @@ async fn entry(req: Request<Body>) -> EntryResult<Response<Body>> {
     *response.body_mut() = Body::from(
         match path {
             "/log" => basic::read_log(data),
+            "/log/remove" => basic::remove_log(data),
             "/user/reg" => model::register(data),
             "/channel/join" => model::join_channel(data),
             "/channel/leave" => model::leave_channel(data),
