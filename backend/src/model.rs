@@ -30,7 +30,7 @@ lazy_static! {
             desc: "A place where everyone can play freely".to_string(),
             users: members,
         };
-        channels.insert("unity channel".to_string(), channel);
+        channels.insert("Eden".to_string(), channel);
         Mutex::new(Model {
             users: users,
             channels: channels,
