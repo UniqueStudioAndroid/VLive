@@ -7,10 +7,35 @@ use super::basic::VLiveResult;
 use super::bean::*;
 
 lazy_static! {
-    static ref MODEL: Mutex<Model> = Mutex::new(Model {
-        users: HashMap::new(),
-        channels: HashMap::new(),
-    });
+    static ref MODEL: Mutex<Model> = {
+        let mut users = HashMap::new();
+        let mut channels = HashMap::new();
+
+        let user = Arc::new(User {
+            uid: "8086".to_string(),
+            name: "UnityUser".to_string(),
+            male: true,
+        });
+        users.insert("8086".to_string(), user.clone());
+
+        let member = ChannelMember {
+            user: user,
+            video_mode: false,
+            index: 0,
+        };
+        let mut members = HashSet::new();
+        members.insert(member);
+        let channel = Channel {
+            id: "Eden".to_string(),
+            desc: "A place where everyone can play freely".to_string(),
+            users: members,
+        };
+        channels.insert("unity channel".to_string(), channel);
+        Mutex::new(Model {
+            users: users,
+            channels: channels,
+        })
+    };
     static ref POSITIONS: Vec<Vec<f32>> = vec![
         vec![0.0, 0.0, -4.0],
         vec![0.0, 0.0, 4.0],
