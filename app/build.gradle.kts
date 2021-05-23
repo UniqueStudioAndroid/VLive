@@ -5,6 +5,7 @@ plugins {
     kotlin("android")
     id("kotlin-android")
     id("kotlin-kapt")
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 apply {
@@ -102,6 +103,9 @@ dependencies {
     implementation(Dep.AndroidX.MATERIAL)
     implementation(Dep.AndroidX.CONSTRAINTLAYOUT)
     implementation(Dep.AndroidX.DATA_STORE)
+    implementation(Dep.AndroidX.NAVIGATION_FRAGMENT)
+    implementation(Dep.AndroidX.NAVIGATION_UI)
+    implementation(Dep.AndroidX.NAVIGATION_DYNAMIC_FEATURE)
 
     implementation(Dep.CameraX.CAMERA2)
     implementation(Dep.CameraX.LIFE_CYCLE)
@@ -129,9 +133,6 @@ dependencies {
     implementation(Dep.RETROFIT_MOSHI)
     implementation(Dep.MOSHI)
     implementation(Dep.RECYCLERVIEW_ADAPTER_HELPER)
-    implementation("androidx.appcompat:appcompat:1.2.0")
-    implementation("com.google.android.material:material:1.3.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.0.4")
 
     kapt(Dep.MOSHI_COMPILER)
 }

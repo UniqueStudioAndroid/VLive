@@ -93,7 +93,6 @@ class SceneActivity : AppCompatActivity() {
             filamentContext = FilamentContext(this, glRender.getEglContext())
             bindController(localController)
 
-//            addModelObject(ActorModelObject())
             addModelObject(SceneModelObject())
         }
         localController.bindControlView(binding.sceneReset)

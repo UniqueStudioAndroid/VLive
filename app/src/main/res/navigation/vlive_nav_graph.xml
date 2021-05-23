@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/vlive_nav_graph"
+    app:startDestination="@id/hello_page_fragment">
+
+    <fragment
+        android:id="@+id/welcome_fragment"
+        android:name="com.hustunique.vlive.ui.WelcomeFragment"
+        android:label="fragment_welcome"
+        tools:layout="@layout/fragment_welcome">
+        <action
+            android:id="@+id/action_welcome_fragment_to_channelListFragment"
+            app:destination="@id/channel_list_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/hello_page_fragment"
+        android:name="com.hustunique.vlive.ui.HelloPageFragment"
+        android:label="fragment_hello_page"
+        tools:layout="@layout/fragment_hello_page">
+        <action
+            android:id="@+id/action_helloPageFragment_to_welcomeFragment"
+            app:destination="@id/welcome_fragment" />
+        <action
+            android:id="@+id/action_hello_page_fragment_to_channelListFragment"
+            app:destination="@id/channel_list_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/channel_list_fragment"
+        android:name="com.hustunique.vlive.ui.ChannelListFragment"
+        android:label="ChannelListFragment"
+        tools:layout="@layout/fragment_channel_list" />
+</navigation>

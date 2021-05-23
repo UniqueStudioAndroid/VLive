@@ -17,4 +17,6 @@
     <dimen name="other_button_size">54dp</dimen>
     <dimen name="control_bottom_margin">40dp</dimen>
     <dimen name="control_bottom_horizontal_margin">24dp</dimen>
+
+    <integer name="animation_interval">800</integer>
 </resources>

@@ -1,78 +1,30 @@
-package com.hustunique.vlive
+package com.hustunique.vlive.ui
 
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.ar.core.ArCoreApk
-import com.hustunique.resonance_audio.AudioRender
-import com.hustunique.vlive.agora.AgoraActivity
-import com.hustunique.vlive.databinding.ActivityMainBinding
-import com.hustunique.vlive.util.Utils
-import com.hustunique.vlive.util.startActivity
+import com.hustunique.vlive.databinding.ActivityVliveHostBinding
 import java.util.*
 
-class MainActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding
+class VLiveHostActivity : AppCompatActivity() {
+
+    companion object {
+        private const val TAG = "VLiveHostActivity"
+        private const val PERMISSION_REQUESTS = 1
+    }
+
+    private val binding by lazy { ActivityVliveHostBinding.inflate(layoutInflater) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        if (UserInfoManager.uid.isEmpty()) {
-//            startActivity<LoginActivity>()
-//            finish()
-//        }
-
-        val t = AudioRender
-        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         if (!allPermissionsGranted()) {
             getRuntimePermissions()
             Log.i(TAG, "onCreate: Request permission")
-        }
-
-        binding.btnMainEntry.setOnClickListener {
-            if (!allPermissionsGranted()) {
-                Toast.makeText(this, "No permission, no work!", Toast.LENGTH_SHORT).show()
-            } else {
-                Utils.init(this)
-                startActivity<CameraXActivity>()
-            }
-        }
-
-        binding.btnModelEntry.setOnClickListener {
-            startActivity<ModelActivity>()
-        }
-
-        binding.btnAgoraEntry.setOnClickListener {
-//            if (!allPermissionsGranted()) {
-//                Toast.makeText(this, "No permission, no work!", Toast.LENGTH_SHORT).show()
-//            } else {
-            startActivity<AgoraActivity>()
-//            }
-        }
-
-        binding.btnArCoreEntry.setOnClickListener {
-            testArCoreAvailability()
-        }
-        binding.btnSceneEntry.setOnClickListener {
-            startActivity<SceneActivity>()
-        }
-    }
-
-    private fun testArCoreAvailability() {
-        val availability = ArCoreApk.getInstance().checkAvailability(this)
-        if (availability.isTransient) {
-            Toast.makeText(this, "Checking...", Toast.LENGTH_SHORT).show()
-        } else if (!availability.isSupported) {
-            Toast.makeText(this, "Not support", Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(this, "AR core support ok", Toast.LENGTH_SHORT).show()
-//            startActivity<ARCoreActivity>()
         }
     }
 
@@ -92,6 +44,7 @@ class MainActivity : AppCompatActivity() {
             )
         }
     }
+
 
     private fun allPermissionsGranted(): Boolean {
         for (permission in getRequiredPermissions()) {
@@ -128,10 +81,5 @@ class MainActivity : AppCompatActivity() {
         }
         Log.i(TAG, "Permission NOT granted: $permission")
         return false
-    }
-
-    companion object {
-        private const val TAG = "MainActivity"
-        private const val PERMISSION_REQUESTS = 1
     }
 }

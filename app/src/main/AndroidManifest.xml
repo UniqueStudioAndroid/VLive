@@ -24,28 +24,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.VLive">
-        <activity android:name=".ui.CreateRoomActivity"></activity>
-        <activity android:name=".ui.ChannelListActivity">
+        <activity android:name=".ui.VLiveHostActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.LoginActivity" />
+        <activity android:name=".ui.CreateRoomActivity" />
         <activity android:name=".SceneActivity" />
         <activity android:name=".agora.AgoraActivity" />
         <activity android:name=".CameraXActivity" />
         <activity android:name=".ModelActivity" />
-        <activity android:name=".MainActivity">
-
-<!--             <intent-filter>-->
-<!--             <action android:name="android.intent.action.MAIN" />-->
-
-
-<!--             <category android:name="android.intent.category.LAUNCHER" />-->
-<!--             </intent-filter>-->
-        </activity>
+        <activity android:name=".MainActivity" />
 
         <meta-data
             android:name="com.google.ar.core"

@@ -27,6 +27,15 @@ object Dep {
         const val CONSTRAINTLAYOUT = "androidx.constraintlayout:constraintlayout:2.0.4"
         const val DATA_STORE = "androidx.datastore:datastore-preferences:1.0.0-beta01"
 
+        private const val NAVIGATION_VERSION = "2.3.5"
+        const val NAVIGATION_FRAGMENT =
+            "androidx.navigation:navigation-fragment-ktx:$NAVIGATION_VERSION"
+        const val NAVIGATION_UI = "androidx.navigation:navigation-ui-ktx:$NAVIGATION_VERSION"
+        const val NAVIGATION_DYNAMIC_FEATURE =
+            "androidx.navigation:navigation-dynamic-features-fragment:$NAVIGATION_VERSION"
+        const val NAVIGATION_SAFE_ARGS =
+            "androidx.navigation:navigation-safe-args-gradle-plugin:$NAVIGATION_VERSION"
+
         object Lifecycle {
             private const val VERSION = "2.3.1"
             const val VM_KTX = "androidx.lifecycle:lifecycle-viewmodel-ktx:$VERSION"
