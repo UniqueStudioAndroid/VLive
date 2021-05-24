@@ -17,7 +17,7 @@ import com.hustunique.vlive.local.GroupMemberManager
 import com.hustunique.vlive.local.VirtualCharacterPropertyProvider
 import com.hustunique.vlive.opengl.GLRender
 import com.hustunique.vlive.remote.Service
-import com.hustunique.vlive.ui.ChannelListActivity
+import com.hustunique.vlive.ui.ChannelListFragment
 import com.hustunique.vlive.util.ToastUtil
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -46,7 +46,7 @@ class SceneActivity : AppCompatActivity() {
         FilamentLocalController(this)
     }
     private val characterPropertyProvider by lazy {
-        if (ChannelListActivity.videoMode) {
+        if (ChannelListFragment.videoMode) {
             VirtualCharacterPropertyProvider(this, localController::onCharacterPropertyReady)
         } else null
     }

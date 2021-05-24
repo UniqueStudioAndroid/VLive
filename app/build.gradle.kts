@@ -133,6 +133,9 @@ dependencies {
     implementation(Dep.RETROFIT_MOSHI)
     implementation(Dep.MOSHI)
     implementation(Dep.RECYCLERVIEW_ADAPTER_HELPER)
+    implementation(Dep.RECYCLERVIEW_ANIMATION)
+    implementation("androidx.appcompat:appcompat:1.3.0")
+    implementation("com.google.android.material:material:1.3.0")
 
     kapt(Dep.MOSHI_COMPILER)
 }

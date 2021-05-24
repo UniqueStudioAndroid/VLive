@@ -21,11 +21,13 @@
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_marginStart="70dp"
             android:layout_weight="1" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
             android:layout_marginBottom="24dp"
             android:text="VLive"
             android:textColor="@color/white"
@@ -37,11 +39,19 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
+        <ImageView
+            android:id="@+id/logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="48dp"
+            android:background="@drawable/power" />
+
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <ImageView
         android:id="@+id/actor_img"
-        android:layout_width="332dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
         android:src="@drawable/actor"
@@ -80,6 +90,7 @@
             android:paddingVertical="13dp"
             android:text="创建房间"
             android:textColor="@color/white"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
     </FrameLayout>

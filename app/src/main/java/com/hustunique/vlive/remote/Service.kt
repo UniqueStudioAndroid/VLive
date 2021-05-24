@@ -1,7 +1,7 @@
 package com.hustunique.vlive.remote
 
 import com.hustunique.vlive.BuildConfig
-import com.hustunique.vlive.ui.ChannelListActivity
+import com.hustunique.vlive.ui.ChannelListFragment
 import com.hustunique.vlive.util.JsonUtil
 import com.hustunique.vlive.util.UserInfoManager
 import com.hustunique.vlive.util.netReq
@@ -55,7 +55,7 @@ object Service {
             ChannelJoinReq(
                 UserInfoManager.uid,
                 channelId,
-                ChannelListActivity.videoMode
+                ChannelListFragment.videoMode
             )
         )
     }

@@ -30,5 +30,14 @@
         android:id="@+id/channel_list_fragment"
         android:name="com.hustunique.vlive.ui.ChannelListFragment"
         android:label="ChannelListFragment"
-        tools:layout="@layout/fragment_channel_list" />
+        tools:layout="@layout/fragment_channel_list">
+        <action
+            android:id="@+id/action_channel_list_fragment_to_createRoomFragment"
+            app:destination="@id/create_room_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/create_room_fragment"
+        android:name="com.hustunique.vlive.ui.CreateRoomFragment"
+        android:label="CreateRoomFragment"
+        tools:layout="@layout/fragment_create_room" />
 </navigation>

@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.hustunique.vlive.R
 import com.hustunique.vlive.local.CharacterProperty
-import com.hustunique.vlive.ui.ChannelListActivity
+import com.hustunique.vlive.ui.ChannelListFragment
 import com.hustunique.vlive.util.UserInfoManager
 import io.agora.rtm.*
 
@@ -176,7 +176,7 @@ class AgoraMessageModule(
                 join(object : ResultCallback<Void> {
                     override fun onSuccess(p0: Void?) {
                         joinChannelSuccess = true
-                        sendMessage(ChannelListActivity.videoMode)
+                        sendMessage(ChannelListFragment.videoMode)
                         Log.i(TAG, "onSuccess: join channel")
                     }
 

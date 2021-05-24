@@ -6,7 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 import com.hustunique.resonance_audio.AudioConfig
 import com.hustunique.vlive.R
-import com.hustunique.vlive.ui.ChannelListActivity
+import com.hustunique.vlive.ui.ChannelListFragment
 import com.hustunique.vlive.util.UserInfoManager
 import io.agora.rtc.Constants
 import io.agora.rtc.IRtcEngineEventHandler
@@ -147,7 +147,7 @@ class AgoraModule(
             setZOrderMediaOverlay(true)
         }
         mRtcEngine?.apply {
-            if (ChannelListActivity.videoMode) {
+            if (ChannelListFragment.videoMode) {
                 enableVideo()
             }
             setupLocalVideo(VideoCanvas(surface, VideoCanvas.RENDER_MODE_FIT, 0))

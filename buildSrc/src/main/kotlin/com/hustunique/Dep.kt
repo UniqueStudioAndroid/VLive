@@ -88,4 +88,5 @@ object Dep {
     const val MOSHI = "com.squareup.moshi:moshi:${MOSHI_VER}"
     const val MOSHI_COMPILER = "com.squareup.moshi:moshi-kotlin-codegen:${MOSHI_VER}"
     const val RECYCLERVIEW_ADAPTER_HELPER = "com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.6"
+    const val RECYCLERVIEW_ANIMATION = "jp.wasabeef:recyclerview-animators:4.0.2"
 }
