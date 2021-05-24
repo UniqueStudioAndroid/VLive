@@ -10,43 +10,64 @@ data class Vector3(
     var y: Float = 0f,
     var z: Float = 0f,
 ) {
-    fun add(other: Vector3, factor: Float = 1f) = apply {
-        x += other.x * factor
-        y += other.y * factor
-        z += other.z * factor
+    operator fun plus(v: Vector3) = Vector3(x + v.x, y + v.y, z + v.z)
+
+    operator fun plusAssign(v: Vector3) {
+        x += v.x
+        y += v.y
+        z += v.z
     }
 
-    fun sub(other: Vector3, factor: Float = 1f) = apply {
-        x -= other.x * factor
-        y -= other.y * factor
-        z -= other.z * factor
+    operator fun plus(f: Float) = Vector3(x + f, y + f, z + f)
+
+    operator fun plusAssign(f: Float) {
+        x += f
+        y += f
+        z += f
     }
 
-    fun addAssign(v1: Vector3, v2: Vector3) = apply {
-        x = v1.x + v2.x
-        y = v1.y + v2.y
-        z = v1.z + v2.z
+    operator fun minus(v: Vector3) = Vector3(x - v.x, y - v.y, z - v.z)
+
+    operator fun minusAssign(v: Vector3) {
+        x -= v.x
+        y -= v.y
+        z -= v.z
     }
 
-    fun subAssign(v1: Vector3, v2: Vector3) = apply {
-        x = v1.x - v2.x
-        y = v1.y - v2.y
-        z = v1.z - v2.z
+    operator fun minus(f: Float) = Vector3(x - f, y - f, z - f)
+
+    operator fun minusAssign(f: Float) {
+        x -= f
+        y -= f
+        z -= f
     }
 
-    fun mul(factor: Float) = apply {
-        x *= factor
-        y *= factor
-        z *= factor
+    operator fun unaryMinus() = Vector3(-x, -y, -z)
+
+    operator fun times(f: Float) = Vector3(x * f, y * f, z * f)
+
+    operator fun timesAssign(f: Float) {
+        x *= f
+        y *= f
+        z *= f
+    }
+
+    operator fun times(v: Vector3) = Vector3(
+        y * v.z - z * v.y,
+        - x * v.z + z * v.x,
+        x * v.y - y * v.x,
+    )
+
+    operator fun timesAssign(v: Vector3) {
+        val x0 = y * v.z - z * v.y
+        val y0 = - x * v.z + z * v.x
+        val z0 = x * v.y - y * v.x
+        x = x0
+        y = y0
+        z = z0
     }
 
     fun dot(other: Vector3) = x * other.x + y * other.y + z * other.z
-
-    fun crossAssign(v1: Vector3, v2: Vector3) = apply {
-        x = v1.y * v2.z - v1.z * v2.y
-        y = -v1.x * v2.z + v1.z * v2.x
-        z = v1.x * v2.y - v1.y * v2.x
-    }
 
     fun normalize() = apply {
         val factor = sqrt(x * x + y * y + z * z)
@@ -99,24 +120,6 @@ data class Vector3(
     override fun toString() = "($x, $y, $z)"
 
     companion object {
-        fun add(v1: Vector3, v2: Vector3): Vector3 {
-            val target = v1.clone()
-            target.add(v2)
-            return target
-        }
-
-        fun sub(v1: Vector3, v2: Vector3): Vector3 {
-            val target = v1.clone()
-            target.sub(v2)
-            return target
-        }
-
-        fun mul(v1: Vector3, v2: Vector3) = Vector3(
-            x = v1.y * v2.z - v1.z * v2.y,
-            y = -v1.x * v2.z + v1.z * v2.x,
-            z = v1.x * v2.y - v1.y * v2.x,
-        )
-
         fun readFromBuffer(buffer: FloatBuffer) = Vector3(buffer.get(), buffer.get(), buffer.get())
     }
 }

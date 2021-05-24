@@ -35,13 +35,15 @@
         </activity>
         <activity android:name=".ui.VLiveHostActivity" />
         <activity android:name=".ui.CreateRoomActivity" />
-        <activity android:name=".SceneActivity" />
-        <activity android:name=".agora.AgoraActivity" >
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
+        <activity
+            android:name=".SceneActivity"
+            android:screenOrientation="landscape" />
+        <activity android:name=".agora.AgoraActivity">
+            <!--            <intent-filter>-->
+            <!--                <action android:name="android.intent.action.MAIN" />-->
 
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
+            <!--            </intent-filter>-->
         </activity>
         <activity android:name=".CameraXActivity" />
         <activity android:name=".ModelActivity" />

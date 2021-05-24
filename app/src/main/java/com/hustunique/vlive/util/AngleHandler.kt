@@ -8,7 +8,9 @@ import android.hardware.SensorManager
 import android.util.Log
 import com.hustunique.vlive.data.Quaternion
 import com.hustunique.vlive.data.Vector3
-import com.hustunique.vlive.toMString
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
  *    author : Yuxuan Xiao
@@ -22,6 +24,8 @@ class AngleHandler(
     companion object {
         private const val TAG = "AngelHandler"
     }
+
+    private val rotationMode = DeviceRotationMode.LANDSCAPE
 
     private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as? SensorManager
 
@@ -48,7 +52,7 @@ class AngleHandler(
         val y = rotationVector[1]
         val z = rotationVector[2]
         val a = rotationVector[3]
-        return Quaternion(Vector3(x, y, z), a).normalize()
+        return Quaternion(Vector3(x, y, z), a).normalize() * getRotationByMode()
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
@@ -57,5 +61,18 @@ class AngleHandler(
                 event.values.copyInto(rotationVector, 0, 0, 4)
             }
         }
+    }
+
+    enum class DeviceRotationMode {
+        PORTRAIT,
+        LANDSCAPE,
+    }
+
+    private fun getRotationByMode() = when (rotationMode) {
+        DeviceRotationMode.PORTRAIT -> Quaternion()
+        DeviceRotationMode.LANDSCAPE -> Quaternion(
+            Vector3(0f, 0f, -sin(PI / 4).toFloat()),
+            cos(-PI / 4).toFloat()
+        )
     }
 }
