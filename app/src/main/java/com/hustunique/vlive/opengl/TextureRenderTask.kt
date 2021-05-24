@@ -82,7 +82,7 @@ class TextureRenderTask: RenderTask {
         GLES20.glBindTexture(GLES11.GL_TEXTURE_2D, inTexture)
         GLES20.glUseProgram(renderProgram)
         GLES20.glUniform1i(textureUniform, 0)
-        GLES20.glViewport(0, 0, 300, 300)
+        GLES20.glViewport(0, 0, 640, 480)
 
         QUAD_COORDS.position(0)
         QUAD_TEX_COORDS.position(0)

@@ -9,7 +9,7 @@ import com.hustunique.vlive.agora.AgoraRawVideoConsumer
  *    e-mail : qpalwo@qq.com
  *    date   : 5/3/21
  */
-class ScreenModelObject : FilamentBaseModelObject("models/screen.glb") {
+class ScreenModelObject : ActorModelObject("models/screen_actor.glb") {
 
     companion object {
         private const val TAG = "ScreenModelObject"
@@ -22,6 +22,7 @@ class ScreenModelObject : FilamentBaseModelObject("models/screen.glb") {
     private lateinit var materialInstance: MaterialInstance
 
     override fun onAssetSet() {
+        super.onAssetSet()
         screenEntity = asset?.getFirstEntityByName("screen") ?: 0
         materialInstance = filamentContext?.materialHolder?.videoMaterial?.createInstance()!!
         materialInstance.setParameter("baseColor", Colors.RgbType.SRGB, 1.0f, 0.85f, 0.57f)
@@ -41,6 +42,7 @@ class ScreenModelObject : FilamentBaseModelObject("models/screen.glb") {
     }
 
     override fun update(frameTimeNanos: Long) {
+        super.update(frameTimeNanos)
         videoConsumer.updateStream()
     }
 }

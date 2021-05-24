@@ -46,7 +46,7 @@ class SceneActivity : AppCompatActivity() {
         FilamentLocalController(this)
     }
     private val characterPropertyProvider by lazy {
-        if (ChannelListFragment.videoMode) {
+        if (!ChannelListFragment.videoMode) {
             VirtualCharacterPropertyProvider(this, localController::onCharacterPropertyReady)
         } else null
     }

@@ -22,6 +22,10 @@ material {
     // always requires the "tangents" vertex attribute (the normal
     // is required for lighting, tangent/bitangent for normal mapping
     // and anisotropy)
+    requires : [
+        uv0
+    ],
+    flipUV : false,
 
     // Custom vertex shader outputs
     variables : [
@@ -63,11 +67,9 @@ fragment {
         material.metallic = 0.0;
 
         // Apply the video stream to the +Z face on the cube.
-        if (variable_uv.z >= 1.0) {
-            vec2 uv = (materialParams.textureTransform * vec4(variable_uv.xy, 0, 1)).xy;
-            material.baseColor.rgb = inverseTonemapSRGB(texture(materialParams_videoTexture, uv).rgb);
-        } else {
-            material.baseColor.rgb = materialParams.baseColor;
-        }
+        //vec2 uv = getUV0();
+        //material.baseColor.rgb = vec3(uv.x, uv.y, 1);
+        material.baseColor.rgb = inverseTonemapSRGB(texture(materialParams_videoTexture, getUV0()).rgb);
+        //material.baseColor.rgb = vec3(getUV0().y, 0, 0);
     }
 }

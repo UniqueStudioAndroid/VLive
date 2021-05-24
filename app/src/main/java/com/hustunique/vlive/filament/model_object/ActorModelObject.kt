@@ -10,7 +10,7 @@ import com.hustunique.vlive.data.Vector3
  *    e-mail : qpalwo@qq.com
  *    date   : 2021/5/19
  */
-class ActorModelObject : FilamentBaseModelObject("models/actor.glb") {
+open class ActorModelObject(path: String = "models/actor.glb") : FilamentBaseModelObject(path) {
     private var rootInstance: Int = 0
     private var transformManager: TransformManager? = null
     private val transformMatrix = FloatArray(16)

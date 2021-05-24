@@ -32,7 +32,7 @@ import kotlinx.coroutines.withContext
 class ChannelListFragment : Fragment() {
     companion object {
         private const val TAG = "ChannelListFragment"
-        var videoMode = false
+        var videoMode = true
     }
 
     private val binding by lazy {
