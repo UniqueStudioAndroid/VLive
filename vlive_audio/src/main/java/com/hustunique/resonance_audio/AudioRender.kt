@@ -26,6 +26,10 @@ class AudioRender(
         nSetHeadPosition(handler, x, y, z)
     }
 
+    fun setHeadRotation(x: Float, y: Float, z: Float, w: Float) {
+        nSetHeadRotation(handler, x, y, z, w)
+    }
+
     fun getOutput(buffer: ByteBuffer, numFrames: Int) =
         nGetOutputData(handler, buffer, channels, numFrames)
 
@@ -44,6 +48,10 @@ class AudioRender(
 
     fun setSourcePos(sourceId: Int, x: Float, y: Float, z: Float) {
         nSetSourcePosition(handler, sourceId, x, y, z)
+    }
+
+    fun setSourceRotation(sourceId: Int, x: Float, y: Float, z: Float, w: Float) {
+        nSetSourceRotation(handler, sourceId, x, y, z, w)
     }
 
     fun releaseSource(sourceId: Int) {

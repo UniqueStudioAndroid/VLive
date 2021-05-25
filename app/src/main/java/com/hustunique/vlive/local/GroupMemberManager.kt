@@ -63,7 +63,13 @@ class GroupMemberManager(
                             )
                         } else ActorModelObject()).also(addObj)
                 }
-                modelObject?.onProperty(characterProperty)
+                modelObject?.run {
+                    onProperty(characterProperty)
+                    val (pos, quat) = getTransform()
+                    agoraModule?.audioModule?.run {
+                        setSourcePosRotation(uid, pos, quat)
+                    }
+                }
             }
         }
     }

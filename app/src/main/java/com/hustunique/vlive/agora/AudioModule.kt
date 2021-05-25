@@ -5,6 +5,8 @@ import android.os.HandlerThread
 import android.util.Log
 import com.hustunique.resonance_audio.AudioConfig
 import com.hustunique.resonance_audio.AudioRender
+import com.hustunique.vlive.data.Quaternion
+import com.hustunique.vlive.data.Vector3
 import java.nio.ByteBuffer
 import java.util.concurrent.ConcurrentLinkedQueue
 
@@ -96,6 +98,16 @@ class AudioModule {
             emptyQueue.offer(it)
             Log.d(TAG, "getData: bfSize: ${buffer.size} dataSize: ${it.capacity()}")
         } ?: Log.i(TAG, "audio getdata null")
+    }
+
+    fun setSourcePosRotation(uid: Int, pos: Vector3, quat: Quaternion) {
+        val sourceId = memberMap[uid] ?: return
+        handler.post {
+            audioRender.run {
+                setSourcePos(sourceId, pos.x, pos.y, pos.z)
+                setSourceRotation(sourceId, quat.n.x, quat.n.y, quat.n.z, quat.a)
+            }
+        }
     }
 
     fun release() {
