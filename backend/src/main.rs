@@ -12,6 +12,7 @@ use chrono::Local;
 type EntryResult<T> = Result<T, Infallible>;
 
 async fn entry(req: Request<Body>) -> EntryResult<Response<Body>> {
+    let before = Local::now();
     let mut response = Response::new(Body::empty());
 
     let (parts, body) = req.into_parts();
@@ -39,11 +40,13 @@ async fn entry(req: Request<Body>) -> EntryResult<Response<Body>> {
         .map_or_else(|e| serde_json::to_vec(&e).unwrap(), |r| r),
     );
 
+    let after = Local::now();
     println!(
-        "{}: Process request for {}, status = {}",
+        "{}: Process request for {}, status = {}, time consumed = {}",
         Local::now(),
         path,
         response.status(),
+        after - before,
     );
     Ok(response)
 }
