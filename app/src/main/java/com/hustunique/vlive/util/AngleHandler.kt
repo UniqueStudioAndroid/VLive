@@ -18,7 +18,8 @@ import kotlin.math.sin
  *    date   : 3/26/21
  */
 class AngleHandler(
-    context: Context
+    context: Context,
+    private val firstCallback: (Quaternion) -> Unit,
 ) : SensorEventCallback() {
 
     companion object {
@@ -55,10 +56,16 @@ class AngleHandler(
         return Quaternion(Vector3(x, y, z), a).normalize() * getRotationByMode()
     }
 
+    private var started = false
+
     override fun onSensorChanged(event: SensorEvent?) {
         when (event?.sensor?.type) {
             Sensor.TYPE_ROTATION_VECTOR -> {
                 event.values.copyInto(rotationVector, 0, 0, 4)
+                if (!started) {
+                    started = true
+                    firstCallback(getRotation())
+                }
             }
         }
     }

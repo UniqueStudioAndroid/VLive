@@ -67,10 +67,24 @@ data class Vector3(
         z = z0
     }
 
+    operator fun div(f: Float) = Vector3(
+        x / f,
+        y / f,
+        z / f,
+    )
+
+    operator fun divAssign(f: Float) {
+        x /= f
+        y /= f
+        z /= f
+    }
+
     fun dot(other: Vector3) = x * other.x + y * other.y + z * other.z
 
-    fun normalize() = apply {
-        val factor = sqrt(x * x + y * y + z * z)
+    fun norm() = sqrt(x * x + y * y + z * z)
+
+    fun normalized() = apply {
+        val factor = norm()
         x /= factor
         y /= factor
         z /= factor

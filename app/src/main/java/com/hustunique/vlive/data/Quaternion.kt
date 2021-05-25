@@ -34,7 +34,7 @@ class Quaternion(
         n = n * q.n + q.n * a + n * q.a,
     )
 
-    fun inverse() {
+    fun inverse() = apply {
         n *= -1f
     }
 

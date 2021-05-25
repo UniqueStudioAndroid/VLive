@@ -1,6 +1,7 @@
 package com.hustunique.vlive.filament
 
 import android.content.Context
+import android.util.Log
 import android.view.MotionEvent
 import android.view.MotionEvent.*
 import android.view.View
@@ -12,6 +13,9 @@ import com.hustunique.vlive.data.Vector3
 import com.hustunique.vlive.local.CharacterProperty
 import com.hustunique.vlive.util.AngleHandler
 import java.nio.FloatBuffer
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
  *    author : Yuxuan Xiao
@@ -21,17 +25,17 @@ import java.nio.FloatBuffer
 class FilamentLocalController(
     context: Context
 ) {
-
     companion object {
         init {
             Utils.init()
         }
 
         val kDefaultObjectPosition = Float3(0.0f, 0.0f, -4.0f)
-        private const val MOVE_DELTA = 1f
-        private const val MOVE_PER_MS_BASE = 0.01f
+        private const val MOVE_PER_SECOND = 5.0
+        private const val FLYING_TIME = 2f
+        private const val FLYING_MAX_HEIGHT = 5f
+        private const val ROTATION_PER_CALL = Math.PI.toFloat() / 90
         private const val TAG = "FilamentCameraController"
-        private const val TRANSMIT_DATA_SIZE = 12 * 4
 
         private val UPWARD = Vector3(y = 1f)
         private val FRONT = Vector3(z = -1f)
@@ -40,8 +44,15 @@ class FilamentLocalController(
 
     var onUpdate: ((CharacterProperty) -> Unit)? = null
 
-    private val angleHandler = AngleHandler(context).apply { start() }
+    private var sensorInitialized = false
+    private val angleHandler = AngleHandler(context) {
+        Log.i(TAG, "First Callback from AngleHandler")
+        baseRotation = it.inverse()
+        sensorInitialized = true
+    }.apply { start() }
+
     private var baseRotation = Quaternion()
+    private var panRotation = Quaternion()
     private val rotationMatrix = FloatArray(9)
     private val rotationBuffer = FloatBuffer.allocate(7)
 
@@ -59,15 +70,11 @@ class FilamentLocalController(
     }
 
     fun bindControlView(reset: View) {
-        reset.setOnClickListener { resetCalibration() }
     }
 
     fun update(camera: Camera) {
-        // calculate rotation matrix
-        val rotation = baseRotation * angleHandler.getRotation()
-//        Log.i(TAG, "update: $rotation")
-        rotation.toRotation(rotationMatrix)
-
+        // calculate rotation
+        val rotation = computeRotation()
         // compute camera's front direction after rotation
         cameraFront.clone(FRONT)
             .applyL(rotationMatrix)
@@ -75,7 +82,7 @@ class FilamentLocalController(
         cameraUP.clone(UPWARD)
             .applyL(rotationMatrix)
         // compute forward step & update last update time
-        computeWalk()
+        computePos()
         // recompute camera's lookAt matrix
         val cameraTarget = cameraFront + cameraPos
         camera.lookAt(
@@ -91,40 +98,81 @@ class FilamentLocalController(
         onUpdate?.invoke(property)
     }
 
-    private var lastUpdateTime = 0L
-    private fun computeWalk() {
-        val now = System.currentTimeMillis()
-        if (lastUpdateTime > 0 && isSelected) {
-            val delta = (now - lastUpdateTime) * MOVE_PER_MS_BASE
-            onMove(MoveDirType.PLANE_FORWARD, delta)
+    private fun computeRotation(): Quaternion {
+        if (!sensorInitialized) return Quaternion()
+        val q = if (useSensor) {
+            baseRotation * angleHandler.getRotation()
+        } else {
+            panRotation * baseRotation
         }
+        q.toRotation(rotationMatrix)
+        return q
+    }
+
+    private var lastUpdateTime = 0L
+    private fun computePos() {
+        val now = System.currentTimeMillis()
+        val deltaTime = (now - lastUpdateTime) / 1000f
+
+        val animator = flyingAnimator
+        if (animator != null) {
+            cameraPos.clone(animator.update(deltaTime))
+            if (animator.over()) {
+                flyingAnimator = null
+            }
+        } else if (lastUpdateTime > 0 && isSelected) {
+            val temp = cameraFront.clone()
+            temp.y = 0f
+            temp.normalized()
+            cameraPos += temp * (deltaTime * MOVE_PER_SECOND).toFloat()
+        }
+
         lastUpdateTime = now
     }
 
-    private fun onMove(type: MoveDirType, delta: Float = MOVE_DELTA) {
-        when (type) {
-            MoveDirType.FORWARD -> cameraPos += cameraFront * delta
-            MoveDirType.BACK -> cameraPos -= cameraFront * delta
-            MoveDirType.LEFT -> cameraPos -= cameraFront * cameraUP * delta
-            MoveDirType.RIGHT -> cameraPos += cameraFront * cameraUP * delta
-            MoveDirType.UP -> cameraPos += cameraUP * delta
-            MoveDirType.DOWN -> cameraPos -= cameraUP * delta
-            MoveDirType.PLANE_FORWARD -> {
-                val temp = cameraFront.clone()
-                temp.y = 0f
-                temp.normalize()
-                cameraPos += temp * delta
-            }
+    private var flyingAnimator: FlyingAnimator? = null
+    private fun flyTo(v: Vector3): Boolean {
+        if ((v - cameraPos).norm() <= 2) {
+            Log.i(TAG, "flyTo: too near, no need to fly")
+            return false
+        }
+        val delta = v - cameraPos
+        flyingAnimator = FlyingAnimator(
+            cameraPos.clone(),
+            v - delta.normalized(),
+            FLYING_TIME,
+            FLYING_MAX_HEIGHT,
+        )
+        return true
+    }
+
+    private fun onRotationEvent(angle: Float, progress: Float) {
+        if (useSensor) return
+        // TODO: recompute rotation matrix
+        val rotAngle = angle + PI.toFloat() / 2
+        val u = Vector3(cos(rotAngle), sin(rotAngle), 0f)
+
+        val theta = progress * ROTATION_PER_CALL
+        val q = Quaternion(u * sin(theta/2), cos(theta/2))
+        panRotation = q * panRotation
+    }
+
+    private var useSensor = true
+    private fun enableSensor(enable: Boolean) {
+        if (useSensor == enable) return
+        useSensor = enable
+        if (enable) {
+            baseRotation = panRotation * baseRotation * angleHandler.getRotation().inverse()
+        } else {
+            baseRotation *= angleHandler.getRotation()
         }
     }
 
-    private fun resetCalibration() {
-        baseRotation = angleHandler.getRotation()
-        baseRotation.inverse()
-    }
-
-    enum class MoveDirType {
-        FORWARD, BACK, LEFT, RIGHT, UP, DOWN, PLANE_FORWARD
+    fun onEvent(type: Int) {
+        when (type) {
+            0 -> onRotationEvent(0f, 1f)
+            1 -> enableSensor(false)
+        }
     }
 
     private var isSelected = false
