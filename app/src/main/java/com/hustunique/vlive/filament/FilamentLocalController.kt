@@ -4,13 +4,13 @@ import android.content.Context
 import android.util.Log
 import android.view.MotionEvent
 import android.view.MotionEvent.*
-import android.view.View
 import com.google.android.filament.Camera
 import com.google.android.filament.utils.Float3
 import com.google.android.filament.utils.Utils
 import com.hustunique.vlive.data.Quaternion
 import com.hustunique.vlive.data.Vector3
 import com.hustunique.vlive.local.CharacterProperty
+import com.hustunique.vlive.ui.*
 import com.hustunique.vlive.util.AngleHandler
 import java.nio.FloatBuffer
 import kotlin.math.PI
@@ -47,6 +47,7 @@ class FilamentLocalController(
     private var sensorInitialized = false
     private val angleHandler = AngleHandler(context) {
         Log.i(TAG, "First Callback from AngleHandler")
+        lastDeviceQuaternion = it
         baseRotation = it.inverse()
         sensorInitialized = true
     }.apply { start() }
@@ -67,9 +68,6 @@ class FilamentLocalController(
 
     fun release() {
         angleHandler.stop()
-    }
-
-    fun bindControlView(reset: View) {
     }
 
     fun update(camera: Camera) {
@@ -103,7 +101,8 @@ class FilamentLocalController(
         val q = if (useSensor) {
             baseRotation * angleHandler.getRotation()
         } else {
-            panRotation * baseRotation
+            panRotation *= panRotationState
+            baseRotation * panRotation
         }
         q.toRotation(rotationMatrix)
         return q
@@ -130,11 +129,43 @@ class FilamentLocalController(
         lastUpdateTime = now
     }
 
+    private var panRotationState = Quaternion()
+    private fun onRotationEvent(angle: Float, progress: Float) {
+        if (useSensor) return
+        val rotAngle = angle - PI.toFloat() / 2
+        val u = Vector3(cos(rotAngle), sin(rotAngle), 0f)
+
+        val theta = progress * ROTATION_PER_CALL
+        panRotationState = Quaternion(u * sin(theta / 2), cos(theta / 2))
+    }
+
+    private var lastDeviceQuaternion = Quaternion()
+    private var useSensor = true
+    private fun onEnableSensor(enable: Boolean) {
+        if (useSensor == enable) return
+        useSensor = enable
+        if (enable) {
+            lastDeviceQuaternion = angleHandler.getRotation()
+            baseRotation = baseRotation * panRotation * angleHandler.getRotation().inverse()
+        } else {
+            baseRotation *= angleHandler.getRotation()
+            panRotation = Quaternion()
+        }
+    }
+
+    private fun onReset() {
+        if (useSensor) {
+            baseRotation *= lastDeviceQuaternion * angleHandler.getRotation().inverse()
+        } else {
+            panRotation = Quaternion()
+        }
+    }
+
     private var flyingAnimator: FlyingAnimator? = null
-    private fun flyTo(v: Vector3): Boolean {
+    private fun onFlyTo(v: Vector3) {
         if ((v - cameraPos).norm() <= 2) {
             Log.i(TAG, "flyTo: too near, no need to fly")
-            return false
+            return
         }
         val delta = v - cameraPos
         flyingAnimator = FlyingAnimator(
@@ -143,36 +174,14 @@ class FilamentLocalController(
             FLYING_TIME,
             FLYING_MAX_HEIGHT,
         )
-        return true
     }
 
-    private fun onRotationEvent(angle: Float, progress: Float) {
-        if (useSensor) return
-        // TODO: recompute rotation matrix
-        val rotAngle = angle + PI.toFloat() / 2
-        val u = Vector3(cos(rotAngle), sin(rotAngle), 0f)
-
-        val theta = progress * ROTATION_PER_CALL
-        val q = Quaternion(u * sin(theta/2), cos(theta/2))
-        panRotation = q * panRotation
-    }
-
-    private var useSensor = true
-    private fun enableSensor(enable: Boolean) {
-        if (useSensor == enable) return
-        useSensor = enable
-        if (enable) {
-            baseRotation = panRotation * baseRotation * angleHandler.getRotation().inverse()
-        } else {
-            baseRotation *= angleHandler.getRotation()
-        }
-    }
-
-    fun onEvent(type: Int) {
-        when (type) {
-            0 -> onRotationEvent(0f, 1f)
-            1 -> enableSensor(false)
-        }
+    fun onEvent(event: BaseEvent) = when (event) {
+        is RockerEvent -> onRotationEvent(event.radians, event.progress)
+        is ModeSwitchEvent -> onEnableSensor(!event.rockerMode)
+        is ResetEvent -> onReset()
+        is FlyEvent -> onFlyTo(event.pos)
+        else -> Unit
     }
 
     private var isSelected = false

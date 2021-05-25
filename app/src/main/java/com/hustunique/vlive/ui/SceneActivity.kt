@@ -103,6 +103,11 @@ class SceneActivity : AppCompatActivity() {
             addModelObject(SceneModelObject())
         }
         enterRoom()
+
+        viewModel.eventData.observe(this) {
+            Log.i(TAG, "Dispatch local control event: $it")
+            localController.onEvent(it)
+        }
     }
 
     private fun enterRoom() {

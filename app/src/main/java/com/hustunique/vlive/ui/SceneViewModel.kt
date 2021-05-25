@@ -29,6 +29,5 @@ data class ModeSwitchEvent(
 class ResetEvent() : BaseEvent()
 
 data class FlyEvent(
-    val uid: Int,
     val pos: Vector3
 ) : BaseEvent()
