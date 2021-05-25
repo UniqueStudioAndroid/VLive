@@ -1,8 +1,11 @@
 package com.hustunique.vlive.filament.model_object
 
 import android.util.Log
+import androidx.annotation.MainThread
 import com.google.android.filament.gltfio.FilamentAsset
 import com.google.android.filament.utils.*
+import com.hustunique.vlive.data.Quaternion
+import com.hustunique.vlive.data.Vector3
 import com.hustunique.vlive.filament.FilamentContext
 import com.hustunique.vlive.filament.FilamentLocalController
 import com.hustunique.vlive.local.CharacterProperty
@@ -64,6 +67,19 @@ abstract class FilamentBaseModelObject(val resourcePath: String) {
             center -= centerPoint / scaleFactor
             val transform = scale(Float3(scaleFactor)) * translation(-center)
             tm.setTransform(tm.getInstance(asset.root), transpose(transform).toFloatArray())
+        }
+    }
+
+    @MainThread
+    open fun getTransform(): Pair<Vector3, Quaternion> {
+        val buffer = property?.objectData
+        return if (buffer != null) {
+            buffer.rewind()
+            val q = Quaternion.readFromBuffer(buffer)
+            val v = Vector3.readFromBuffer(buffer)
+            Pair(v, q)
+        } else {
+            Pair(Vector3(), Quaternion())
         }
     }
 }
