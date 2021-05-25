@@ -45,9 +45,14 @@ class FilamentLocalController(
     private val rotationMatrix = FloatArray(9)
     private val rotationBuffer = FloatBuffer.allocate(7)
 
-    private val cameraPos = Vector3()
     private val cameraFront = Vector3(z = -1f)
     private val cameraUP = Vector3(y = 1f)
+    private val cameraPos = Vector3()
+    var position: Vector3
+        get() = cameraPos.clone()
+        set(value) {
+            cameraPos.clone(value)
+        }
 
     fun release() {
         angleHandler.stop()
@@ -55,10 +60,6 @@ class FilamentLocalController(
 
     fun bindControlView(reset: View) {
         reset.setOnClickListener { resetCalibration() }
-    }
-
-    fun resetPosition(v: Vector3) {
-        cameraPos.clone(v)
     }
 
     fun update(camera: Camera) {
