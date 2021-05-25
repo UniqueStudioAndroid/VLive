@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RockerView">
+        <attr name="bg_color" format="color" />
+        <attr name="fg_color" format="color" />
+        <attr name="radius_diff" format="dimension" />
+    </declare-styleable>
+</resources>

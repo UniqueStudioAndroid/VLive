@@ -1,7 +1,9 @@
 package com.hustunique.vlive.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.WindowManager
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -44,6 +46,8 @@ class SceneActivity : AppCompatActivity() {
         } else null
     }
 
+    private val viewModel by viewModels<SceneViewModel>()
+
     lateinit var screenModelObject: ScreenModelObject
 
     private lateinit var glRender: GLRender
@@ -78,6 +82,7 @@ class SceneActivity : AppCompatActivity() {
         glRender = GLRender().apply {
             init()
         }
+        Log.i(TAG, "onCreate: vlive viewmodel $viewModel")
 
         agoraModule =
             AgoraModule(
@@ -97,7 +102,6 @@ class SceneActivity : AppCompatActivity() {
 
             addModelObject(SceneModelObject())
         }
-        localController.bindControlView(binding.sceneReset)
         enterRoom()
     }
 

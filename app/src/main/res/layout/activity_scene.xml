@@ -16,13 +16,4 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <ImageView
-        android:id="@+id/scene_reset"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_gravity="end|bottom"
-        android:layout_marginEnd="30dp"
-        android:layout_marginBottom="30dp"
-        android:background="@drawable/camera_calib_icon" />
-
 </FrameLayout>
