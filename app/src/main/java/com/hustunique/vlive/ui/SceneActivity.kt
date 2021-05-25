@@ -95,6 +95,7 @@ class SceneActivity : AppCompatActivity() {
                 joinChannel(args.cid)
             }.also { groupMemberManager.agoraModule = it }
         agoraMessageModule.mode = args.mode
+        groupMemberManager.onMemberUpdate = { viewModel.memberInfo.postValue(it) }
 
         binding.filamentView.apply {
             filamentContext = FilamentContext(this, glRender.getEglContext())

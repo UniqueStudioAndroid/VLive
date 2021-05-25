@@ -6,7 +6,7 @@ import java.nio.FloatBuffer
 // Properties for virtual characters
 data class CharacterProperty(
     val lEyeOpenProbability: Float,
-    val eEyeOpenProbability: Float,
+    val rEyeOpenProbability: Float,
     val mouthOpenWeight: Float,
     val faceQuaternion: FloatBuffer, // 4 * float
     var objectData: FloatBuffer, // rotation data + position data
@@ -38,7 +38,7 @@ data class CharacterProperty(
     fun toByteArray(): ByteArray =
         ByteBuffer.allocate(14 * 4).apply {
             putFloat(lEyeOpenProbability)
-            putFloat(eEyeOpenProbability)
+            putFloat(rEyeOpenProbability)
             putFloat(mouthOpenWeight)
             faceQuaternion.array().forEach {
                 putFloat(it)

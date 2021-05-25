@@ -2,7 +2,9 @@ package com.hustunique.vlive.ui
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.hustunique.vlive.data.Quaternion
 import com.hustunique.vlive.data.Vector3
+import com.hustunique.vlive.local.MemberInfo
 
 /**
  *    author : Yuxuan Xiao
@@ -12,6 +14,8 @@ import com.hustunique.vlive.data.Vector3
 class SceneViewModel : ViewModel() {
 
     val eventData = MutableLiveData<BaseEvent>()
+
+    val memberInfo = MutableLiveData<List<MemberInfo>>()
 
 }
 

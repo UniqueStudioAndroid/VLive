@@ -6,8 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.chad.library.adapter.base.BaseQuickAdapter
+import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.hustunique.vlive.R
 import com.hustunique.vlive.databinding.FragmentFloatControlBinding
+import com.hustunique.vlive.local.MemberInfo
 
 /**
  *    author : Yuxuan Xiao
@@ -25,6 +29,14 @@ class FloatControlFragment : Fragment() {
     }
 
     private val viewModel by viewModels<SceneViewModel>({ requireActivity() })
+
+    private val listAdapter = UserListAdapter().apply {
+        setOnItemClickListener { adapter, view, position ->
+            viewModel.eventData.postValue(FlyEvent(data[position].modelObject?.getTransform()!!.first))
+        }
+    }
+
+    private var userListShow = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,6 +61,35 @@ class FloatControlFragment : Fragment() {
         binding.reset.setOnClickListener {
             viewModel.eventData.postValue(ResetEvent())
         }
+        binding.userRecycler.apply {
+            layoutManager = LinearLayoutManager(requireActivity())
+            adapter = listAdapter
+        }
+        binding.userChoose.setOnClickListener {
+            if (userListShow) {
+                binding.userRecycler.visibility = View.GONE
+                binding.grayLayer.visibility = View.GONE
+            } else {
+                binding.userRecycler.visibility = View.VISIBLE
+                binding.grayLayer.visibility = View.VISIBLE
+            }
+            userListShow = !userListShow
+        }
         return binding.root
     }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        viewModel.memberInfo.observe(viewLifecycleOwner) {
+            listAdapter.setList(it)
+        }
+    }
+}
+
+class UserListAdapter : BaseQuickAdapter<MemberInfo, BaseViewHolder>(R.layout.item_user) {
+
+    override fun convert(holder: BaseViewHolder, item: MemberInfo) {
+        holder.setText(R.id.user_name, item.userName)
+    }
+
 }

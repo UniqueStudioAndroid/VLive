@@ -43,6 +43,7 @@ class FilamentLocalController(
     }
 
     var onUpdate: ((CharacterProperty) -> Unit)? = null
+    var onCameraUpdate: (Vector3) -> Unit = { }
 
     private var sensorInitialized = false
     private val angleHandler = AngleHandler(context) {
@@ -70,6 +71,7 @@ class FilamentLocalController(
         angleHandler.stop()
     }
 
+    private var counter = 0
     fun update(camera: Camera) {
         // calculate rotation
         val rotation = computeRotation()
@@ -94,6 +96,9 @@ class FilamentLocalController(
         cameraPos.writeToBuffer(rotationBuffer)
         property.objectData = rotationBuffer
         onUpdate?.invoke(property)
+        if (counter++ % 10 == 0) {
+            onCameraUpdate(position)
+        }
     }
 
     private fun computeRotation(): Quaternion {

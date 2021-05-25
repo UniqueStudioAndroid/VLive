@@ -60,6 +60,14 @@ class RockerView @JvmOverloads constructor(
     var onUpdate: (Float, Float) -> Unit = { _, _ -> }
 
     var enable = false
+        set(value) {
+            visibility = if (value) {
+                VISIBLE
+            } else {
+                GONE
+            }
+            field = value
+        }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)

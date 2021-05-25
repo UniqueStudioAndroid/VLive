@@ -52,9 +52,10 @@ fun Activity.readCompressedAsset(assetName: String): ByteBuffer =
         ByteBuffer.wrap(bytes)
     }
 
-fun <T> SparseArray<T>.putIfAbsent(key: Int, value: T): T {
+fun <T> SparseArray<T>.putIfAbsent(key: Int, value: T, onPut: (T) -> Unit = {}): T {
     if (get(key) == null) {
         put(key, value)
+        onPut(value)
     }
     return value
 }

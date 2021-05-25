@@ -25,11 +25,20 @@ class GroupMemberManager(
 
     var agoraModule: AgoraModule? = null
 
+    var onMemberUpdate: (List<MemberInfo>) -> Unit = {}
+
     private val memberInfo = SparseArray<MemberInfo>()
+
+    private val memberInfoList = mutableListOf<MemberInfo>()
+
+    private val onPut: (MemberInfo) -> Unit = {
+        memberInfoList.add(it)
+        onMemberUpdate(memberInfoList)
+    }
 
     @Synchronized
     fun rtcJoin(uid: Int) {
-        memberInfo.putIfAbsent(uid, MemberInfo())
+        memberInfo.putIfAbsent(uid, MemberInfo(), onPut)
         memberInfo.get(uid).apply { rtcJoined = true }
     }
 
@@ -38,6 +47,8 @@ class GroupMemberManager(
         memberInfo.get(uid)?.apply {
             rtcJoined = false
             modelObject?.run(removeObj)
+            memberInfoList.remove(this)
+            onMemberUpdate(memberInfoList)
         }
         Log.i(TAG, "rtcQuit: removeObj $uid")
         memberInfo.remove(uid)
@@ -46,7 +57,7 @@ class GroupMemberManager(
     @Synchronized
     fun rtmModeChoose(video: Int, uid: Int) {
         Log.i(TAG, "rtmModeChoose() called with: video = $video, uid = $uid")
-        memberInfo.putIfAbsent(uid, MemberInfo())
+        memberInfo.putIfAbsent(uid, MemberInfo(), onPut)
         memberInfo.get(uid).apply { mode = video }
     }
 
@@ -77,6 +88,7 @@ class GroupMemberManager(
 }
 
 data class MemberInfo(
+    var userName: String = "ceshi",
     var mode: Int? = null,
     var rtcJoined: Boolean = false,
     var modelObject: FilamentBaseModelObject? = null,
