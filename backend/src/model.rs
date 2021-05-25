@@ -32,14 +32,14 @@ lazy_static! {
         members.insert(member);
 
         let channel = Channel {
-            id: name,
-            scene: scene.clone(),
+            id: name.clone(),
+            scene: scene,
             desc: "A place where everyone can play freely".to_string(),
             users: members,
             indexes: indexes,
             last_zero_time: Local::now(),
         };
-        channels.insert(scene, channel);
+        channels.insert(name, channel);
         Mutex::new(Model {
             users: users,
             channels: channels,
