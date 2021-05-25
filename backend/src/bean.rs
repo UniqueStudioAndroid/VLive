@@ -1,6 +1,10 @@
-use serde::{Deserialize, Serialize};
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 
+use serde::{Deserialize, Serialize};
+
+use std::collections::HashMap;
+
+use chrono::{DateTime, Local};
 use std::sync::Arc;
 
 pub struct Model {
@@ -12,27 +16,28 @@ pub struct Model {
 pub struct User {
     pub uid: String,
     pub name: String,
-    pub male: bool,
 }
 
 #[derive(Debug)]
 pub struct Channel {
     pub id: String,
+    pub scene: String,
     pub desc: String,
     pub users: HashSet<ChannelMember>,
+    pub indexes: Vec<usize>,
+    pub last_zero_time: DateTime<Local>,
 }
 
 #[derive(Debug, PartialEq, Eq, Hash)]
 pub struct ChannelMember {
     pub user: Arc<User>,
-    pub video_mode: bool,
+    pub mode: usize,
     pub index: usize,
 }
 
 #[derive(Deserialize)]
 pub struct UserRegReq {
     pub name: String,
-    pub male: bool,
 }
 
 #[derive(Serialize)]
@@ -43,6 +48,7 @@ pub struct UserRegRsp {
 #[derive(Deserialize)]
 pub struct ChannelCreateReq {
     pub cid: String,
+    pub scene: String,
     pub desc: String,
 }
 
@@ -50,7 +56,7 @@ pub struct ChannelCreateReq {
 pub struct ChannelJoinReq {
     pub uid: String,
     pub cid: String,
-    pub video_mode: bool,
+    pub mode: usize,
 }
 
 #[derive(Serialize)]
@@ -62,7 +68,7 @@ pub struct ChannelJoinRsp {
 #[derive(Serialize)]
 pub struct ChannelUserInfo {
     pub uid: String,
-    pub video_mode: bool,
+    pub mode: usize,
 }
 
 #[derive(Deserialize)]
@@ -76,14 +82,15 @@ pub struct ChannelListRsp {
     pub cid: String,
     pub desc: String,
     pub count: usize,
+    pub max_count: usize,
 }
 
 impl ChannelMember {
     pub fn new(user: Arc<User>, req: ChannelJoinReq, index: usize) -> Self {
         ChannelMember {
             user,
+            mode: req.mode,
             index,
-            video_mode: req.video_mode,
         }
     }
 }
@@ -94,6 +101,11 @@ impl Channel {
     }
 
     pub fn remove_user(&mut self, uid: &String) {
-        self.users.retain(|u| &u.user.uid != uid)
+        let index = match self.users.iter().find(|u| &u.user.uid == uid) {
+            Some(c) => c.index,
+            None => return,
+        };
+        self.users.retain(|c| &c.user.uid != uid);
+        self.indexes.push(index)
     }
 }

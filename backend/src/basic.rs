@@ -1,5 +1,9 @@
+use std::collections::HashMap;
+
 use serde::Serialize;
 use serde_json::Error;
+
+use crate::bean::Channel;
 
 pub type VLiveResult = Result<Vec<u8>, VLiveErr>;
 
@@ -67,4 +71,37 @@ pub fn remove_log(_: Vec<u8>) -> VLiveResult {
         |_| rsp_err("Write to log file failed"),
         |_| rsp_ok("Remove log success"),
     )
+}
+
+lazy_static! {
+    static ref ROOMS: HashMap<String, Vec<Vec<f32>>> = [(
+        "Eden".to_string(),
+        vec![
+            vec![0.0, 0.0, -4.0],
+            vec![0.0, 0.0, 4.0],
+            vec![4.0, 0.0, 0.0],
+            vec![-4.0, 0.0, 0.0]
+        ]
+    ),]
+    .iter()
+    .cloned()
+    .collect();
+}
+
+pub fn create_indexes(s: &String) -> Option<Vec<usize>> {
+    ROOMS.get(s).map(|v| (0..v.len()).collect())
+}
+
+pub fn get_position(c: &mut Channel) -> Option<(usize, Vec<f32>)> {
+    let idx = match c.indexes.pop() {
+        Some(v) => v,
+        None => return None,
+    };
+    match ROOMS.get(&c.scene) {
+        Some(vec) => match vec.get(idx) {
+            Some(v) => Some((idx, v.clone())),
+            None => None,
+        },
+        None => None,
+    }
 }

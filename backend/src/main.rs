@@ -4,15 +4,14 @@ use std::net::SocketAddr;
 use hyper::service::{make_service_fn, service_fn};
 use hyper::{Body, Request, Response, Server, StatusCode};
 
+use backend::basic;
 use backend::basic::VLiveErr;
 use backend::model;
-use backend::basic;
+use chrono::Local;
 
 type EntryResult<T> = Result<T, Infallible>;
 
 async fn entry(req: Request<Body>) -> EntryResult<Response<Body>> {
-    println!("Receive request from {}", req.uri());
-
     let mut response = Response::new(Body::empty());
 
     let (parts, body) = req.into_parts();
@@ -41,9 +40,10 @@ async fn entry(req: Request<Body>) -> EntryResult<Response<Body>> {
     );
 
     println!(
-        "Process request for {}, status = {}",
+        "{}: Process request for {}, status = {}",
+        Local::now(),
         path,
-        response.status()
+        response.status(),
     );
     Ok(response)
 }
