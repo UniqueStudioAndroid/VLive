@@ -34,7 +34,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.VLiveHostActivity" />
-        <activity android:name=".ui.CreateRoomActivity" />
         <activity
             android:name=".SceneActivity"
             android:screenOrientation="landscape" />

@@ -21,7 +21,8 @@ object Dep {
     }
 
     object AndroidX {
-        const val CORE = "org.jetbrains.kotlin:kotlin-stdlib:1.4.31"
+        const val CORE = "androidx.core:core:1.5.0"
+        const val CORE_KTX = "androidx.core:core-ktx:1.5.0"
         const val APPCOMPAT = "androidx.appcompat:appcompat:1.2.0"
         const val MATERIAL = "com.google.android.material:material:1.3.0"
         const val CONSTRAINTLAYOUT = "androidx.constraintlayout:constraintlayout:2.0.4"

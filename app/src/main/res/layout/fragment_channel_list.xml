@@ -64,7 +64,6 @@
         android:id="@+id/channel_list_recyclerview"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginHorizontal="48dp"
         android:layout_marginTop="30dp"
         app:layout_constraintBottom_toTopOf="@id/button_layout"
         app:layout_constraintEnd_toEndOf="parent"

@@ -67,9 +67,9 @@ fragment {
         material.metallic = 0.0;
 
         // Apply the video stream to the +Z face on the cube.
-        //vec2 uv = getUV0();
+        vec2 uv = getUV0();
         //material.baseColor.rgb = vec3(uv.x, uv.y, 1);
-        material.baseColor.rgb = inverseTonemapSRGB(texture(materialParams_videoTexture, getUV0()).rgb);
+        material.baseColor.rgb = inverseTonemapSRGB(texture(materialParams_videoTexture, vec2(1.0 - uv.y, 1.0 - uv.x)).rgb);
         //material.baseColor.rgb = vec3(getUV0().y, 0, 0);
     }
 }

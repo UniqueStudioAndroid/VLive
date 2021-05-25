@@ -42,7 +42,7 @@ object Service {
     suspend fun userReg(userName: String, male: Boolean) = netReq {
         remoteApi.userReg(RegReq(userName, male)).apply {
             if (success) {
-                UserInfoManager.saveUid(data?.uid ?: "")
+                UserInfoManager.saveUid(data?.uid ?: "", userName)
             }
         }
     }

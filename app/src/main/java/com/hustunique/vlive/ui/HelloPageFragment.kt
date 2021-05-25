@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
-import com.hustunique.vlive.R
 import com.hustunique.vlive.databinding.FragmentHelloPageBinding
 import com.hustunique.vlive.util.UserInfoManager
 import kotlinx.coroutines.Dispatchers
@@ -46,16 +45,17 @@ class HelloPageFragment : Fragment() {
                     withContext(Dispatchers.IO) {
                         UserInfoManager.blockRefreshUid()
                     }
-                    popBackStack()
                     if (UserInfoManager.uid.isEmpty()) {
                         navigate(
-                            R.id.welcome_fragment, null, null, FragmentNavigatorExtras(
+                            HelloPageFragmentDirections.actionHelloPageFragmentToWelcomeFragment(),
+                            FragmentNavigatorExtras(
                                 binding.actorImg to "welcome_actor_img"
                             )
                         )
                     } else {
                         navigate(
-                            R.id.channel_list_fragment, null, null, FragmentNavigatorExtras(
+                            HelloPageFragmentDirections.actionHelloPageFragmentToChannelListFragment(),
+                            FragmentNavigatorExtras(
                                 binding.actorImg to "channel_list_actor_img"
                             )
                         )

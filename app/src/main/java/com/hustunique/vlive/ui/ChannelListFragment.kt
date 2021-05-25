@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.hustunique.vlive.R
-import com.hustunique.vlive.SceneActivity
 import com.hustunique.vlive.databinding.FragmentChannelListBinding
 import com.hustunique.vlive.remote.Channel
 import com.hustunique.vlive.remote.Service
@@ -39,7 +38,17 @@ class ChannelListFragment : Fragment() {
         FragmentChannelListBinding.inflate(layoutInflater)
     }
 
-    private val listAdapter = ChannelListAdapter()
+    private val listAdapter = ChannelListAdapter().apply {
+        setOnItemClickListener { adapter, view, position ->
+            (adapter.data[position] as? Channel)?.let {
+                findNavController().navigate(
+                    ChannelListFragmentDirections.actionChannelListFragmentToActorChooseFragment(
+                        it.id
+                    )
+                )
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,11 +84,10 @@ class ChannelListFragment : Fragment() {
         })
         binding.logout.setOnClickListener {
             UserInfoManager.saveUid("")
-            findNavController().popBackStack()
-            findNavController().navigate(R.id.welcome_fragment)
+            findNavController().navigate(ChannelListFragmentDirections.actionChannelListFragmentToWelcomeFragment())
         }
         binding.createBtn.setOnClickListener {
-            findNavController().navigate(R.id.create_room_fragment)
+            findNavController().navigate(ChannelListFragmentDirections.actionChannelListFragmentToCreateRoomFragment())
         }
         return binding.root
     }
@@ -88,6 +96,8 @@ class ChannelListFragment : Fragment() {
         super.onResume()
         if (listAdapter.data.isNullOrEmpty()) {
             binding.root.transitionToState(R.id.end)
+        } else {
+            initData()
         }
     }
 
@@ -105,9 +115,10 @@ class ChannelListFragment : Fragment() {
                     binding.root.transitionToState(R.id.none_actor)
                 }
                 lifecycleScope.launchWhenCreated {
+                    listAdapter.setList(listOf())
                     it.forEach { channel ->
                         withContext(Dispatchers.IO) {
-                            delay(300)
+                            delay(100)
                         }
                         listAdapter.addData(channel)
                     }
@@ -123,9 +134,9 @@ class ChannelListAdapter : BaseQuickAdapter<Channel, BaseViewHolder>(R.layout.it
         holder.setText(R.id.channel_name, "${item.id}的派对")
             .setText(R.id.channel_desc, item.desc)
 
-        holder.itemView.setOnClickListener {
-            SceneActivity.startActivity(context, item.id)
-        }
+//        holder.itemView.setOnClickListener {
+//            SceneActivity.startActivity(context, item.id)
+//        }
     }
 
 }

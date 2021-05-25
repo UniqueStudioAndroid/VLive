@@ -60,11 +60,8 @@ class WelcomeFragment : Fragment() {
                         .apply {
                             if (successful) {
                                 findNavController().apply {
-                                    popBackStack()
                                     navigate(
-                                        R.id.channel_list_fragment,
-                                        null,
-                                        null,
+                                        WelcomeFragmentDirections.actionWelcomeFragmentToChannelListFragment(),
                                         FragmentNavigatorExtras(
                                             binding.actorImg to "channel_list_actor_img"
                                         )

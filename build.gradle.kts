@@ -20,6 +20,8 @@ allprojects {
         google()
         jcenter()
         maven { setUrl("https://www.jitpack.io") }
+        maven { setUrl("https://maven.google.com/artifac") }
+        maven { setUrl("https://mvnrepository.com/artifac") }
     }
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {

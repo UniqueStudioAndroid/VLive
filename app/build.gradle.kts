@@ -99,6 +99,7 @@ dependencies {
     implementation(Dep.MLKit.ML_KIT_FACE)
     implementation(Dep.Kt.COROUTINE)
     implementation(Dep.AndroidX.CORE)
+    implementation(Dep.AndroidX.CORE_KTX)
     implementation(Dep.AndroidX.APPCOMPAT)
     implementation(Dep.AndroidX.MATERIAL)
     implementation(Dep.AndroidX.CONSTRAINTLAYOUT)
@@ -134,8 +135,6 @@ dependencies {
     implementation(Dep.MOSHI)
     implementation(Dep.RECYCLERVIEW_ADAPTER_HELPER)
     implementation(Dep.RECYCLERVIEW_ANIMATION)
-    implementation("androidx.appcompat:appcompat:1.3.0")
-    implementation("com.google.android.material:material:1.3.0")
 
     kapt(Dep.MOSHI_COMPILER)
 }

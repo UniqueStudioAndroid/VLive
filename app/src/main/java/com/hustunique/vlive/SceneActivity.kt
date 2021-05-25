@@ -1,11 +1,12 @@
 package com.hustunique.vlive
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.navArgs
 import com.hustunique.vlive.agora.AgoraMessageModule
 import com.hustunique.vlive.agora.AgoraModule
 import com.hustunique.vlive.databinding.ActivitySceneBinding
@@ -27,16 +28,9 @@ class SceneActivity : AppCompatActivity() {
     companion object {
         private const val TAG = "SceneActivity"
 
-        private const val CHANNEL_ID_STR = "channel_id"
-
-        fun startActivity(context: Context, channelId: String) {
-            context.startActivity(Intent(context, SceneActivity::class.java).apply {
-                putExtra(CHANNEL_ID_STR, channelId)
-            })
-        }
     }
 
-    private val channelId by lazy { intent.getStringExtra(CHANNEL_ID_STR) ?: "" }
+    private val args by navArgs<SceneActivityArgs>()
 
     private val binding by lazy {
         ActivitySceneBinding.inflate(layoutInflater)
@@ -57,6 +51,8 @@ class SceneActivity : AppCompatActivity() {
 
     private lateinit var agoraModule: AgoraModule
 
+    private val insetsController by lazy { ViewCompat.getWindowInsetsController(binding.root) }
+
     private val groupMemberManager by lazy {
         GroupMemberManager(
             binding.filamentView::addModelObject,
@@ -67,7 +63,7 @@ class SceneActivity : AppCompatActivity() {
     private val agoraMessageModule by lazy {
         AgoraMessageModule(
             this,
-            channelId,
+            args.cid,
             groupMemberManager::onMatrix,
             groupMemberManager::rtmModeChoose
         )
@@ -77,6 +73,7 @@ class SceneActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        insetsController?.hide(WindowInsetsCompat.Type.systemBars())
         localController.onUpdate = agoraMessageModule::sendMessage
 
         glRender = GLRender().apply {
@@ -86,7 +83,7 @@ class SceneActivity : AppCompatActivity() {
         agoraModule =
             AgoraModule(this, groupMemberManager::rtcJoin, groupMemberManager::rtcQuit).apply {
                 initAgora()
-                joinChannel(channelId)
+                joinChannel(args.cid)
             }.also { groupMemberManager.agoraModule = it }
 
         binding.filamentView.apply {
@@ -101,7 +98,7 @@ class SceneActivity : AppCompatActivity() {
 
     private fun enterRoom() {
         lifecycleScope.launchWhenCreated {
-            Service.channelJoin(channelId).apply {
+            Service.channelJoin(args.cid).apply {
                 if (!successful) {
                     ToastUtil.makeShort("加入房间失败")
                     finish()
@@ -118,7 +115,7 @@ class SceneActivity : AppCompatActivity() {
 
     private fun leaveRoom() {
         GlobalScope.launch {
-            Service.channelLeave(channelId)
+            Service.channelLeave(args.cid)
         }
     }
 

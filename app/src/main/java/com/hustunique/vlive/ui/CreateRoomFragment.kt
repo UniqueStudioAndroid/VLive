@@ -5,7 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.hustunique.vlive.databinding.FragmentCreateRoomBinding
+import com.hustunique.vlive.remote.Service
+import com.hustunique.vlive.util.ToastUtil
+import com.hustunique.vlive.util.UserInfoManager
 
 /**
  *    author : Yuxuan Xiao
@@ -23,6 +28,37 @@ class CreateRoomFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        binding.back.setOnClickListener {
+            findNavController().popBackStack()
+        }
+        binding.createBtn.setOnClickListener {
+            lifecycleScope.launchWhenCreated {
+                Service.createChannel(
+                    UserInfoManager.uname,
+                    binding.channelDesc.text.toString()
+                ).let {
+                    if (it.successful) {
+                        ChannelListFragment.videoMode = !binding.virtualCb.isChecked
+                        if (binding.virtualCb.isChecked) {
+                            findNavController().navigate(
+                                CreateRoomFragmentDirections.actionCreateRoomFragmentToActorChooseFragment(
+                                    UserInfoManager.uname
+                                )
+                            )
+                        } else {
+                            findNavController().navigate(
+                                CreateRoomFragmentDirections.actionCreateRoomFragmentToSceneActivity(
+                                    UserInfoManager.uname
+                                )
+                            )
+                        }
+                    } else {
+                        ToastUtil.makeShort("创建失败 ${it.msg}")
+                    }
+                }
+            }
+        }
+        binding.channelName.text = "${UserInfoManager.uname}的派对"
         return binding.root
     }
 }
