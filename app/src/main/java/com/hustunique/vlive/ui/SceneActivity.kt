@@ -1,4 +1,4 @@
-package com.hustunique.vlive
+package com.hustunique.vlive.ui
 
 import android.os.Bundle
 import android.view.WindowManager
@@ -18,7 +18,6 @@ import com.hustunique.vlive.local.GroupMemberManager
 import com.hustunique.vlive.local.VirtualCharacterPropertyProvider
 import com.hustunique.vlive.opengl.GLRender
 import com.hustunique.vlive.remote.Service
-import com.hustunique.vlive.ui.ChannelListFragment
 import com.hustunique.vlive.util.ToastUtil
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -40,7 +39,7 @@ class SceneActivity : AppCompatActivity() {
         FilamentLocalController(this)
     }
     private val characterPropertyProvider by lazy {
-        if (!ChannelListFragment.videoMode) {
+        if (args.mode != 0) {
             VirtualCharacterPropertyProvider(this, localController::onCharacterPropertyReady)
         } else null
     }
@@ -81,10 +80,16 @@ class SceneActivity : AppCompatActivity() {
         }
 
         agoraModule =
-            AgoraModule(this, groupMemberManager::rtcJoin, groupMemberManager::rtcQuit).apply {
+            AgoraModule(
+                this,
+                args.mode,
+                groupMemberManager::rtcJoin,
+                groupMemberManager::rtcQuit
+            ).apply {
                 initAgora()
                 joinChannel(args.cid)
             }.also { groupMemberManager.agoraModule = it }
+        agoraMessageModule.mode = args.mode
 
         binding.filamentView.apply {
             filamentContext = FilamentContext(this, glRender.getEglContext())
@@ -98,15 +103,15 @@ class SceneActivity : AppCompatActivity() {
 
     private fun enterRoom() {
         lifecycleScope.launchWhenCreated {
-            Service.channelJoin(args.cid).apply {
+            Service.channelJoin(args.cid, args.mode).apply {
                 if (!successful) {
-                    ToastUtil.makeShort("加入房间失败")
+                    ToastUtil.makeShort("加入房间失败 $msg")
                     finish()
                     return@apply
                 }
                 data?.let {
                     it.memberList.forEach {
-                        groupMemberManager.rtmModeChoose(it.videoMode, it.uid.toIntOrNull() ?: 0)
+                        groupMemberManager.rtmModeChoose(it.mode, it.uid.toIntOrNull() ?: 0)
                     }
                 }
             }

@@ -25,8 +25,6 @@ data class BaseRsp<T>(
 data class RegReq(
     @Json(name = "name")
     val userName: String,
-    @Json(name = "male")
-    val male: Boolean
 )
 
 data class NetRsp<T>(
@@ -47,8 +45,8 @@ data class ChannelJoinReq(
     val uid: String,
     @Json(name = "cid")
     val cid: String,
-    @Json(name = "video_mode")
-    val videoMode: Boolean
+    @Json(name = "mode")
+    val mode: Int
 )
 
 @JsonClass(generateAdapter = true)
@@ -63,8 +61,8 @@ data class JoinRspData(
 data class ChannelMemberInfo(
     @Json(name = "uid")
     val uid: String,
-    @Json(name = "video_mode")
-    val videoMode: Boolean
+    @Json(name = "mode")
+    val mode: Int,
 )
 
 @JsonClass(generateAdapter = true)

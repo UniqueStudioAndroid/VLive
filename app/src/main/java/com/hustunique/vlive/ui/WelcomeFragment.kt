@@ -56,7 +56,7 @@ class WelcomeFragment : Fragment() {
                     return@setOnClickListener
                 }
                 lifecycleScope.launchWhenCreated {
-                    Service.userReg(binding.username.text.toString(), false)
+                    Service.userReg(binding.username.text.toString())
                         .apply {
                             if (successful) {
                                 findNavController().apply {

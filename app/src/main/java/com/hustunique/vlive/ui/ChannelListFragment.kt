@@ -31,7 +31,6 @@ import kotlinx.coroutines.withContext
 class ChannelListFragment : Fragment() {
     companion object {
         private const val TAG = "ChannelListFragment"
-        var videoMode = true
     }
 
     private val binding by lazy {
@@ -114,14 +113,12 @@ class ChannelListFragment : Fragment() {
                 if (it.isNotEmpty()) {
                     binding.root.transitionToState(R.id.none_actor)
                 }
-                lifecycleScope.launchWhenCreated {
-                    listAdapter.setList(listOf())
-                    it.forEach { channel ->
-                        withContext(Dispatchers.IO) {
-                            delay(100)
-                        }
-                        listAdapter.addData(channel)
+                listAdapter.setList(listOf())
+                it.forEach { channel ->
+                    withContext(Dispatchers.IO) {
+                        delay(100)
                     }
+                    listAdapter.addData(channel)
                 }
             }
         }

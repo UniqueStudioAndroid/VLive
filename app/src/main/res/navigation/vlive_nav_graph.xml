@@ -82,12 +82,16 @@
     </fragment>
     <activity
         android:id="@+id/scene_activity"
-        android:name="com.hustunique.vlive.SceneActivity"
+        android:name="com.hustunique.vlive.ui.SceneActivity"
         android:label="activity_scene"
         tools:layout="@layout/activity_scene">
         <argument
             android:name="cid"
             android:defaultValue=''
             app:argType="string" />
+        <argument
+            android:name="mode"
+            app:argType="integer"
+            android:defaultValue="0" />
     </activity>
 </navigation>

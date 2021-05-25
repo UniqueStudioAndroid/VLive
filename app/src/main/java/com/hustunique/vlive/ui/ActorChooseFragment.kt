@@ -30,7 +30,8 @@ class ActorChooseFragment : Fragment() {
         binding.confirmButton.setOnClickListener {
             findNavController().navigate(
                 ActorChooseFragmentDirections.actionActorChooseFragmentToSceneActivity(
-                    args.cid
+                    args.cid,
+                    1
                 )
             )
         }

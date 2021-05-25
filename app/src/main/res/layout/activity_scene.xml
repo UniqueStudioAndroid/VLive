@@ -3,12 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SceneActivity">
+    tools:context=".ui.SceneActivity">
 
     <com.hustunique.vlive.filament.FilamentView
         android:id="@+id/filament_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/container_view"
+        android:name="com.hustunique.vlive.ui.FloatControlFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <ImageView
         android:id="@+id/scene_reset"

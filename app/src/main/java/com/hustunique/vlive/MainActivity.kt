@@ -12,6 +12,7 @@ import com.google.ar.core.ArCoreApk
 import com.hustunique.resonance_audio.AudioRender
 import com.hustunique.vlive.agora.AgoraActivity
 import com.hustunique.vlive.databinding.ActivityMainBinding
+import com.hustunique.vlive.ui.SceneActivity
 import com.hustunique.vlive.util.Utils
 import com.hustunique.vlive.util.startActivity
 import java.util.*

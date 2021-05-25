@@ -6,7 +6,6 @@ import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 import com.hustunique.resonance_audio.AudioConfig
 import com.hustunique.vlive.R
-import com.hustunique.vlive.ui.ChannelListFragment
 import com.hustunique.vlive.util.UserInfoManager
 import io.agora.rtc.Constants
 import io.agora.rtc.IRtcEngineEventHandler
@@ -25,6 +24,7 @@ import kotlinx.coroutines.withContext
  */
 class AgoraModule(
     private val activity: ComponentActivity,
+    private val mode: Int,
     private val onUserJoinedAction: (Int) -> Unit = {},
     private val onUserLeaveAction: (Int) -> Unit = {}
 ) {
@@ -147,7 +147,7 @@ class AgoraModule(
             setZOrderMediaOverlay(true)
         }
         mRtcEngine?.apply {
-            if (ChannelListFragment.videoMode) {
+            if (mode == 0) {
                 enableVideo()
             }
             setupLocalVideo(VideoCanvas(surface, VideoCanvas.RENDER_MODE_FIT, 0))

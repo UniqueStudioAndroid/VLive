@@ -38,7 +38,6 @@ class CreateRoomFragment : Fragment() {
                     binding.channelDesc.text.toString()
                 ).let {
                     if (it.successful) {
-                        ChannelListFragment.videoMode = !binding.virtualCb.isChecked
                         if (binding.virtualCb.isChecked) {
                             findNavController().navigate(
                                 CreateRoomFragmentDirections.actionCreateRoomFragmentToActorChooseFragment(
@@ -48,7 +47,8 @@ class CreateRoomFragment : Fragment() {
                         } else {
                             findNavController().navigate(
                                 CreateRoomFragmentDirections.actionCreateRoomFragmentToSceneActivity(
-                                    UserInfoManager.uname
+                                    UserInfoManager.uname,
+                                    0
                                 )
                             )
                         }

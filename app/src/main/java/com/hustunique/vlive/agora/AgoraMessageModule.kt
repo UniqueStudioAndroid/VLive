@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import com.hustunique.vlive.R
 import com.hustunique.vlive.local.CharacterProperty
-import com.hustunique.vlive.ui.ChannelListFragment
 import com.hustunique.vlive.util.UserInfoManager
 import io.agora.rtm.*
 
@@ -17,7 +16,7 @@ class AgoraMessageModule(
     context: Context,
     channelId: String,
     private val posMessageCallback: (CharacterProperty, Int) -> Unit,
-    private val modeMessageCallback: (Boolean, Int) -> Unit
+    private val modeMessageCallback: (Int, Int) -> Unit
 ) {
 
     companion object {
@@ -27,6 +26,14 @@ class AgoraMessageModule(
     private var rtmClient: RtmClient? = null
 
     private var rtmChannel: RtmChannel? = null
+
+    var mode = -1
+        set(value) {
+            field = value
+            if (joinChannelSuccess) {
+                sendMessage(field)
+            }
+        }
 
     var loginSuccess = false
         private set
@@ -80,7 +87,7 @@ class AgoraMessageModule(
                 posMessageCallback(msg, p1?.userId?.toIntOrNull() ?: 0)
             } else {
                 Log.i(TAG, "onTextMessageReceived: ${p0.text}")
-                modeMessageCallback(p0.text == "video", p1?.userId?.toIntOrNull() ?: 0)
+                modeMessageCallback(p0.text.toIntOrNull() ?: 0, p1?.userId?.toIntOrNull() ?: 0)
             }
         }
 
@@ -143,17 +150,17 @@ class AgoraMessageModule(
         }
     }
 
-    fun sendMessage(isVideo: Boolean) {
+    fun sendMessage(mode: Int) {
         if (!joinChannelSuccess) {
             Log.i(TAG, "sendMessage: no channel now")
             Log.i(TAG, "sendTextMessage: no channel ")
             return
         }
         Log.i(TAG, "sendTextMessage: ")
-        rtmClient?.createMessage(if (isVideo) "video" else "virtual")?.apply {
+        rtmClient?.createMessage(mode.toString())?.apply {
             rtmChannel?.sendMessage(this, object : ResultCallback<Void> {
                 override fun onSuccess(p0: Void?) {
-                    Log.i(TAG, "sendTextMessage: $isVideo")
+                    Log.i(TAG, "sendTextMessage: $mode")
                 }
 
                 override fun onFailure(p0: ErrorInfo?) {
@@ -176,7 +183,9 @@ class AgoraMessageModule(
                 join(object : ResultCallback<Void> {
                     override fun onSuccess(p0: Void?) {
                         joinChannelSuccess = true
-                        sendMessage(ChannelListFragment.videoMode)
+                        if (mode != -1) {
+                            sendMessage(mode)
+                        }
                         Log.i(TAG, "onSuccess: join channel")
                     }
 

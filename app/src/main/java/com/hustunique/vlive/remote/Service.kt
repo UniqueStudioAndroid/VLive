@@ -5,10 +5,12 @@ import com.hustunique.vlive.ui.ChannelListFragment
 import com.hustunique.vlive.util.JsonUtil
 import com.hustunique.vlive.util.UserInfoManager
 import com.hustunique.vlive.util.netReq
+import okhttp3.Dns
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.net.InetAddress
 
 /**
  *    author : Yuxuan Xiao
@@ -22,6 +24,11 @@ object Service {
             .addInterceptor(HttpLoggingInterceptor().apply {
                 if (BuildConfig.DEBUG) {
                     level = HttpLoggingInterceptor.Level.BODY
+                }
+            })
+            .dns(object : Dns {
+                override fun lookup(hostname: String): List<InetAddress> {
+                    return listOf(InetAddress.getByName("1.116.248.164"))
                 }
             })
             .build()
@@ -39,15 +46,15 @@ object Service {
         retrofitClient.create(RemoteApi::class.java)
     }
 
-    suspend fun userReg(userName: String, male: Boolean) = netReq {
-        remoteApi.userReg(RegReq(userName, male)).apply {
+    suspend fun userReg(userName: String) = netReq {
+        remoteApi.userReg(RegReq(userName)).apply {
             if (success) {
                 UserInfoManager.saveUid(data?.uid ?: "", userName)
             }
         }
     }
 
-    suspend fun channelJoin(channelId: String) = netReq {
+    suspend fun channelJoin(channelId: String, mode: Int) = netReq {
         if (UserInfoManager.uid.isEmpty()) {
             return@netReq BaseRsp(-1, "do not login", null)
         }
@@ -55,7 +62,7 @@ object Service {
             ChannelJoinReq(
                 UserInfoManager.uid,
                 channelId,
-                ChannelListFragment.videoMode
+                mode
             )
         )
     }
@@ -78,6 +85,7 @@ object Service {
         remoteApi.createChannel(JsonUtil.jsonReqBody {
             it["cid"] = channelName
             it["desc"] = desc
+            it["scene"] = ""
         })
     }
 

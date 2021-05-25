@@ -44,19 +44,19 @@ class GroupMemberManager(
     }
 
     @Synchronized
-    fun rtmModeChoose(video: Boolean, uid: Int) {
+    fun rtmModeChoose(video: Int, uid: Int) {
         Log.i(TAG, "rtmModeChoose() called with: video = $video, uid = $uid")
         memberInfo.putIfAbsent(uid, MemberInfo())
-        memberInfo.get(uid).apply { videoMode = video }
+        memberInfo.get(uid).apply { mode = video }
     }
 
     fun onMatrix(characterProperty: CharacterProperty, uid: Int) {
         memberInfo.get(uid)?.apply {
             ThreadUtil.execUi {
-                if (rtcJoined && videoMode != null && modelObject == null) {
+                if (rtcJoined && mode != null && modelObject == null) {
                     Log.i(TAG, "addModelObject: $uid")
                     modelObject =
-                        (if (videoMode == true) ScreenModelObject().apply {
+                        (if (mode == 0) ScreenModelObject().apply {
                             agoraModule?.setRemoteVideoRender(
                                 uid,
                                 videoConsumer
@@ -77,7 +77,7 @@ class GroupMemberManager(
 }
 
 data class MemberInfo(
-    var videoMode: Boolean? = null,
+    var mode: Int? = null,
     var rtcJoined: Boolean = false,
     var modelObject: FilamentBaseModelObject? = null,
     var onMatrix: (CharacterProperty) -> Unit = {}
