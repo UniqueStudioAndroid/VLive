@@ -2,7 +2,6 @@ package com.hustunique.vlive.ui
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.hustunique.vlive.data.Quaternion
 import com.hustunique.vlive.data.Vector3
 import com.hustunique.vlive.local.MemberInfo
 
@@ -23,7 +22,8 @@ open class BaseEvent()
 
 data class RockerEvent(
     val radians: Float,
-    val progress: Float
+    val progress: Float,
+    val roll: Float,
 ) : BaseEvent()
 
 data class ModeSwitchEvent(

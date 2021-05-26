@@ -135,10 +135,10 @@ class FilamentLocalController(
     }
 
     private var panRotationState = Quaternion()
-    private fun onRotationEvent(angle: Float, progress: Float) {
+    private fun onRotationEvent(angle: Float, progress: Float, roll: Float) {
         if (useSensor) return
         val rotAngle = angle - PI.toFloat() / 2
-        val u = Vector3(cos(rotAngle), sin(rotAngle), 0f)
+        val u = Vector3(cos(rotAngle), sin(rotAngle), roll).normalized()
 
         val theta = progress * ROTATION_PER_CALL
         panRotationState = Quaternion(u * sin(theta / 2), cos(theta / 2))
@@ -182,7 +182,7 @@ class FilamentLocalController(
     }
 
     fun onEvent(event: BaseEvent) = when (event) {
-        is RockerEvent -> onRotationEvent(event.radians, event.progress)
+        is RockerEvent -> onRotationEvent(event.radians, event.progress, event.roll)
         is ModeSwitchEvent -> onEnableSensor(!event.rockerMode)
         is ResetEvent -> onReset()
         is FlyEvent -> onFlyTo(event.pos)

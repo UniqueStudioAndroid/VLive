@@ -63,7 +63,7 @@ class FloatControlFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding.rocker.onUpdate = { radians, progress ->
-            viewModel.eventData.postValue(RockerEvent(radians, progress))
+            viewModel.eventData.postValue(RockerEvent(radians, progress, 1f))
         }
         binding.modeSwitcher.setOnClickListener {
             val curState = binding.rocker.enable
