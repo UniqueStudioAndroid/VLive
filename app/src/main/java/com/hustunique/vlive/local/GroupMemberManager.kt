@@ -7,6 +7,7 @@ import com.hustunique.vlive.filament.model_object.ActorModelObject
 import com.hustunique.vlive.filament.model_object.FilamentBaseModelObject
 import com.hustunique.vlive.filament.model_object.ScreenModelObject
 import com.hustunique.vlive.util.ThreadUtil
+import com.hustunique.vlive.util.UserInfoManager
 import com.hustunique.vlive.util.putIfAbsent
 
 /**
@@ -32,13 +33,15 @@ class GroupMemberManager(
     private val memberInfoList = mutableListOf<MemberInfo>()
 
     private val onPut: (MemberInfo) -> Unit = {
-        memberInfoList.add(it)
-        onMemberUpdate(memberInfoList)
+        if (it.uid.toString() != UserInfoManager.uid) {
+            memberInfoList.add(it)
+            onMemberUpdate(memberInfoList)
+        }
     }
 
     @Synchronized
     fun rtcJoin(uid: Int) {
-        memberInfo.putIfAbsent(uid, MemberInfo(), onPut)
+        memberInfo.putIfAbsent(uid, MemberInfo(uid = uid), onPut)
         memberInfo.get(uid).apply { rtcJoined = true }
     }
 
@@ -57,7 +60,7 @@ class GroupMemberManager(
     @Synchronized
     fun rtmModeChoose(video: Int, uid: Int) {
         Log.i(TAG, "rtmModeChoose() called with: video = $video, uid = $uid")
-        memberInfo.putIfAbsent(uid, MemberInfo(), onPut)
+        memberInfo.putIfAbsent(uid, MemberInfo(uid = uid), onPut)
         memberInfo.get(uid).apply { mode = video }
     }
 
@@ -89,6 +92,7 @@ class GroupMemberManager(
 
 data class MemberInfo(
     var userName: String = "ceshi",
+    var uid: Int,
     var mode: Int? = null,
     var rtcJoined: Boolean = false,
     var modelObject: FilamentBaseModelObject? = null,

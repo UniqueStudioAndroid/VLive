@@ -4,14 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.hustunique.vlive.R
 import com.hustunique.vlive.databinding.FragmentFloatControlBinding
 import com.hustunique.vlive.local.MemberInfo
+import com.hustunique.vlive.util.ToastUtil
 
 /**
  *    author : Yuxuan Xiao
@@ -31,12 +34,29 @@ class FloatControlFragment : Fragment() {
     private val viewModel by viewModels<SceneViewModel>({ requireActivity() })
 
     private val listAdapter = UserListAdapter().apply {
-        setOnItemClickListener { adapter, view, position ->
-            viewModel.eventData.postValue(FlyEvent(data[position].modelObject?.getTransform()!!.first))
+        setOnItemClickListener { _, _, position ->
+            data[position].modelObject?.getTransform()?.first?.let {
+                viewModel.eventData.postValue(FlyEvent(it))
+            }
         }
     }
 
     private var userListShow = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (userListShow) {
+                    binding.userRecycler.visibility = View.GONE
+                    binding.grayLayer.visibility = View.GONE
+                    userListShow = !userListShow
+                } else {
+                    activity?.finish()
+                }
+            }
+        })
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -65,7 +85,12 @@ class FloatControlFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireActivity())
             adapter = listAdapter
         }
+        binding.grayLayer.setOnClickListener {  }
         binding.userChoose.setOnClickListener {
+            if (listAdapter.data.size == 0) {
+                ToastUtil.makeShort("暂无其它用户")
+                return@setOnClickListener
+            }
             if (userListShow) {
                 binding.userRecycler.visibility = View.GONE
                 binding.grayLayer.visibility = View.GONE

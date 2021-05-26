@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PointF
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import com.hustunique.vlive.R
@@ -87,7 +88,7 @@ class RockerView @JvmOverloads constructor(
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (!enable) return enable
+        if (!enable) return super.onTouchEvent(event)
 
         when (event.action) {
             MotionEvent.ACTION_MOVE -> {

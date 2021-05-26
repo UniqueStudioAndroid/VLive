@@ -85,7 +85,7 @@ object Service {
         remoteApi.createChannel(JsonUtil.jsonReqBody {
             it["cid"] = channelName
             it["desc"] = desc
-            it["scene"] = ""
+            it["scene"] = "Eden"
         })
     }
 

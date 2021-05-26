@@ -38,14 +38,12 @@ class ChannelListFragment : Fragment() {
     }
 
     private val listAdapter = ChannelListAdapter().apply {
-        setOnItemClickListener { adapter, view, position ->
-            (adapter.data[position] as? Channel)?.let {
-                findNavController().navigate(
-                    ChannelListFragmentDirections.actionChannelListFragmentToActorChooseFragment(
-                        it.id
-                    )
+        setOnItemClickListener { _, _, position ->
+            findNavController().navigate(
+                ChannelListFragmentDirections.actionChannelListFragmentToActorChooseFragment(
+                    data[position].id
                 )
-            }
+            )
         }
     }
 
@@ -130,10 +128,6 @@ class ChannelListAdapter : BaseQuickAdapter<Channel, BaseViewHolder>(R.layout.it
     override fun convert(holder: BaseViewHolder, item: Channel) {
         holder.setText(R.id.channel_name, "${item.id}的派对")
             .setText(R.id.channel_desc, item.desc)
-
-//        holder.itemView.setOnClickListener {
-//            SceneActivity.startActivity(context, item.id)
-//        }
     }
 
 }

@@ -33,7 +33,6 @@ class FilamentLocalController(
         val kDefaultObjectPosition = Float3(0.0f, 0.0f, -4.0f)
         private const val MOVE_PER_SECOND = 5.0
         private const val FLYING_TIME = 2f
-        private const val FLYING_MAX_HEIGHT = 5f
         private const val ROTATION_PER_CALL = Math.PI.toFloat() / 90
         private const val TAG = "FilamentCameraController"
 
@@ -56,15 +55,15 @@ class FilamentLocalController(
     private var baseRotation = Quaternion()
     private var panRotation = Quaternion()
     private val rotationMatrix = FloatArray(9)
-    private val rotationBuffer = FloatBuffer.allocate(7)
+    private val transformBuffer = FloatBuffer.allocate(7)
 
     private val cameraFront = Vector3(z = -1f)
     private val cameraUP = Vector3(y = 1f)
-    private val cameraPos = Vector3()
+    private val cameraBottom = Vector3()
     var position: Vector3
-        get() = cameraPos.clone()
+        get() = cameraBottom.clone()
         set(value) {
-            cameraPos.clone(value)
+            cameraBottom.clone(value)
         }
 
     fun release() {
@@ -84,6 +83,7 @@ class FilamentLocalController(
         // compute forward step & update last update time
         computePos()
         // recompute camera's lookAt matrix
+        val cameraPos = cameraBottom + Vector3(0f, 0.8f, 0f)
         val cameraTarget = cameraFront + cameraPos
         camera.lookAt(
             cameraPos.x.toDouble(), cameraPos.y.toDouble(), cameraPos.z.toDouble(),
@@ -91,10 +91,10 @@ class FilamentLocalController(
             cameraUP.x.toDouble(), cameraUP.y.toDouble(), cameraUP.z.toDouble()
         )
 
-        rotationBuffer.rewind()
-        rotation.writeToBuffer(rotationBuffer)
-        cameraPos.writeToBuffer(rotationBuffer)
-        property.objectData = rotationBuffer
+        transformBuffer.rewind()
+        rotation.writeToBuffer(transformBuffer)
+        cameraBottom.writeToBuffer(transformBuffer)
+        property.objectData = transformBuffer
         onUpdate?.invoke(property)
         if (counter++ % 10 == 0) {
             onCameraUpdate(position)
@@ -120,7 +120,7 @@ class FilamentLocalController(
 
         val animator = flyingAnimator
         if (animator != null) {
-            cameraPos.clone(animator.update(deltaTime))
+            cameraBottom.clone(animator.update(deltaTime))
             if (animator.over()) {
                 flyingAnimator = null
             }
@@ -128,7 +128,7 @@ class FilamentLocalController(
             val temp = cameraFront.clone()
             temp.y = 0f
             temp.normalized()
-            cameraPos += temp * (deltaTime * MOVE_PER_SECOND).toFloat()
+            cameraBottom += temp * (deltaTime * MOVE_PER_SECOND).toFloat()
         }
 
         lastUpdateTime = now
@@ -150,17 +150,18 @@ class FilamentLocalController(
         if (useSensor == enable) return
         useSensor = enable
         if (enable) {
-            lastDeviceQuaternion = angleHandler.getRotation()
+            lastDeviceQuaternion = baseRotation * panRotation
             baseRotation = baseRotation * panRotation * angleHandler.getRotation().inverse()
         } else {
             baseRotation *= angleHandler.getRotation()
             panRotation = Quaternion()
+            panRotationState = Quaternion()
         }
     }
 
     private fun onReset() {
         if (useSensor) {
-            baseRotation *= lastDeviceQuaternion * angleHandler.getRotation().inverse()
+            baseRotation = lastDeviceQuaternion * angleHandler.getRotation().inverse()
         } else {
             panRotation = Quaternion()
         }
@@ -168,16 +169,15 @@ class FilamentLocalController(
 
     private var flyingAnimator: FlyingAnimator? = null
     private fun onFlyTo(v: Vector3) {
-        if ((v - cameraPos).norm() <= 2) {
+        if ((v - cameraBottom).norm() <= 2) {
             Log.i(TAG, "flyTo: too near, no need to fly")
             return
         }
-        val delta = v - cameraPos
+        val delta = v - cameraBottom
         flyingAnimator = FlyingAnimator(
-            cameraPos.clone(),
+            cameraBottom.clone(),
             v - delta.normalized(),
             FLYING_TIME,
-            FLYING_MAX_HEIGHT,
         )
     }
 
