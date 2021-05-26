@@ -102,6 +102,12 @@ class SceneActivity : AppCompatActivity() {
         agoraMessageModule.mode = args.mode
         groupMemberManager.onMemberUpdate = { viewModel.memberInfo.postValue(it) }
 
+        localController.onCameraUpdate = { pos, rotation ->
+            agoraModule.audioModule?.run {
+                setHeadPosRotation(pos, rotation)
+            }
+        }
+
         binding.filamentView.apply {
             filamentContext = FilamentContext(this, glRender.getEglContext())
             bindController(localController)

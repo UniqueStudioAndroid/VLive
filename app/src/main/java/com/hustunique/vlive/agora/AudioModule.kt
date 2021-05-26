@@ -117,6 +117,15 @@ class AudioModule {
         }
     }
 
+    fun setHeadPosRotation(pos: Vector3, quat: Quaternion) {
+        handler.post {
+            audioRender.run {
+                setHeadPos(pos.x, pos.y, pos.z)
+                setHeadRotation(quat.n.x, quat.n.y, quat.n.z, quat.a)
+            }
+        }
+    }
+
     fun release() {
         running = false
         handlerThread.quitSafely()

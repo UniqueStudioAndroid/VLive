@@ -45,15 +45,15 @@ open class ActorModelObject(path: String = "models/actor.glb") : FilamentBaseMod
                 renderManager?.run {
                     setMorphWeights(
                         getInstance(mouthEntity),
-                        floatArrayOf(it.mouthOpenWeight, 0f, 0f, 0f)
+                        floatArrayOf(1f - it.mouthOpenWeight, 0f, 0f, 0f)
                     )
                     setMorphWeights(
                         getInstance(leyeEntity),
-                        floatArrayOf(it.lEyeOpenProbability, 0f, 0f, 0f)
+                        floatArrayOf(1f - it.lEyeOpenProbability, 0f, 0f, 0f)
                     )
                     setMorphWeights(
                         getInstance(reyeEntity),
-                        floatArrayOf(it.rEyeOpenProbability, 0f, 0f, 0f)
+                        floatArrayOf(1f - it.rEyeOpenProbability, 0f, 0f, 0f)
                     )
                 }
             }

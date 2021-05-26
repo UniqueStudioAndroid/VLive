@@ -36,6 +36,11 @@ class FloatControlFragment : Fragment() {
         setOnItemClickListener { _, _, position ->
             data[position].modelObject?.getTransform()?.first?.let {
                 viewModel.eventData.postValue(FlyEvent(it))
+                if (userListShow) {
+                    binding.userRecycler.visibility = View.GONE
+                    binding.grayLayer.visibility = View.GONE
+                    userListShow = !userListShow
+                }
             }
         }
     }
@@ -62,8 +67,8 @@ class FloatControlFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding.rocker.onUpdate = { radians, progress ->
-            viewModel.eventData.postValue(RockerEvent(radians, progress, 1f))
+        binding.rocker.onUpdate = { radians, progress, roll ->
+            viewModel.eventData.postValue(RockerEvent(radians, progress, roll))
         }
         binding.modeSwitcher.setOnClickListener {
             val curState = binding.rocker.enable

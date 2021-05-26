@@ -24,7 +24,7 @@ class ActorChooseFragment : Fragment() {
     private val args by navArgs<ActorChooseFragmentArgs>()
 
     private val listAdapter = ImgListAdapter().apply {
-        setList(listOf("1", "2"))
+        setList(listOf(R.drawable.actor, R.drawable.actor_green))
     }
 
     override fun onCreateView(
@@ -51,10 +51,10 @@ class ActorChooseFragment : Fragment() {
     }
 }
 
-class ImgListAdapter : BaseQuickAdapter<String, BaseViewHolder>(R.layout.item_image) {
+class ImgListAdapter : BaseQuickAdapter<Int, BaseViewHolder>(R.layout.item_image) {
 
-    override fun convert(holder: BaseViewHolder, item: String) {
+    override fun convert(holder: BaseViewHolder, item: Int) {
         holder.getView<ImageView>(R.id.item_image)
-            .setImageDrawable(context.getDrawable(R.drawable.actor))
+            .setImageDrawable(context.getDrawable(item))
     }
 }

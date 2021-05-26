@@ -42,7 +42,7 @@ class FilamentLocalController(
     }
 
     var onUpdate: ((CharacterProperty) -> Unit)? = null
-    var onCameraUpdate: (Vector3) -> Unit = { }
+    var onCameraUpdate: (Vector3, Quaternion) -> Unit = { _, _ -> }
 
     private var sensorInitialized = false
     private val angleHandler = AngleHandler(context) {
@@ -99,7 +99,7 @@ class FilamentLocalController(
         property.objectData = transformBuffer
         onUpdate?.invoke(property)
         if (counter++ % 10 == 0) {
-            onCameraUpdate(position)
+            onCameraUpdate(position, headRotation)
         }
     }
 
@@ -139,11 +139,16 @@ class FilamentLocalController(
     private var panRotationState = Quaternion()
     private fun onRotationEvent(angle: Float, progress: Float, roll: Float) {
         if (useSensor) return
-        val rotAngle = angle - PI.toFloat() / 2
-        val u = Vector3(cos(rotAngle), sin(rotAngle), roll).normalized()
-
-        val theta = progress * ROTATION_PER_CALL
-        panRotationState = Quaternion(u * sin(theta / 2), cos(theta / 2))
+        if (roll != 0f) {
+            val u = Vector3(0f, 0f, 1f)
+            val theta = -roll * ROTATION_PER_CALL
+            panRotationState = Quaternion(u * sin(theta / 2), cos(theta / 2))
+        } else {
+            val rotAngle = angle - PI.toFloat() / 2
+            val u = Vector3(cos(rotAngle), sin(rotAngle), 0f)
+            val theta = progress * ROTATION_PER_CALL
+            panRotationState = Quaternion(u * sin(theta / 2), cos(theta / 2))
+        }
     }
 
     private var lastDeviceQuaternion = Quaternion()
