@@ -68,6 +68,7 @@ pub struct ChannelJoinRsp {
 #[derive(Serialize)]
 pub struct ChannelUserInfo {
     pub uid: String,
+    pub name: String,
     pub mode: usize,
 }
 

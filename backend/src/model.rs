@@ -117,6 +117,7 @@ pub fn join_channel(data: Vec<u8>) -> VLiveResult {
                     .iter()
                     .map(|c| ChannelUserInfo {
                         uid: c.user.uid.clone(),
+                        name: c.user.name.clone(),
                         mode: c.mode,
                     })
                     .collect(),
