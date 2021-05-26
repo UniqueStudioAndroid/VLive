@@ -36,6 +36,7 @@ object Dep {
             "androidx.navigation:navigation-dynamic-features-fragment:$NAVIGATION_VERSION"
         const val NAVIGATION_SAFE_ARGS =
             "androidx.navigation:navigation-safe-args-gradle-plugin:$NAVIGATION_VERSION"
+        const val VIEW_PAGER = "androidx.viewpager2:viewpager2:1.0.0"
 
         object Lifecycle {
             private const val VERSION = "2.3.1"
@@ -90,4 +91,5 @@ object Dep {
     const val MOSHI_COMPILER = "com.squareup.moshi:moshi-kotlin-codegen:${MOSHI_VER}"
     const val RECYCLERVIEW_ADAPTER_HELPER = "com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.6"
     const val RECYCLERVIEW_ANIMATION = "jp.wasabeef:recyclerview-animators:4.0.2"
+    const val INDICATOR = "com.tbuonomo:dotsindicator:4.2"
 }

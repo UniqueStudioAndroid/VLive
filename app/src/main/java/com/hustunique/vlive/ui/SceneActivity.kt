@@ -7,10 +7,12 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.navArgs
 import com.hustunique.vlive.agora.AgoraMessageModule
 import com.hustunique.vlive.agora.AgoraModule
+import com.hustunique.vlive.data.Vector3
 import com.hustunique.vlive.databinding.ActivitySceneBinding
 import com.hustunique.vlive.filament.FilamentContext
 import com.hustunique.vlive.filament.FilamentLocalController
@@ -76,7 +78,10 @@ class SceneActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        insetsController?.hide(WindowInsetsCompat.Type.systemBars())
+        insetsController?.apply {
+            hide(WindowInsetsCompat.Type.systemBars())
+            systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_BARS_BY_SWIPE
+        }
         localController.onUpdate = agoraMessageModule::sendMessage
 
         glRender = GLRender().apply {
@@ -120,8 +125,15 @@ class SceneActivity : AppCompatActivity() {
                     return@apply
                 }
                 data?.let {
+                    it.pos.run {
+                        localController.position = Vector3(get(0), get(1), get(2))
+                    }
                     it.memberList.forEach {
-                        groupMemberManager.rtmModeChoose(it.mode, it.uid.toIntOrNull() ?: 0)
+                        groupMemberManager.rtmModeChoose(
+                            it.mode,
+                            it.uid.toIntOrNull() ?: 0,
+                            it.name
+                        )
                     }
                 }
             }

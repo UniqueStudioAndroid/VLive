@@ -5,6 +5,7 @@ import android.util.SparseArray
 import com.hustunique.vlive.agora.AgoraModule
 import com.hustunique.vlive.filament.model_object.ActorModelObject
 import com.hustunique.vlive.filament.model_object.FilamentBaseModelObject
+import com.hustunique.vlive.filament.model_object.GreenActorModelObject
 import com.hustunique.vlive.filament.model_object.ScreenModelObject
 import com.hustunique.vlive.util.ThreadUtil
 import com.hustunique.vlive.util.UserInfoManager
@@ -58,10 +59,13 @@ class GroupMemberManager(
     }
 
     @Synchronized
-    fun rtmModeChoose(video: Int, uid: Int) {
-        Log.i(TAG, "rtmModeChoose() called with: video = $video, uid = $uid")
+    fun rtmModeChoose(mode: Int, uid: Int, uname: String) {
+        Log.i(TAG, "rtmModeChoose() called with: video = $mode, uid = $uid")
         memberInfo.putIfAbsent(uid, MemberInfo(uid = uid), onPut)
-        memberInfo.get(uid).apply { mode = video }
+        memberInfo.get(uid).apply {
+            this.mode = mode
+            userName = uname
+        }
     }
 
     fun onMatrix(characterProperty: CharacterProperty, uid: Int) {
@@ -70,12 +74,18 @@ class GroupMemberManager(
                 if (rtcJoined && mode != null && modelObject == null) {
                     Log.i(TAG, "addModelObject: $uid")
                     modelObject =
-                        (if (mode == 0) ScreenModelObject().apply {
-                            agoraModule?.setRemoteVideoRender(
-                                uid,
-                                videoConsumer
-                            )
-                        } else ActorModelObject()).also(addObj)
+                        when (mode) {
+                            0 -> ScreenModelObject().apply {
+                                agoraModule?.setRemoteVideoRender(
+                                    uid,
+                                    videoConsumer
+                                )
+                            }
+                            1 -> ActorModelObject()
+                            else -> GreenActorModelObject()
+                        }.also(
+                            addObj
+                        )
                 }
                 modelObject?.run {
                     onProperty(characterProperty)
@@ -91,7 +101,7 @@ class GroupMemberManager(
 }
 
 data class MemberInfo(
-    var userName: String = "ceshi",
+    var userName: String = "",
     var uid: Int,
     var mode: Int? = null,
     var rtcJoined: Boolean = false,

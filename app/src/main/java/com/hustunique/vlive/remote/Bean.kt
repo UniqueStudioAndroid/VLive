@@ -52,7 +52,7 @@ data class ChannelJoinReq(
 @JsonClass(generateAdapter = true)
 data class JoinRspData(
     @Json(name = "pos")
-    val pos: List<Int>,
+    val pos: List<Float>,
     @Json(name = "users")
     val memberList: List<ChannelMemberInfo>
 )
@@ -63,6 +63,8 @@ data class ChannelMemberInfo(
     val uid: String,
     @Json(name = "mode")
     val mode: Int,
+    @Json(name = "name")
+    val name: String
 )
 
 @JsonClass(generateAdapter = true)

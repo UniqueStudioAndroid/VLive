@@ -16,7 +16,7 @@ class AgoraMessageModule(
     context: Context,
     channelId: String,
     private val posMessageCallback: (CharacterProperty, Int) -> Unit,
-    private val modeMessageCallback: (Int, Int) -> Unit
+    private val modeMessageCallback: (Int, Int, String) -> Unit
 ) {
 
     companion object {
@@ -87,7 +87,12 @@ class AgoraMessageModule(
                 posMessageCallback(msg, p1?.userId?.toIntOrNull() ?: 0)
             } else {
                 Log.i(TAG, "onTextMessageReceived: ${p0.text}")
-                modeMessageCallback(p0.text.toIntOrNull() ?: 0, p1?.userId?.toIntOrNull() ?: 0)
+                val datas = p0.text.split("|")
+                modeMessageCallback(
+                    datas[0].toIntOrNull() ?: 0,
+                    p1?.userId?.toIntOrNull() ?: 0,
+                    datas[1]
+                )
             }
         }
 
@@ -157,7 +162,8 @@ class AgoraMessageModule(
             return
         }
         Log.i(TAG, "sendTextMessage: ")
-        rtmClient?.createMessage(mode.toString())?.apply {
+        val uname = UserInfoManager.uname
+        rtmClient?.createMessage("$mode|$uname")?.apply {
             rtmChannel?.sendMessage(this, object : ResultCallback<Void> {
                 override fun onSuccess(p0: Void?) {
                     Log.i(TAG, "sendTextMessage: $mode")

@@ -45,6 +45,10 @@ class AudioModule {
 
     private val emptyQueue = ConcurrentLinkedQueue<ByteBuffer>()
 
+    private val inDataQueue = ConcurrentLinkedQueue<ByteBuffer>()
+
+    private val inEmptyQueue = ConcurrentLinkedQueue<ByteBuffer>()
+
     private val processRunnable = object : Runnable {
         override fun run() {
             if (dataQueue.size > 50) {
@@ -87,7 +91,10 @@ class AudioModule {
             sourceId = audioRender.createRenderSource()
             memberMap[uid] = sourceId
         }
-        audioRender.feedData(sourceId, array, frames)
+        Log.i(TAG, "feedData: ${frames} ${array.size}")
+        handler.post {
+            audioRender.feedData(sourceId, array, frames)
+        }
     }
 
     fun getData(buffer: ByteArray, numFrames: Int) {

@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
@@ -85,9 +84,9 @@ class FloatControlFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireActivity())
             adapter = listAdapter
         }
-        binding.grayLayer.setOnClickListener {  }
+        binding.grayLayer.setOnClickListener { }
         binding.userChoose.setOnClickListener {
-            if (listAdapter.data.size == 0) {
+            if (!userListShow && listAdapter.data.size == 0) {
                 ToastUtil.makeShort("暂无其它用户")
                 return@setOnClickListener
             }

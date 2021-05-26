@@ -11,10 +11,21 @@
         android:id="@+id/actor_img"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="true"
         android:src="@drawable/actor"
         android:transitionName="hello_actor_img"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <com.hustunique.vlive.ui.RockerView
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        app:bg_color="@color/translucent_light"
+        app:fg_color="@color/translucent_dark"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:radius_diff="30dp" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

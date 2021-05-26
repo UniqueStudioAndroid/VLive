@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/color_main"
@@ -53,14 +54,30 @@
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <ImageView
-        android:id="@+id/actor_img"
+    <!--    <ImageView-->
+    <!--        android:id="@+id/actor_img"-->
+    <!--        android:layout_width="332dp"-->
+    <!--        android:layout_height="348dp"-->
+    <!--        android:layout_gravity="center_horizontal"-->
+    <!--        android:layout_marginTop="102dp"-->
+    <!--        android:src="@drawable/actor" />-->
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/actor_img_pager"
         android:layout_width="332dp"
         android:layout_height="348dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="102dp"
-        android:fitsSystemWindows="true"
-        android:src="@drawable/actor" />
+        android:layout_marginTop="102dp" />
+
+    <com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
+        android:id="@+id/indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        app:dotsColor="@color/white"
+        app:dotsSize="10dp"
+        app:dotsSpacing="8dp"
+        app:dotsStrokeColor="@color/white" />
 
     <TextView
         android:id="@+id/confirm_button"

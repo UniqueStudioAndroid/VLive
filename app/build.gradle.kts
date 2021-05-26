@@ -107,6 +107,7 @@ dependencies {
     implementation(Dep.AndroidX.NAVIGATION_FRAGMENT)
     implementation(Dep.AndroidX.NAVIGATION_UI)
     implementation(Dep.AndroidX.NAVIGATION_DYNAMIC_FEATURE)
+    implementation(Dep.AndroidX.VIEW_PAGER)
 
     implementation(Dep.CameraX.CAMERA2)
     implementation(Dep.CameraX.LIFE_CYCLE)
@@ -135,6 +136,7 @@ dependencies {
     implementation(Dep.MOSHI)
     implementation(Dep.RECYCLERVIEW_ADAPTER_HELPER)
     implementation(Dep.RECYCLERVIEW_ANIMATION)
+    implementation(Dep.INDICATOR)
 
     kapt(Dep.MOSHI_COMPILER)
 }

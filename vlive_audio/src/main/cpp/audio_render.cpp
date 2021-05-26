@@ -36,8 +36,9 @@ Java_com_hustunique_resonance_1audio_AudioRender_nCreateSoundsSource(
         JNIEnv *env, jobject thiz,
         jlong handler) {
     auto api = reinterpret_cast<ResonanceAudioApi *>(handler);
-    return api->CreateSoundObjectSource(RenderingMode::kBinauralMediumQuality);
-//    return api->CreateStereoSource(2);
+    auto sourceId = api->CreateSoundObjectSource(RenderingMode::kBinauralMediumQuality);
+    api->SetSourceDistanceModel(sourceId, DistanceRolloffModel::kLinear, 1, 10);
+    return sourceId;
 }
 
 extern "C"
