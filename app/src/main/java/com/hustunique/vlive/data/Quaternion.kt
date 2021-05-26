@@ -79,6 +79,8 @@ class Quaternion(
         R[8] = 1 - sq_q1 - sq_q2
     }
 
+    fun clone() = Quaternion(n.clone(), a)
+
     fun clone(q1: Quaternion) = apply {
         a = q1.a
         n.x = q1.n.x

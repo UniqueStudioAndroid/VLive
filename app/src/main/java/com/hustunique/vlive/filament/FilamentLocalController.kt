@@ -65,6 +65,7 @@ class FilamentLocalController(
         set(value) {
             cameraBottom.clone(value)
         }
+    var headRotation: Quaternion = Quaternion()
 
     fun release() {
         angleHandler.stop()
@@ -74,6 +75,7 @@ class FilamentLocalController(
     fun update(camera: Camera) {
         // calculate rotation
         val rotation = computeRotation()
+        headRotation = rotation.clone()
         // compute camera's front direction after rotation
         cameraFront.clone(FRONT)
             .applyL(rotationMatrix)
