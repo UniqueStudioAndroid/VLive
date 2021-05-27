@@ -31,7 +31,7 @@ private const val kNearPlane = 0.05     // 5 cm
 private const val kFarPlane = 1000.0    // 1 km
 private const val kAperture = 16f
 private const val kShutterSpeed = 1f / 125f
-private const val kSensitivity = 100f
+private const val kSensitivity = 80f
 
 /**
  * Helps render glTF models into a [SurfaceView] or [TextureView] with an orbit controller.

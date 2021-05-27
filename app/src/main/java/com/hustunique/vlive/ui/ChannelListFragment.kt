@@ -19,9 +19,6 @@ import com.hustunique.vlive.remote.Service
 import com.hustunique.vlive.util.ToastUtil
 import com.hustunique.vlive.util.UserInfoManager
 import jp.wasabeef.recyclerview.animators.SlideInRightAnimator
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
 
 /**
  *    author : Yuxuan Xiao
@@ -41,7 +38,8 @@ class ChannelListFragment : Fragment() {
         setOnItemClickListener { _, _, position ->
             findNavController().navigate(
                 ChannelListFragmentDirections.actionChannelListFragmentToActorChooseFragment(
-                    data[position].id
+                    data[position].id,
+                    true
                 )
             )
         }
@@ -113,9 +111,6 @@ class ChannelListFragment : Fragment() {
                 }
                 listAdapter.setList(listOf())
                 it.forEach { channel ->
-                    withContext(Dispatchers.IO) {
-                        delay(100)
-                    }
                     listAdapter.addData(channel)
                 }
             }

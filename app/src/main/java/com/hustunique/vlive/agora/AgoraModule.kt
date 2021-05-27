@@ -1,7 +1,6 @@
 package com.hustunique.vlive.agora
 
 import android.util.Log
-import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 import com.hustunique.resonance_audio.AudioConfig
@@ -12,7 +11,6 @@ import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
 import io.agora.rtc.RtcEngineConfig
 import io.agora.rtc.mediaio.IVideoSource
-import io.agora.rtc.video.VideoCanvas
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -111,14 +109,13 @@ class AgoraModule(
     }
 
 
-    fun initAgora(videoSource: IVideoSource? = null): View {
+    fun initAgora(videoSource: IVideoSource? = null) {
         initializeAgoraEngine()
-        val view = setupLocalVideo()
+        setupLocalVideo()
 //        mRtcEngine?.setLocalVideoRenderer(rawVideoConsumer)
 //        mRtcEngine?.setVideoSource(videoSource)
 
         setAudioObserver()
-        return view
     }
 
     private fun setAudioObserver() {
@@ -142,17 +139,11 @@ class AgoraModule(
     }
 
 
-    private fun setupLocalVideo(): View {
-        val surface = RtcEngine.CreateRendererView(activity).apply {
-            setZOrderMediaOverlay(true)
-        }
+    private fun setupLocalVideo() {
         mRtcEngine?.apply {
-            if (mode == 0) {
-                enableVideo()
-            }
-            setupLocalVideo(VideoCanvas(surface, VideoCanvas.RENDER_MODE_FIT, 0))
+            enableVideo()
+            enableLocalVideo(mode == 0)
         }
-        return surface
     }
 
     fun joinChannel(channelId: String) {

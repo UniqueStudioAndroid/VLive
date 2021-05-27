@@ -36,7 +36,7 @@ class FilamentContext(private val surfaceView: SurfaceView, sharedContext: EGLCo
         attachTo(surfaceView)
     }
 
-    var cameraFocalLength = 28f
+    var cameraFocalLength = 35f
         set(value) {
             field = value
             updateCameraProjection()
@@ -101,8 +101,9 @@ class FilamentContext(private val surfaceView: SurfaceView, sharedContext: EGLCo
     }
 
     fun setIndirectLight(buffer: Buffer) {
+//        scene.indirectLight = IndirectLight.Builder().build(engine)
         scene.indirectLight = KtxLoader.createIndirectLight(engine, buffer).apply {
-            intensity = 30_000.0f
+            intensity = 10_000.0f
         }
     }
 

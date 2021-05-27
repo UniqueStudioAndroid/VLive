@@ -41,7 +41,8 @@ class CreateRoomFragment : Fragment() {
                         if (binding.virtualCb.isChecked) {
                             findNavController().navigate(
                                 CreateRoomFragmentDirections.actionCreateRoomFragmentToActorChooseFragment(
-                                    UserInfoManager.uname
+                                    UserInfoManager.uname,
+                                    false
                                 )
                             )
                         } else {

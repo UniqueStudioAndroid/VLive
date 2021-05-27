@@ -80,7 +80,7 @@ class RockerView @JvmOverloads constructor(
     // radians, progress
     var onUpdate: (Float, Float, Float) -> Unit = { _, _, _ -> }
 
-    var enable = false
+    var enable = true
         set(value) {
             visibility = if (value) {
                 VISIBLE
@@ -95,7 +95,7 @@ class RockerView @JvmOverloads constructor(
         centerPos.x = measuredWidth / 2f
         centerPos.y = measuredHeight / 2f
         circleBgRadius = centerPos.x.coerceAtMost(centerPos.y) - arcOffset - outGap
-        curPosRadius = centerPos.x - radiusDiff - arcOffset - outGap
+        curPosRadius = centerPos.x - radiusDiff
         curPos.set(centerPos)
         smallCirclePathRadius = centerPos.x - arcWidth / 2f - outGap
         setSmallCycle((PI / 4f).toFloat())
