@@ -11,11 +11,6 @@ buildscript {
     }
 }
 
-dependencies {
-    implementation(gradleKotlinDsl())
-    implementation(kotlin("stdlib", "1.4.31"))
-}
-
 repositories {
     gradlePluginPortal()
 }
