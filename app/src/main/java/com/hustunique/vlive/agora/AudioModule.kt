@@ -45,10 +45,6 @@ class AudioModule {
 
     private val emptyQueue = ConcurrentLinkedQueue<ByteBuffer>()
 
-    private val inDataQueue = ConcurrentLinkedQueue<ByteBuffer>()
-
-    private val inEmptyQueue = ConcurrentLinkedQueue<ByteBuffer>()
-
     private val processRunnable = object : Runnable {
         override fun run() {
             if (dataQueue.size > 50) {
@@ -128,13 +124,15 @@ class AudioModule {
 
     fun release() {
         running = false
-        handlerThread.quitSafely()
-        audioRender.apply {
-            memberMap.forEach { (_, u) ->
-                releaseSource(u)
+        handler.post {
+            audioRender.apply {
+                memberMap.forEach { (_, u) ->
+                    releaseSource(u)
+                }
+                release()
             }
-            release()
         }
+        handlerThread.quitSafely()
 //        audioPlayer?.release()
     }
 

@@ -41,4 +41,11 @@ object MathUtil {
         R[14] = p.z
         R[15] = 1.0f
     }
+
+    fun packPRST(p: Vector3, q: Quaternion, s: Vector3, R: FloatArray) {
+        packRotationAndPosT(q, p, R)
+        R[0] *= s.x
+        R[5] *= s.y
+        R[10] *= s.z
+    }
 }

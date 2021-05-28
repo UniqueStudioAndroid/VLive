@@ -79,6 +79,10 @@
             android:name="cid"
             android:defaultValue=''
             app:argType="string" />
+        <argument
+            android:name="has_video"
+            app:argType="boolean"
+            android:defaultValue="false" />
     </fragment>
     <activity
         android:id="@+id/scene_activity"
@@ -91,7 +95,7 @@
             app:argType="string" />
         <argument
             android:name="mode"
-            app:argType="integer"
-            android:defaultValue="0" />
+            android:defaultValue="0"
+            app:argType="integer" />
     </activity>
 </navigation>

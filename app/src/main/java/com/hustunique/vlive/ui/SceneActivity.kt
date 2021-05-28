@@ -16,9 +16,12 @@ import com.hustunique.vlive.data.Vector3
 import com.hustunique.vlive.databinding.ActivitySceneBinding
 import com.hustunique.vlive.filament.FilamentContext
 import com.hustunique.vlive.filament.FilamentLocalController
+import com.hustunique.vlive.filament.model_object.ActorModelObject
 import com.hustunique.vlive.filament.model_object.SceneModelObject
 import com.hustunique.vlive.filament.model_object.ScreenModelObject
+import com.hustunique.vlive.filament.model_object.UnityCubeModelObject
 import com.hustunique.vlive.local.GroupMemberManager
+import com.hustunique.vlive.local.UnityObjectManager
 import com.hustunique.vlive.local.VirtualCharacterPropertyProvider
 import com.hustunique.vlive.opengl.GLRender
 import com.hustunique.vlive.remote.Service
@@ -74,6 +77,13 @@ class SceneActivity : AppCompatActivity() {
         )
     }
 
+    private val unityBlockManager by lazy {
+        UnityObjectManager(
+            binding.filamentView::addModelObject,
+            binding.filamentView::removeModelObject
+        )
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -101,6 +111,10 @@ class SceneActivity : AppCompatActivity() {
             }.also { groupMemberManager.agoraModule = it }
         agoraMessageModule.mode = args.mode
         groupMemberManager.onMemberUpdate = { viewModel.memberInfo.postValue(it) }
+
+        if (args.cid == "UnityUser") {
+            agoraMessageModule.onUnityMessage = unityBlockManager::onEvent
+        }
 
         localController.onCameraUpdate = { pos, rotation ->
             agoraModule.audioModule?.run {

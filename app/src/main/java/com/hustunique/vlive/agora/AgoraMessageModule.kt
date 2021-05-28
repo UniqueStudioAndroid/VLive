@@ -3,6 +3,7 @@ package com.hustunique.vlive.agora
 import android.content.Context
 import android.util.Log
 import com.hustunique.vlive.R
+import com.hustunique.vlive.data.EventWrapper
 import com.hustunique.vlive.local.CharacterProperty
 import com.hustunique.vlive.util.UserInfoManager
 import io.agora.rtm.*
@@ -40,6 +41,8 @@ class AgoraMessageModule(
 
     var joinChannelSuccess = false
         private set
+
+    var onUnityMessage: (EventWrapper) -> Unit = {}
 
     private val rtmClientListener = object : RtmClientListener {
         override fun onConnectionStateChanged(p0: Int, p1: Int) {
@@ -110,6 +113,34 @@ class AgoraMessageModule(
 
     }
 
+    private val unityRtmChannelListener = object : RtmChannelListener {
+        override fun onMemberCountUpdated(p0: Int) {
+        }
+
+        override fun onAttributesUpdated(p0: MutableList<RtmChannelAttribute>?) {
+        }
+
+        override fun onMessageReceived(p0: RtmMessage?, p1: RtmChannelMember?) {
+            if (p0 == null || p0.messageType != 2) {
+                return
+            }
+            onUnityMessage(EventWrapper.unWrap(p0.rawMessage))
+            Log.d(TAG, "onUnityMessageReceived:")
+        }
+
+        override fun onImageMessageReceived(p0: RtmImageMessage?, p1: RtmChannelMember?) {
+        }
+
+        override fun onFileMessageReceived(p0: RtmFileMessage?, p1: RtmChannelMember?) {
+        }
+
+        override fun onMemberJoined(p0: RtmChannelMember?) {
+        }
+
+        override fun onMemberLeft(p0: RtmChannelMember?) {
+        }
+    }
+
     init {
         try {
             rtmClient = RtmClient.createInstance(
@@ -178,12 +209,32 @@ class AgoraMessageModule(
         }
     }
 
+    private fun joinUnityBlockChannel(channelId: String) {
+        try {
+            rtmChannel =
+                rtmClient?.createChannel("${channelId}_unity", unityRtmChannelListener)?.apply {
+                    join(object : ResultCallback<Void> {
+                        override fun onSuccess(p0: Void?) {
+                            Log.i(TAG, "onSuccess: join unity channel")
+                        }
+
+                        override fun onFailure(p0: ErrorInfo?) {
+                            Log.e(TAG, "onFailure: join unity channel ${p0?.toString()}")
+                        }
+                    })
+                }
+        } catch (e: Exception) {
+            Log.e(TAG, "joinChannel: join channel error", e)
+        }
+    }
+
     fun release() {
         rtmChannel?.release()
         rtmClient?.release()
     }
 
     private fun joinChannel(channelId: String) {
+        joinUnityBlockChannel(channelId)
         try {
             rtmChannel = rtmClient?.createChannel(channelId, rtmChannelListener)?.apply {
                 join(object : ResultCallback<Void> {

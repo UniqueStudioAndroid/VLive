@@ -56,6 +56,9 @@ class AgoraAudioFrameObserver(
             TAG,
             "onPlaybackFrameBeforeMixing() called with: samples = $samples, numOfSamples = $numOfSamples, bytesPerSample = $bytesPerSample, channels = $channels, samplesPerSec = $samplesPerSec, uid = $uid"
         )
+        if (uid == 8086) {
+            return true
+        }
         samples?.let {
             dataCallback(it, numOfSamples, uid)
         }

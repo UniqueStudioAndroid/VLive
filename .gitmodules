@@ -1,0 +1,3 @@
+[submodule "WeIn-Unity"]
+	path = WeIn-Unity
+	url = https://github.com/UniqueStudioAndroid/WeIn-Unity.git

@@ -23,8 +23,14 @@ class ActorChooseFragment : Fragment() {
     private val binding by lazy { FragmentActorChooseBinding.inflate(layoutInflater) }
     private val args by navArgs<ActorChooseFragmentArgs>()
 
-    private val listAdapter = ImgListAdapter().apply {
-        setList(listOf(R.drawable.actor, R.drawable.actor_green))
+    private val listAdapter by lazy {
+        ImgListAdapter().apply {
+            if (args.hasVideo) {
+                setList(listOf(R.drawable.actor_video, R.drawable.actor, R.drawable.actor_green))
+            } else {
+                setList(listOf(R.drawable.actor, R.drawable.actor_green))
+            }
+        }
     }
 
     override fun onCreateView(
@@ -39,7 +45,7 @@ class ActorChooseFragment : Fragment() {
             findNavController().navigate(
                 ActorChooseFragmentDirections.actionActorChooseFragmentToSceneActivity(
                     args.cid,
-                    binding.actorImgPager.currentItem + 1
+                    if (args.hasVideo) binding.actorImgPager.currentItem else binding.actorImgPager.currentItem + 1
                 )
             )
         }
