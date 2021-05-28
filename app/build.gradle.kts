@@ -9,7 +9,7 @@ plugins {
     id("androidx.navigation.safeargs.kotlin")
 }
 
-Dep.filamentPath = gradleLocalProperties(rootDir).getProperty("filament.dir")
+Dep.filamentPath = gradleLocalProperties(rootDir).getProperty("filament.dir", "")
 if (Dep.filamentPath.isNotEmpty()) {
     apply {
         FilamentToolsPlugin().apply(project)
