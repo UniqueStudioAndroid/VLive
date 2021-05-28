@@ -1,4 +1,4 @@
-![IMG_4063](/Users/alfredchen/Desktop/IMG_4063.PNG)
+![cover](image/cover.PNG)
 
 # WeIn
 
@@ -55,7 +55,7 @@
 
 且该虚拟形象的面部表情与用户同步
 
-![IMG_4067](/Users/alfredchen/Desktop/IMG_4067.PNG)
+![visual_role](image/visual_role.PNG)
 
 ### 视频形象
 
@@ -63,7 +63,7 @@
 
 该虚拟形象将提供视频窗口呈现用户真实场景
 
-![Screen Shot 2021-05-28 at 4.07.37 PM](/Users/alfredchen/Library/Application Support/typora-user-images/Screen Shot 2021-05-28 at 4.07.37 PM.png)
+![video_role](image/video_role.png)
 
 ### 空间音频
 
@@ -77,7 +77,7 @@
 
 点按屏幕上半部分可使虚拟形象在该方向后退
 
-![Screen Shot 2021-05-28 at 4.21.03 PM](/Users/alfredchen/Library/Application Support/typora-user-images/Screen Shot 2021-05-28 at 4.21.03 PM.png)
+![space_interaction](image/space_interaction.png)
 
 ### 轮盘交互
 
@@ -89,7 +89,7 @@
 
 点按屏幕上半部分可使虚拟形象在该方向后退
 
-![Screen Shot 2021-05-28 at 4.12.10 PM](/Users/alfredchen/Library/Application Support/typora-user-images/Screen Shot 2021-05-28 at 4.12.10 PM.png)
+![rotary](image/rotary.png)
 
 ### 方向还原
 
@@ -99,14 +99,14 @@
 
 点击寻人按钮后，在列表中选择你要寻找的用户名称并点击选择，即可自动飞至该用户所在位置
 
-![Screen Shot 2021-05-28 at 4.06.19 PM](/Users/alfredchen/Library/Application Support/typora-user-images/Screen Shot 2021-05-28 at 4.06.19 PM.png)
+![fly](image/fly.png)
 
 ### VR环境
 
 Unity 版本在 VR 环境下运行，且通过手势进行交互，提供更好的场景沉浸感
 
 
-![VR](/Users/alfredchen/Desktop/VR.png)
+![VR](image/VR.png)
 
 ### 彩蛋
 
