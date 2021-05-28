@@ -1,4 +1,4 @@
-![cover](image/cover.PNG)
+![icon](app/src/main/res/drawable/icon.webp)
 
 # WeIn
 
@@ -55,7 +55,7 @@
 
 且该虚拟形象的面部表情与用户同步
 
-![visual_role](image/visual_role.PNG)
+![role](image/role.webp)
 
 ### 视频形象
 
@@ -63,7 +63,7 @@
 
 该虚拟形象将提供视频窗口呈现用户真实场景
 
-![video_role](image/video_role.png)
+![video_role](image/video.webp)
 
 ### 空间音频
 
@@ -75,9 +75,9 @@
 
 点按屏幕上半部分可使虚拟形象在该方向前进，
 
-点按屏幕上半部分可使虚拟形象在该方向后退
+点按屏幕下半部分可使虚拟形象在该方向后退
 
-![space_interaction](image/space_interaction.png)
+![rotate](image/space_rotate.webp)
 
 ### 轮盘交互
 
@@ -87,9 +87,9 @@
 
 点按屏幕上半部分可使虚拟形象在该方向前进，
 
-点按屏幕上半部分可使虚拟形象在该方向后退
+点按屏幕下半部分可使虚拟形象在该方向后退
 
-![rotary](image/rotary.png)
+![rotary](image/disc.webp)
 
 ### 方向还原
 
@@ -113,6 +113,10 @@ Unity 版本在 VR 环境下运行，且通过手势进行交互，提供更好�
 该功能需要在Unity环境下配合HTC Vive及Noitom Hi5方可使用，
 
 答辩时将会进行展示，敬请期待~
+
+# Roadmap
+
+[项目心路历程](ROADMAP.md)
 
 # Compile
 
@@ -199,3 +203,7 @@ Scope: com.htc.upm
 - [XR-SDK](https://docs.unity3d.com/ru/2017.2/Manual/XR-SDK_overviews.html)
 
 - [UniGLTF](https://github.com/ousttrue/UniGLTF.git)
+
+# LICENSE
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
