@@ -1,4 +1,6 @@
-![icon](app/src/main/res/drawable/icon.webp)
+<p align="center">
+  <img src="app/src/main/res/drawable/icon.webp" width="480" height="480"/>
+</p>
 
 # WeIn
 
