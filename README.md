@@ -69,9 +69,9 @@
 
 用户在场景中对话时，可以根据声源相对虚拟形象的方向和位置获得不同的听觉体验
 
-###空间交互
+### 空间交互
 
-用户在场景中运动时，可以通过改变手机方向操纵虚拟形象进行360°的方向旋转，
+用户在场景中运动时，可以通过改变手机方向操纵虚拟形象进行六自由度的方向旋转，
 
 点按屏幕上半部分可使虚拟形象在该方向前进，
 
@@ -184,6 +184,8 @@ Scope: com.htc.upm
 - [Resonance Audio](https://github.com/resonance-audio/resonance-audio)
 
 - [ML Kit](https://developers.google.com/ml-kit)
+
+- [ARCore](https://developers.google.com/ar)
 
 ## Backend
 
