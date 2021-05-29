@@ -143,6 +143,11 @@ pub fn leave_channel(data: Vec<u8>) -> VLiveResult {
         || rsp_err("Channel not exist"),
         |c| {
             c.remove_user(&req.uid);
+
+            if c.users.is_empty() {
+                c.last_zero_time = Local::now();
+            }
+
             rsp_ok(String::new())
         },
     )
@@ -175,7 +180,11 @@ fn remove_empty_channel_indefinitely() {
         let mut ids = Vec::new();
 
         model.channels.iter().for_each(|t| {
-            if t.1.users.is_empty() {
+            if !t.1.users.is_empty() {
+                return;
+            }
+            let now = Local::now() - t.1.last_zero_time;
+            if now < chrono::Duration::seconds(5) {
                 return;
             }
             ids.push(t.0.clone());
@@ -183,6 +192,7 @@ fn remove_empty_channel_indefinitely() {
 
         ids.iter().for_each(|id| {
             model.channels.remove(id);
+            println!("Remove channel: {}", id);
         });
     }
 
