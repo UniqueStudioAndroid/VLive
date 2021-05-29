@@ -184,7 +184,7 @@ fn remove_empty_channel_indefinitely() {
                 return;
             }
             let now = Local::now() - t.1.last_zero_time;
-            if now < chrono::Duration::seconds(5) {
+            if now < chrono::Duration::seconds(60) {
                 return;
             }
             ids.push(t.0.clone());
