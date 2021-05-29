@@ -4,12 +4,12 @@ use std::time::Duration;
 
 use chrono::Local;
 use std::thread;
-use tokio::time::sleep;
 
 use crate::basic::{create_indexes, get_position, rsp_err, rsp_ok};
 
 use super::basic::VLiveResult;
 use super::bean::*;
+use std::thread::sleep;
 
 lazy_static! {
     static ref MODEL: Mutex<Model> = {
@@ -165,11 +165,11 @@ pub fn list_channel(_: Vec<u8>) -> VLiveResult {
     rsp_ok(rsp)
 }
 
-async fn remove_empty_channel_indefinitely() {
+fn remove_empty_channel_indefinitely() {
     println!("Start remove empty channel task");
 
     loop {
-        sleep(Duration::from_millis(10000)).await;
+        sleep(Duration::from_millis(10000));
 
         let mut model = MODEL.lock().unwrap();
         let mut ids = Vec::new();
