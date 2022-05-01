@@ -1,6 +1,9 @@
 use std::collections::{HashMap, HashSet};
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
+use std::fs::File;
+use std::io::{BufReader, BufRead, BufWriter, Write};
+use std::io::prelude;
 
 use chrono::Local;
 use std::thread;
@@ -13,48 +16,90 @@ use std::thread::sleep;
 
 lazy_static! {
     static ref MODEL: Mutex<Model> = {
-        let mut users = HashMap::new();
-        let mut channels = HashMap::new();
+        // let mut users = HashMap::new();
+        // let mut channels = HashMap::new();
 
-        let uid = "8086".to_string();
-        let name = "UnityUser".to_string();
+        // let uid = "8086".to_string();
+        // let name = "UnityUser".to_string();
 
-        let user = Arc::new(User {
-            uid: uid.clone(),
-            name: name.clone(),
-        });
-        users.insert(uid, user.clone());
+        // let user = Arc::new(User {
+            // uid: uid.clone(),
+            // name: name.clone(),
+        // });
+        // users.insert(uid, user.clone());
 
-        let scene = "Eden".to_string();
-        let mut indexes = create_indexes(&scene).unwrap();
-        let member = ChannelMember {
-            user: user,
-            mode: 1,
-            index: indexes.pop().unwrap(),
-        };
-        let mut members = HashSet::new();
-        members.insert(member);
+        // let scene = "Eden".to_string();
+        // let mut indexes = create_indexes(&scene).unwrap();
+        // let member = ChannelMember {
+            // user: user,
+            // mode: 1,
+            // index: indexes.pop().unwrap(),
+        // };
+        // let mut members = HashSet::new();
+        // members.insert(member);
 
-        let channel = Channel {
-            id: name.clone(),
-            scene: scene,
-            desc: "A place where everyone can play freely".to_string(),
-            users: members,
-            indexes: indexes,
-            last_zero_time: Local::now(),
-        };
-        channels.insert(name, channel);
+        // let channel = Channel {
+            // id: name.clone(),
+            // scene: scene,
+            // desc: "A place where everyone can play freely".to_string(),
+            // users: members,
+            // indexes: indexes,
+            // last_zero_time: Local::now(),
+        // };
+        // channels.insert(name, channel);
 
         thread::spawn(remove_empty_channel_indefinitely);
 
         Mutex::new(Model {
-            users: users,
-            channels: channels,
+            users: read_users(), // users,
+            channels: HashMap::new(), // channels,
         })
     };
 }
 
 const BASE_USER_SIZE: usize = 10000;
+
+fn read_users() -> HashMap<String, Arc<User>> {
+    let mut id = BASE_USER_SIZE;
+    let input = File::create("users.log").unwrap();
+    let mut buffered = BufReader::new(input);
+
+    let mut users = HashMap::new();
+    loop {
+        let mut line = String::new();
+        match buffered.read_line(&mut line) {
+            Ok(0) => (),
+            Ok(_) => {
+                let uid = id.to_string();
+                users.insert(uid.clone(), Arc::new(User {
+                    uid: uid,
+                    name: line.clone(),
+                }));
+                println!("Read user name = {}", line.clone());
+                id += 1;
+            },
+            _ => break
+        };
+    }
+
+    return users;
+}
+
+fn write_users() {
+    let model = MODEL.lock().unwrap();
+    let mut vec: Vec<i32> = model.users.keys().map(|x| x.parse().unwrap()).collect();
+    vec.sort();
+    let m = &model.users;
+    
+    let mut output = File::create("users.log").unwrap();
+
+    for k in vec {
+        m.get(&k.to_string()).and_then(|u| {
+            writeln!(output, "{}", u.name);
+            return Some(());
+        });
+    }
+}
 
 pub fn register(data: Vec<u8>) -> VLiveResult {
     let req: UserRegReq = serde_json::from_slice(&data)?;
@@ -67,6 +112,7 @@ pub fn register(data: Vec<u8>) -> VLiveResult {
     println!("Add user: {:?}", &user);
 
     model.users.insert(uid.clone(), Arc::new(user));
+    write_users();
     rsp_ok(UserRegRsp { uid })
 }
 
