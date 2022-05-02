@@ -15,42 +15,42 @@ use std::thread::sleep;
 
 lazy_static! {
     static ref MODEL: Mutex<Model> = {
-        // let mut users = HashMap::new();
-        // let mut channels = HashMap::new();
+        let mut users = read_users();
+        let mut channels = HashMap::new();
 
-        // let uid = "8086".to_string();
-        // let name = "UnityUser".to_string();
+        let uid = "8086".to_string();
+        let name = "UnityUser".to_string();
 
-        // let user = Arc::new(User {
-            // uid: uid.clone(),
-            // name: name.clone(),
-        // });
-        // users.insert(uid, user.clone());
+        let user = Arc::new(User {
+            uid: uid.clone(),
+            name: name.clone(),
+        });
+        users.insert(uid, user.clone());
 
-        // let scene = "Eden".to_string();
-        // let mut indexes = create_indexes(&scene).unwrap();
-        // let member = ChannelMember {
-            // user: user,
-            // mode: 1,
-            // index: indexes.pop().unwrap(),
-        // };
-        // let mut members = HashSet::new();
-        // members.insert(member);
+        let scene = "Eden".to_string();
+        let mut indexes = create_indexes(&scene).unwrap();
+        let member = ChannelMember {
+            user: user,
+            mode: 1,
+            index: indexes.pop().unwrap(),
+        };
+        let mut members = HashSet::new();
+        members.insert(member);
 
-        // let channel = Channel {
-            // id: name.clone(),
-            // scene: scene,
-            // desc: "A place where everyone can play freely".to_string(),
-            // users: members,
-            // indexes: indexes,
-            // last_zero_time: Local::now(),
-        // };
-        // channels.insert(name, channel);
+        let channel = Channel {
+            id: name.clone(),
+            scene: scene,
+            desc: "A place where everyone can play freely".to_string(),
+            users: members,
+            indexes: indexes,
+            last_zero_time: Local::now(),
+        };
+        channels.insert(name, channel);
 
         thread::spawn(remove_empty_channel_indefinitely);
 
         Mutex::new(Model {
-            users: read_users(), // users,
+            users: users, // users,
             channels: HashMap::new(), // channels,
         })
     };
@@ -99,6 +99,9 @@ fn write_users(m: &HashMap<String, Arc<User>>) {
     let mut output = File::create("./users.log").unwrap();
 
     for k in vec {
+        if k < 10000 {
+            continue;
+        }
         m.get(&k.to_string()).and_then(|u| {
             let _ = writeln!(output, "{}", u.name);
             return Some(());
