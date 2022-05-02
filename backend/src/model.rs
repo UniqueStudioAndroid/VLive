@@ -2,8 +2,7 @@ use std::collections::{HashMap, HashSet};
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
 use std::fs::File;
-use std::io::{BufReader, BufRead, BufWriter, Write};
-use std::io::prelude;
+use std::io::{BufReader, BufRead, Write};
 
 use chrono::Local;
 use std::thread;
@@ -61,41 +60,47 @@ const BASE_USER_SIZE: usize = 10000;
 
 fn read_users() -> HashMap<String, Arc<User>> {
     let mut id = BASE_USER_SIZE;
-    let input = File::create("users.log").unwrap();
+    let input = File::open("./users.log").unwrap();
     let mut buffered = BufReader::new(input);
 
     let mut users = HashMap::new();
-    loop {
+    let mut done = false;
+    let mut count = 0;
+    while !done {
         let mut line = String::new();
         match buffered.read_line(&mut line) {
-            Ok(0) => (),
+            Ok(0) => done = true,
             Ok(_) => {
                 let uid = id.to_string();
+                let name = line.trim_end_matches('\n');
                 users.insert(uid.clone(), Arc::new(User {
                     uid: uid,
-                    name: line.clone(),
+                    name: name.to_string(),
                 }));
-                println!("Read user name = {}", line.clone());
+                println!("Read user name = {}", name);
                 id += 1;
             },
-            _ => break
+            _ => done = true
         };
+        count += 1;
+        if count > 3 {
+            done = true;
+        }
+        println!("user = {}", line);
     }
 
     return users;
 }
 
-fn write_users() {
-    let model = MODEL.lock().unwrap();
-    let mut vec: Vec<i32> = model.users.keys().map(|x| x.parse().unwrap()).collect();
+fn write_users(m: &HashMap<String, Arc<User>>) {
+    let mut vec: Vec<i32> = m.keys().map(|x| x.parse().unwrap()).collect();
     vec.sort();
-    let m = &model.users;
-    
-    let mut output = File::create("users.log").unwrap();
+
+    let mut output = File::create("./users.log").unwrap();
 
     for k in vec {
         m.get(&k.to_string()).and_then(|u| {
-            writeln!(output, "{}", u.name);
+            let _ = writeln!(output, "{}", u.name);
             return Some(());
         });
     }
@@ -107,12 +112,12 @@ pub fn register(data: Vec<u8>) -> VLiveResult {
     let uid = (model.users.len() + BASE_USER_SIZE).to_string();
     let user = User {
         uid: uid.clone(),
-        name: req.name,
+        name: req.name.trim_end_matches('\n').to_string(),
     };
     println!("Add user: {:?}", &user);
 
     model.users.insert(uid.clone(), Arc::new(user));
-    write_users();
+    write_users(&model.users);
     rsp_ok(UserRegRsp { uid })
 }
 
